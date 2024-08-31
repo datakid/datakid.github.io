@@ -568,6 +568,11 @@ td[contenteditable="true"]:focus::before {
 .print-icon svg {
     color: #2ecc71; 
 }
+
+td[contenteditable="true"] {
+    direction: ltr;
+    text-align: left;
+}
     
 </style>
 </head>
@@ -1221,6 +1226,19 @@ function autocomplete(inp, arr) {
         updateLegacyModeVisibility();
         updateAddNameButtonState();
     });
+    
+    document.getElementById('dataTable').addEventListener('input', function(e) {
+    if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
+        e.target.textContent = e.target.textContent.replace(/[^0-9]/g, '');
+        
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.setStart(e.target.childNodes[0], e.target.textContent.length);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+});
 
 function addData(product, unitsSold) {
     const month = document.getElementById("monthSelect").value;
@@ -1256,7 +1274,7 @@ function addData(product, unitsSold) {
     }
 
     if (!isLegacyMode) {
-        const validProduct = products.find(p => p.split('|')[0] === product.split('|')[0]);
+        const validProduct = products.find(p => p === product);
         if (!validProduct) {
             alert("Please select a valid product from the list");
             return;
@@ -1279,6 +1297,7 @@ function addData(product, unitsSold) {
     }
     saveData();
 }
+
 
 function updateTable() {
     const table = document.getElementById("dataTable");
@@ -1340,9 +1359,9 @@ function updateTable() {
         }
     }
 
-    function isDuplicate(product) {
-        return data.some(entry => entry.product === product);
-    }
+function isDuplicate(product) {
+    return data.some(entry => entry.product === product);
+}
 
     function resetSelections() {
         document.getElementById("searchInput").value = '';
@@ -1422,9 +1441,16 @@ function updateLegacyUnitsSold(product, element) {
         }
     }, true);
 
-    document.getElementById('legacyTable').addEventListener('input', function(e) {
-        if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
-            e.target.textContent = e.target.textContent.replace(/[^0-9]/g, '');
+document.getElementById('legacyTable').addEventListener('input', function(e) {
+    if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
+        e.target.textContent = e.target.textContent.replace(/[^0-9]/g, '');
+        
+                const range = document.createRange();
+        const sel = window.getSelection();
+        range.setStart(e.target.childNodes[0], e.target.textContent.length);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
         }
     });
 
