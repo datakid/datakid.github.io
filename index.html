@@ -1678,6 +1678,7 @@ function submitData() {
             region: region,
             pharmacy: pharmacy,
             name: item.product.split('|')[0],
+            unit: item.product.split('|')[1],
             unitSold: item.unitsSold,
             method: item.method
         }));
