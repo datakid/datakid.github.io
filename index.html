@@ -76,7 +76,7 @@ select:not(:focus):invalid,
 select:invalid,
 select:required:invalid {
     color: #7f8c8d;
-    background-color: var(--invalid-bg-color);
+    background-color: #f6f6f6;
 }
 
 input:focus, select:focus {
@@ -261,7 +261,7 @@ tr:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(231, 76, 60, 0.2);
+    background-color: #cccccc; 
     transition: .4s;
     border-radius: 34px;
 }
@@ -696,11 +696,28 @@ td[contenteditable="true"] {
             </div>
         </div>
     </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </body>
 </html>
 
     <script>
     
+    
+const firebaseConfig = {
+  apiKey: "AIzaSyCziPixswDPCbYf1zuxdR0A_Z4KgRSrc0I",
+  authDomain: "plan-b-d4c36.firebaseapp.com",
+  databaseURL: "https://plan-b-d4c36-default-rtdb.firebaseio.com",
+  projectId: "plan-b-d4c36",
+  storageBucket: "plan-b-d4c36.appspot.com",
+  messagingSenderId: "647093759607",
+  appId: "1:647093759607:web:e5086e95ec5b378ea4e072",
+  measurementId: "G-S9S6T513SD"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+        
     const products =  [
   "Antacid Syp|Bottle",
   "Acetazolamide 250mg|10 T",
@@ -812,6 +829,7 @@ td[contenteditable="true"] {
   "Cytarabine 1gm|Vial",
   "Dapagliflozin 10mg|10 T",
   "Dapagliflozin 5mg & Met. 1000mg|10 T",
+  "Dapagliflozin 10mg & Met. 1000mg|10 T",
   "Darbepoetin Alpha (لجنه عليا)|Syringe",
   "Deferoxamine 500mg|Amp",
   "Dexamethasone , Neomycine & Polimyxin ED|Bottle",
@@ -876,6 +894,7 @@ td[contenteditable="true"] {
   "Ginkgo biloba|10 T",
   "Glibenclamide 5mg|10 T",
   "Glibenclamide 5mg & Met. 1000mg|10 T",
+  "Glibenclamide 5mg & Met. 500mg|10 T",
   "Gliclazide 60mg|10 T",
   "Glimepiride 2mg|10 T",
   "Glimepiride 2mg & Met. 1000mg|10 T",
@@ -1102,9 +1121,9 @@ td[contenteditable="true"] {
 ].sort();
 
     const regionOptions = {
-        first: ["كفر الدوار سكر", "كفر الدوار 1", "كفر الدوار 2", "النوبارية", "البيضا", "ابو المطامير", "رشيد", "ادكو"],
+        first: ["كفر الدوار سكر", "كفر الدوار الشاملة 1" , "كفر الدوار الشاملة 2", "كفر الدوار مسائي", "النوبارية", "البيضا", "ابو المطامير", "رشيد", "ادكو"],
         second: ["دمنهور الشاملة 1", "دمنهور الشاملة 2", "دمنهور مسائي", "دمنهور سكر", "دمنهور اورام", "الشرطة", "حوش عيسي", "المحمودية", "الرحمانية", "ابو حمص"],
-        third: ["ايتاي", "ايتاي سكر", "كوم حمادة", "بدر", "شبراخيت", "الدلنجات", "وادي النطرون", "قليشان"]
+        third: ["ايتاي الشاملة 1", "ايتاي الشاملة 2 ",   "ايتاي مسائي ","كوم حمادة", "كوم حمادة مسائي", "بدر", "شبراخيت", "الدلنجات", "وادي النطرون", "قليشان"]
     };
 
     let data = [];
@@ -1227,16 +1246,20 @@ function autocomplete(inp, arr) {
         updateAddNameButtonState();
     });
     
-    document.getElementById('dataTable').addEventListener('input', function(e) {
+document.getElementById('dataTable').addEventListener('input', function(e) {
     if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
+        const cursorPosition = window.getSelection().getRangeAt(0).startOffset;
         e.target.textContent = e.target.textContent.replace(/[^0-9]/g, '');
         
         const range = document.createRange();
         const sel = window.getSelection();
-        range.setStart(e.target.childNodes[0], e.target.textContent.length);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
+        
+        if (e.target.childNodes.length > 0) {
+            range.setStart(e.target.childNodes[0], Math.min(cursorPosition, e.target.textContent.length));
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
     }
 });
 
@@ -1307,7 +1330,7 @@ function updateTable() {
         const [name, unit] = entry.product.split('|');
         row.innerHTML = `
             <td><span class="product-name">${name}</span> <span class="product-unit">${unit}</span>${entry.needsApproval ? ' <span style="color: red;">(new)</span>' : ''}</td>
-            <td contenteditable="true" onblur="updateUnitsSold(${index}, this)" oninput="this.innerText=this.innerText.replace(/[^0-9]/g,'')">${entry.unitsSold}</td>
+            <td contenteditable="true" onblur="updateUnitsSold(${index}, this)">${entry.unitsSold}</td>
             <td class="no-print">
                 <button class="delete-btn" onclick="deleteRow(${index})" title="Delete">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1402,20 +1425,20 @@ function isDuplicate(product) {
         }
     }
 
-    function updateLegacyTable() {
-        const legacyTable = document.getElementById("legacyTable");
-        legacyTable.innerHTML = '';
-        products.forEach((product, index) => {
-            const row = document.createElement("tr");
-            const [name, unit] = product.split('|');
-            const entry = data.find(e => e.product === product);
-            row.innerHTML = `
-                <td><span class="product-name">${name}</span> <span class="product-unit">${unit}</span></td>
-                <td contenteditable="true" data-product="${product}" data-index="${index}">${entry ? entry.unitsSold : ''}</td>
-            `;
-            legacyTable.appendChild(row);
-        });
-    }
+function updateLegacyTable() {
+    const legacyTable = document.getElementById("legacyTable");
+    legacyTable.innerHTML = '';
+    products.forEach((product, index) => {
+        const row = document.createElement("tr");
+        const [name, unit] = product.split('|');
+        const entry = data.find(e => e.product === product);
+        row.innerHTML = `
+            <td><span class="product-name">${name}</span> <span class="product-unit">${unit}</span></td>
+            <td contenteditable="true" data-product="${product}" data-index="${index}">${entry ? entry.unitsSold : ''}</td>
+        `;
+        legacyTable.appendChild(row);
+    });
+}
 
 function updateLegacyUnitsSold(product, element) {
     const newValue = parseInt(element.textContent);
@@ -1443,16 +1466,20 @@ function updateLegacyUnitsSold(product, element) {
 
 document.getElementById('legacyTable').addEventListener('input', function(e) {
     if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
+        const cursorPosition = window.getSelection().getRangeAt(0).startOffset;
         e.target.textContent = e.target.textContent.replace(/[^0-9]/g, '');
         
-                const range = document.createRange();
+        const range = document.createRange();
         const sel = window.getSelection();
-        range.setStart(e.target.childNodes[0], e.target.textContent.length);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
+        
+        if (e.target.childNodes.length > 0) {
+            range.setStart(e.target.childNodes[0], Math.min(cursorPosition, e.target.textContent.length));
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
         }
-    });
+    }
+});
 
     document.getElementById('legacyTable').addEventListener('keydown', function(e) {
         if (!isLegacyMode || !currentLegacyCell) return;
@@ -1610,6 +1637,30 @@ function addNewName() {
     alert("Added.");
 }
 
+function handleNumericInput(event) {
+    const cell = event.target;
+    if (cell.tagName === 'TD' && cell.getAttribute('contenteditable') === 'true') {
+        const cursorPosition = window.getSelection().getRangeAt(0).startOffset;
+        const originalLength = cell.textContent.length;
+        
+        cell.textContent = cell.textContent.replace(/[^0-9]/g, '');
+        
+        const newLength = cell.textContent.length;
+        
+        const newPosition = Math.max(0, cursorPosition - (originalLength - newLength));
+        
+        const range = document.createRange();
+        const sel = window.getSelection();
+        
+        if (cell.childNodes.length > 0) {
+            range.setStart(cell.childNodes[0], newPosition);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+}
+
 function submitData() {
     if (confirm("Are you sure you want to submit the data?")) {
         if (data.length === 0) {
@@ -1617,46 +1668,35 @@ function submitData() {
             return;
         }
 
-        sendToGoogleSheets(data)
-            .then(result => {
-                console.log('Success:', result);
-                alert('Data submitted successfully!');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('There was an error submitting the data. Please try again.');
-            });
-    }
-}
+        const month = document.getElementById("monthSelect").value;
+        const region = document.getElementById("regionSelect").value;
+        const pharmacy = document.getElementById("pharmacySelect").value;
 
-function sendToGoogleSheets(data) {
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyDtNnk7KqKh3xwMQ130rLFJ_NNaovccCavBw7ZVP1RmaskmbyfZVWw1_mj2zfZqmVL/exec';
-    
-    return fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(responseData => {
-        if (responseData.result === "Success") {
-            console.log('Data sent successfully');
+        const pharmacyRef = database.ref('pharmacyData');
+        const submissionData = data.map(item => ({
+            month: month,
+            region: region,
+            pharmacy: pharmacy,
+            name: item.product.split('|')[0],
+            unitSold: item.unitsSold,
+            method: item.method
+        }));
+
+        pharmacyRef.push({
+            timestamp: Date.now(),
+            data: submissionData
+        })
+        .then(() => {
+            alert('Data submitted successfully!');
             data = [];
             updateTable();
             saveData();
-            return responseData;
-        } else {
-            console.error('Submission failed:', responseData.result);
-            throw new Error('Submission failed: ' + responseData.result);
-        }
-    });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('There was an error submitting the data. Please try again.');
+        });
+    }
 }
 
 
@@ -1666,6 +1706,9 @@ window.addEventListener('load', function() {
     updateAdminModeVisibility();
     updateAddNameButtonState();
     updateLegacyTable();
+    document.getElementById('dataTable').addEventListener('input', handleNumericInput);
+    document.getElementById('legacyTable').addEventListener('input', handleNumericInput);
+
 });
 
     setInterval(saveData, 30000);
