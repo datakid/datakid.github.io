@@ -317,7 +317,7 @@ td[contenteditable="true"]:focus::before {
     display: none;
 }
 
-#saveAndQuitBtn {
+#saveAndExitBtn {
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -654,7 +654,7 @@ td[contenteditable="true"] {
                 <tbody id="legacyTable">
                 </tbody>
             </table>
-            <button id="saveAndQuitBtn" onclick="saveAndQuit()" title="Save and Quit">Save and Quit</button>
+            <button id="saveAndExitBtn" onclick="saveAndExit()" title="Save and Exit">Save and Exit</button>
         </div>
 <div class="action-icons no-print">
     <div class="icon-wrapper print-icon" onclick="window.print()" title="Print">
@@ -1406,24 +1406,26 @@ function isDuplicate(product) {
         updateLegacyModeVisibility();
     }
 
-    function updateLegacyModeVisibility() {
-        const region = document.getElementById("regionSelect").value;
-        const pharmacy = document.getElementById("pharmacySelect").value;
-        const month = document.getElementById("monthSelect").value;
-        const allFieldsFilled = region && pharmacy && month;
+function updateLegacyModeVisibility() {
+    const region = document.getElementById("regionSelect").value;
+    const pharmacy = document.getElementById("pharmacySelect").value;
+    const month = document.getElementById("monthSelect").value;
+    const allFieldsFilled = region && pharmacy && month;
 
-        document.getElementById("results").style.display = isLegacyMode && allFieldsFilled ? "none" : "block";
-        document.getElementById("legacyMode").style.display = isLegacyMode && allFieldsFilled ? "block" : "none";
-        
-        document.getElementById("regionSelect").disabled = isLegacyMode && allFieldsFilled;
-        document.getElementById("pharmacySelect").disabled = isLegacyMode && allFieldsFilled;
-        document.getElementById("monthSelect").disabled = isLegacyMode && allFieldsFilled;
+    document.getElementById("results").style.display = isLegacyMode && allFieldsFilled ? "none" : "block";
+    document.getElementById("legacyMode").style.display = isLegacyMode && allFieldsFilled ? "block" : "none";
+    
+    document.getElementById("regionSelect").disabled = isLegacyMode && allFieldsFilled;
+    document.getElementById("pharmacySelect").disabled = isLegacyMode && allFieldsFilled;
+    document.getElementById("monthSelect").disabled = isLegacyMode && allFieldsFilled;
 
-        if (!allFieldsFilled) {
-            isLegacyMode = false;
-            document.getElementById("legacyModeToggle").checked = false;
-        }
+    document.getElementById("saveAndExitBtn").style.display = isLegacyMode && allFieldsFilled ? "block" : "none";
+
+    if (!allFieldsFilled) {
+        isLegacyMode = false;
+        document.getElementById("legacyModeToggle").checked = false;
     }
+}
 
 function updateLegacyTable() {
     const legacyTable = document.getElementById("legacyTable");
@@ -1565,17 +1567,21 @@ function loadData() {
         products = JSON.parse(savedProducts);
     }
 
+    document.getElementById("saveAndQuitBtn").textContent = "Save and Exit";
+    document.getElementById("saveAndQuitBtn").setAttribute("onclick", "saveAndExit()");
+
     updateLegacyModeVisibility();
     updateAddNameButtonState();
 }
 
-function saveAndQuit() {
+function saveAndExit() {
     saveData();
     isLegacyMode = false;
     document.getElementById("legacyModeToggle").checked = false;
     updateLegacyModeVisibility();
     document.getElementById("legacyMode").style.display = "none";
     document.getElementById("results").style.display = "block";
+    
 }
 
     function updateAddNameButtonState() {
@@ -1672,6 +1678,27 @@ function submitData() {
         const region = document.getElementById("regionSelect").value;
         const pharmacy = document.getElementById("pharmacySelect").value;
 
+        if (!month || !region || !pharmacy) {
+            alert("Please select a valid month, region, and pharmacy before submitting.");
+            return;
+        }
+
+        if (!["first", "second", "third"].includes(region)) {
+            alert("Please select a valid region.");
+            return;
+        }
+
+        if (!regionOptions[region].includes(pharmacy)) {
+            alert("Please select a valid pharmacy for the chosen region.");
+            return;
+        }
+
+        const validMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        if (!validMonths.includes(month)) {
+            alert("Please select a valid month.");
+            return;
+        }
+
         const pharmacyRef = database.ref('pharmacyData');
         const submissionData = data.map(item => ({
             month: month,
@@ -1704,13 +1731,13 @@ function submitData() {
 window.addEventListener('load', function() {
     loadData();
     updateLegacyModeVisibility();
-    updateAdminModeVisibility();
     updateAddNameButtonState();
     updateLegacyTable();
     document.getElementById('dataTable').addEventListener('input', handleNumericInput);
     document.getElementById('legacyTable').addEventListener('input', handleNumericInput);
-
+    document.getElementById("saveAndExitBtn").onclick = saveAndExit;
 });
+
 
     setInterval(saveData, 30000);
 
