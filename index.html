@@ -1667,7 +1667,14 @@ function handleNumericInput(event) {
     }
 }
 
+let isSubmitting = false;
+
 function submitData() {
+    if (isSubmitting) {
+        alert("Submission is already in progress. Please wait.");
+        return;
+    }
+
     if (confirm("Are you sure you want to submit the data?")) {
         if (data.length === 0) {
             alert("There is nothing to submit. Please add some data first.");
@@ -1699,7 +1706,8 @@ function submitData() {
             return;
         }
 
-        const pharmacyRef = database.ref('pharmacyData');
+        isSubmitting = true;
+
         const submissionData = data.map(item => ({
             month: month,
             region: region,
@@ -1710,6 +1718,18 @@ function submitData() {
             method: item.method
         }));
 
+        const jsonData = JSON.stringify(submissionData, null, 2);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pharmacy_data_${month}_${region}_${pharmacy}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        const pharmacyRef = database.ref('pharmacyData');
         pharmacyRef.push({
             timestamp: Date.now(),
             data: submissionData
@@ -1723,20 +1743,12 @@ function submitData() {
         .catch((error) => {
             console.error('Error:', error);
             alert('There was an error submitting the data. Please try again.');
+        })
+        .finally(() => {
+            isSubmitting = false;
         });
     }
 }
-
-
-window.addEventListener('load', function() {
-    loadData();
-    updateLegacyModeVisibility();
-    updateAddNameButtonState();
-    updateLegacyTable();
-    document.getElementById('dataTable').addEventListener('input', handleNumericInput);
-    document.getElementById('legacyTable').addEventListener('input', handleNumericInput);
-    document.getElementById("saveAndExitBtn").onclick = saveAndExit;
-});
 
 
     setInterval(saveData, 30000);
