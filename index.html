@@ -395,9 +395,32 @@ td[contenteditable="true"]:focus::before {
     cursor: not-allowed;
 }
 
+.report-header {
+    background-color: #f8f9fa;
+    border: 2px solid #4a90e2;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: right;
+    direction: rtl;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.report-header p {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.report-header span {
+    font-weight: bold;
+    color: #4a90e2;
+}
+
 @media print {
     body {
-        padding: 0;
+        padding: 20px;
         margin: 0;
     }
 
@@ -408,52 +431,38 @@ td[contenteditable="true"]:focus::before {
         width: 100%;
     }
 
-    #results {
-        position: static;
-        top: 0;
-        left: 0;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        width: 100%;
+    .title {
+        display: none; 
     }
 
-    table {
-        width: 100%;
-        margin: 0;
-        page-break-inside: auto;
-    }
-
-    tr {
-        page-break-inside: avoid;
-        page-break-after: auto;
-    }
-
-    body * {
-        visibility: hidden;
-    }
-
-    header, 
-    #results, 
-    #results * {
-        visibility: visible;
-    }
-
-    .no-print {
-        display: none;
+    .report-header {
+        display: block !important; 
+        page-break-after: avoid; 
+        margin-bottom: 30px; 
     }
 
     #results {
         margin-top: 0;
+        display: block !important;
     }
 
     table {
         page-break-inside: auto;
+        margin-top: 20px; 
     }
 
     tr, td, th {
         page-break-inside: avoid;
         page-break-after: auto;
+    }
+
+  
+    .legacy-mode-toggle,
+    #legacyMode,
+    #saveAndExitBtn,
+    .action-icons,
+    .no-print {
+        display: none !important;
     }
 }
 
@@ -573,12 +582,37 @@ td[contenteditable="true"] {
     direction: ltr;
     text-align: left;
 }
+@page {
+    @bottom-right {
+        content: counter(page);
+    }
+}
+
+body {
+    counter-reset: page;
+}
+
+.page-break {
+    page-break-after: always;
+    counter-increment: page;
+}
+@media print {
+    td[contenteditable="true"]::before {
+        display: none;
+    }
+}
     
 </style>
 </head>
 <body>
     <div class="container">
         <h1 class="title">خارجي قوي عاملة</h1>
+<div class="report-header print-only">
+    <p>مرسل الي ادارة التموين الطبي والصيدليات</p>
+    <p>فرع البحيرة المنطقة <span id="regionDisplay"></span></p>
+    <p>صيدلية <span id="pharmacyDisplay"></span></p>
+    <p>بيان الخارجي عن شهر <span id="monthDisplay"></span></p>
+</div>
         <div class="legacy-mode-toggle">
             <span>Legacy Mode</span>
             <label class="toggle-switch">
@@ -657,7 +691,7 @@ td[contenteditable="true"] {
             <button id="saveAndExitBtn" onclick="saveAndExit()" title="Save and Exit">Save and Exit</button>
         </div>
 <div class="action-icons no-print">
-    <div class="icon-wrapper print-icon" onclick="window.print()" title="Print">
+    <div class="icon-wrapper print-icon" onclick="printReport()" title="Print">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 6 2 18 2 18 9"></polyline>
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -696,11 +730,11 @@ td[contenteditable="true"] {
             </div>
         </div>
     </div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </body>
 </html>
-
     <script>
     
     
@@ -1230,6 +1264,7 @@ function autocomplete(inp, arr) {
         saveData();
         updateLegacyModeVisibility();
         updateAddNameButtonState();
+        updateHeaderInfo();
     });
 
     document.getElementById("pharmacySelect").addEventListener("change", function() {
@@ -1237,6 +1272,7 @@ function autocomplete(inp, arr) {
         saveData();
         updateLegacyModeVisibility();
         updateAddNameButtonState();
+        updateHeaderInfo();
     });
 
     document.getElementById("monthSelect").addEventListener("change", function() {
@@ -1244,6 +1280,7 @@ function autocomplete(inp, arr) {
         saveData();
         updateLegacyModeVisibility();
         updateAddNameButtonState();
+        updateHeaderInfo();
     });
     
 document.getElementById('dataTable').addEventListener('input', function(e) {
@@ -1572,6 +1609,8 @@ function loadData() {
 
     updateLegacyModeVisibility();
     updateAddNameButtonState();
+    updateHeaderInfo();
+
 }
 
 function saveAndExit() {
@@ -1666,6 +1705,43 @@ function handleNumericInput(event) {
         }
     }
 }
+
+function updateHeaderInfo() {
+    const region = document.getElementById("regionSelect").value;
+    const pharmacy = document.getElementById("pharmacySelect").value;
+    const month = document.getElementById("monthSelect").value;
+
+    const regionMap = {
+        "first": "الاولى",
+        "second": "الثانية",
+        "third": "الثالثة"
+    };
+
+    const monthMap = {
+        "January": "يناير",
+        "February": "فبراير",
+        "March": "مارس",
+        "April": "ابريل",
+        "May": "مايو",
+        "June": "يونيو",
+        "July": "يوليو",
+        "August": "اغسطس",
+        "September": "سبتمبر",
+        "October": "اكتوبر",
+        "November": "نوفمبر",
+        "December": "ديسمبر"
+    };
+
+    document.getElementById("regionDisplay").textContent = regionMap[region] || "";
+    document.getElementById("pharmacyDisplay").textContent = pharmacy || "";
+    document.getElementById("monthDisplay").textContent = monthMap[month] || "";
+}
+
+function printReport() {
+    updateHeaderInfo(); 
+    window.print();
+}
+
 
 let isSubmitting = false;
 
