@@ -1583,6 +1583,11 @@ function loadData() {
         updateTable();
     }
 
+    const savedProducts = localStorage.getItem('products');
+    if (savedProducts) {
+        products = JSON.parse(savedProducts);
+    }
+
     const savedRegion = localStorage.getItem('selectedRegion');
     if (savedRegion) {
         document.getElementById("regionSelect").value = savedRegion;
@@ -1599,18 +1604,12 @@ function loadData() {
         document.getElementById("monthSelect").value = savedMonth;
     }
 
-    const savedProducts = localStorage.getItem('products');
-    if (savedProducts) {
-        products = JSON.parse(savedProducts);
-    }
-
     document.getElementById("saveAndQuitBtn").textContent = "Save and Exit";
     document.getElementById("saveAndQuitBtn").setAttribute("onclick", "saveAndExit()");
 
     updateLegacyModeVisibility();
     updateAddNameButtonState();
     updateHeaderInfo();
-
 }
 
 function saveAndExit() {
@@ -1829,6 +1828,9 @@ function submitData() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    loadData();
+});
 
     setInterval(saveData, 30000);
 
