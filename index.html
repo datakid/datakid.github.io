@@ -400,15 +400,17 @@
 
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 30px;
             border: 1px solid #bdc3c7;
             width: 80%;
-            max-width: 600px;
+            max-width: 800px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             position: relative; 
             animation: modalIn 0.4s ease-out;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         @keyframes modalIn {
@@ -607,6 +609,80 @@
         .guide-box.csv-guide { border-left-color: #27ae60; }
         .guide-box.json-guide { border-left-color: #e67e22; }
 
+        .bulk-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .bulk-table th, .bulk-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .bulk-table select {
+            margin-bottom: 0;
+            padding: 8px;
+        }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            max-width: 400px;
+            margin-left: -125px;
+            background-color: #2ecc71;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px;
+            position: fixed;
+            z-index: 3000;
+            left: 50%;
+            top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s, top 0.5s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            top: 50px;
+        }
+
+        #toast.error {
+            background-color: #e74c3c;
+        }
+        
+        #toast.warning {
+            background-color: #f39c12;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-icon {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+        }
+
+        .btn.loading .loading-icon {
+            display: block;
+        }
+        .btn.loading {
+            color: transparent;
+            pointer-events: none;
+        }
+
         @media print {
             body {
                 padding: 25px;
@@ -671,6 +747,8 @@
     </style>
 </head>
 <body>
+    <div id="toast">Data Submitted Successfully!</div>
+
     <div class="container">
         <h1 class="title">خارجي قوي عاملة</h1>
         
@@ -781,7 +859,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
             </div>
             
-            <div class="dock-item submit-icon" onclick="submitData()" data-tooltip="Submit to Database">
+            <div class="dock-item submit-icon" id="submitBtnDock" onclick="submitData()" data-tooltip="Submit to Database">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             </div>
         </div>
@@ -810,6 +888,28 @@
             </div>
         </div>
 
+        <div id="bulkReasonModal" class="modal">
+            <div class="modal-content">
+                <h2>Select Reason for New Items</h2>
+                <p>The following imported items are not in the main list. Please select a reason for addition.</p>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="bulk-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulkReasonTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="button-container">
+                    <button class="btn" onclick="saveBulkReasons()">Save & Continue</button>
+                </div>
+            </div>
+        </div>
+
         <div id="importModal" class="modal">
             <div class="modal-content">
                 <h2>Import Data</h2>
@@ -822,11 +922,11 @@
                 <div class="format-guide">
                     <div class="guide-box csv-guide">
                         <h4>CSV Headers (Required)</h4>
-                        <code>month, region, pharmacy, name, unit, unitSold, method</code>
+                        <code>month, region, pharmacy, name, unit, unitSold</code>
                     </div>
                     <div class="guide-box json-guide">
                         <h4>JSON Objects</h4>
-                        <code>[{"month": "...", "region": "...", "pharmacy": "...", "name": "...", "unit": "...", "unitSold": 10, "method": "..."}]</code>
+                        <code>[{"month": "...", "region": "...", "pharmacy": "...", "name": "...", "unit": "...", "unitSold": 10}]</code>
                     </div>
                 </div>
 
@@ -978,6 +1078,14 @@
             third: ["ايتاي الشاملة 1", "ايتاي الشاملة 2 ",   "ايتاي مسائي ","كوم حمادة", "كوم حمادة مسائي", "بدر","شبراخيت مسائي", "شبراخيت","الدلنجات مسائي", "الدلنجات", "وادي النطرون", "قليشان"]
         };
 
+        const validRegions = Object.keys(regionOptions);
+        const validMonths = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+        let allValidPharmacies = [];
+        Object.values(regionOptions).forEach(arr => allValidPharmacies.push(...arr));
+
         let data = [];
         let selectedProducts = new Set();
         let isLegacyMode = false;
@@ -1120,13 +1228,16 @@
                 }
             }
 
-            const method = isLegacyMode ? 'old' : (products.includes(product) ? 'old' : 'new');
+            const isKnown = products.includes(product);
+            const method = isKnown ? 'old' : 'new';
+            const category = isKnown ? null : (data.find(e => e.product === product)?.category || null);
+
             const existingEntry = data.find(entry => entry.product === product);
             
             if (existingEntry) {
                 existingEntry.unitsSold = unitsSold;
             } else {
-                data.push({ product, unitsSold, month, region, pharmacy, method });
+                data.push({ product, unitsSold, month, region, pharmacy, method, category });
             }
 
             updateTable();
@@ -1143,9 +1254,16 @@
                 const name = parts[0];
                 const unit = parts.length > 1 ? parts[1] : '';
                 const isExternal = !products.includes(entry.product);
+                
+                let extraInfo = '';
+                if(isExternal) {
+                    extraInfo = ` <span style="color: red; font-size:0.8em;">(ext)</span>`;
+                    if(entry.category) extraInfo += ` <span style="color: green; font-size:0.8em;">[${entry.category}]</span>`;
+                    else extraInfo += ` <span style="color: orange; font-size:0.8em;">[Missing Category]</span>`;
+                }
 
                 row.innerHTML = `
-                    <td><span class="product-name">${name}</span> <span class="product-unit">${unit}</span>${isExternal ? ' <span style="color: red; font-size:0.8em;">(ext)</span>' : ''}</td>
+                    <td><span class="product-name">${name}</span> <span class="product-unit">${unit}</span>${extraInfo}</td>
                     <td contenteditable="true" onblur="updateUnitsSold(${index}, this)">${entry.unitsSold}</td>
                     <td class="no-print">
                         <button class="delete-btn" onclick="deleteRow(${index})" title="Delete">
@@ -1373,7 +1491,6 @@
             }
 
             let fullName = name;
-            if (category !== "داخل اللستة") fullName += ` (${category})`;
             const newProduct = `${fullName}|${unit}`;
 
             data.push({
@@ -1382,7 +1499,8 @@
                 month: document.getElementById("monthSelect").value,
                 region: document.getElementById("regionSelect").value,
                 pharmacy: document.getElementById("pharmacySelect").value,
-                method: 'new'
+                method: 'new',
+                category: category
             });
 
             saveData();
@@ -1411,45 +1529,128 @@
         let isSubmitting = false;
 
         function submitData() {
-            if (isSubmitting) { alert("Submission is already in progress. Please wait."); return; }
-            if (confirm("Are you sure you want to submit the data?")) {
-                if (data.length === 0) { alert("There is nothing to submit."); return; }
-                const month = document.getElementById("monthSelect").value;
-                const region = document.getElementById("regionSelect").value;
-                const pharmacy = document.getElementById("pharmacySelect").value;
-                if (!month || !region || !pharmacy) { alert("Please select all fields."); return; }
-                
-                isSubmitting = true;
-                const submissionData = data.map(item => {
-                    const [name, unit] = item.product.split('|');
-                    return {
-                        month: item.month || month, 
-                        region: item.region || region, 
-                        pharmacy: item.pharmacy || pharmacy,
-                        name: name, 
-                        unit: unit, 
-                        unitSold: item.unitsSold,
-                        method: item.method, 
-                        timestamp: new Date().toISOString()
-                    };
-                });
+            if (isSubmitting) return;
 
-                const jsonData = JSON.stringify(submissionData, null, 2);
-                downloadFile(jsonData, `pharmacy_data_${month}_${region}_${pharmacy}.json`, 'application/json');
-
-                database.ref('pharmacyData').push(submissionData)
-                .then(() => {
-                    alert('Data submitted successfully!');
-                    data = [];
-                    updateTable();
-                    saveData();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    alert('Error submitting data.');
-                })
-                .finally(() => { isSubmitting = false; });
+            if (checkMissingReasons()) {
+                showBulkReasonModal();
+                return;
             }
+
+            if (data.length === 0) { showToast("There is nothing to submit."); return; }
+            const month = document.getElementById("monthSelect").value;
+            const region = document.getElementById("regionSelect").value;
+            const pharmacy = document.getElementById("pharmacySelect").value;
+            if (!month || !region || !pharmacy) { showToast("Please select all fields."); return; }
+            
+            isSubmitting = true;
+            const btn = document.getElementById('submitBtnDock');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<div class="loading-icon"></div>';
+            btn.classList.add('loading');
+            
+            const submissionData = data.map(item => {
+                const [name, unit] = item.product.split('|');
+                const finalName = (item.method === 'new' && item.category && item.category !== 'داخل اللستة') 
+                    ? `${name} (${item.category})` 
+                    : name;
+
+                return {
+                    month: item.month || month, 
+                    region: item.region || region, 
+                    pharmacy: item.pharmacy || pharmacy,
+                    name: finalName, 
+                    unit: unit, 
+                    unitSold: item.unitsSold,
+                    method: item.method,
+                    category: item.category || 'N/A',
+                    timestamp: new Date().toISOString()
+                };
+            });
+
+            database.ref('pharmacyData').push(submissionData)
+            .then(() => {
+                showToast('Data submitted successfully!');
+                data = [];
+                updateTable();
+                saveData();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                showToast('Error submitting data.', true);
+            })
+            .finally(() => { 
+                isSubmitting = false; 
+                btn.innerHTML = originalContent;
+                btn.classList.remove('loading');
+            });
+        }
+
+        function showToast(message, isError = false, isWarning = false) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "show";
+            if(isError) toast.classList.add("error");
+            if(isWarning) toast.classList.add("warning");
+            setTimeout(function(){ 
+                toast.className = toast.className.replace("show", "").replace("error", "").replace("warning", ""); 
+            }, 4000);
+        }
+
+        function checkMissingReasons() {
+            return data.some(item => item.method === 'new' && !item.category);
+        }
+
+        function showBulkReasonModal() {
+            const tableBody = document.getElementById("bulkReasonTableBody");
+            tableBody.innerHTML = "";
+            const newItems = data.filter(item => item.method === 'new' && !item.category);
+            
+            if (newItems.length === 0) return;
+
+            newItems.forEach(item => {
+                const tr = document.createElement("tr");
+                const [name, unit] = item.product.split('|');
+                tr.innerHTML = `
+                    <td>${name} <span class="product-unit">${unit}</span></td>
+                    <td>
+                        <select class="bulk-reason-select" data-product="${item.product}">
+                            <option value="">Select Reason</option>
+                            <option value="قرار لجنة">قرار لجنة</option>
+                            <option value="حكم قضائي">حكم قضائي</option>
+                            <option value="داخل اللستة">داخل اللستة</option>
+                            <option value="شئون طبية">شئون طبية</option>
+                        </select>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            document.getElementById("bulkReasonModal").style.display = "block";
+        }
+
+        function saveBulkReasons() {
+            const selects = document.querySelectorAll(".bulk-reason-select");
+            let allSelected = true;
+            
+            selects.forEach(select => {
+                if(!select.value) allSelected = false;
+            });
+
+            if (!allSelected) {
+                alert("Please select a reason for all items.");
+                return;
+            }
+
+            selects.forEach(select => {
+                const product = select.getAttribute("data-product");
+                const item = data.find(d => d.product === product);
+                if (item) {
+                    item.category = select.value;
+                }
+            });
+
+            document.getElementById("bulkReasonModal").style.display = "none";
+            updateTable();
+            saveData();
         }
 
         function openImportModal() { document.getElementById("importModal").style.display = "block"; }
@@ -1467,14 +1668,24 @@
             reader.onload = function(e) {
                 const content = e.target.result;
                 try {
-                    if (file.name.endsWith('.json')) parseJSON(content);
-                    else if (file.name.endsWith('.csv')) parseCSV(content);
-                    else alert("Unsupported file format.");
+                    let resultMsg = "";
+                    if (file.name.endsWith('.json')) resultMsg = parseJSON(content);
+                    else if (file.name.endsWith('.csv')) resultMsg = parseCSV(content);
+                    else { showToast("Unsupported file format.", true); closeImportModal(); return; }
+
+                    closeImportModal();
+                    
+                    if (resultMsg) {
+                        showToast(resultMsg, false, resultMsg.includes("Ignored") || resultMsg.includes("dropdowns"));
+                        if (checkMissingReasons()) {
+                            setTimeout(showBulkReasonModal, 1000); 
+                        }
+                    }
+
                 } catch (error) {
                     console.error(error);
-                    alert("Error parsing file.");
+                    showToast("Error parsing file.", true);
                 }
-                closeImportModal();
             };
             reader.readAsText(file, 'UTF-8');
         }
@@ -1490,45 +1701,69 @@
 
         function parseJSON(content) {
             const importedData = JSON.parse(content);
-            if (!Array.isArray(importedData)) { alert("Invalid JSON format."); return; }
+            if (!Array.isArray(importedData)) { showToast("Invalid JSON format.", true); return null; }
             
-            let addedCount = 0;
             const uiRegion = document.getElementById("regionSelect").value;
             const uiPharmacy = document.getElementById("pharmacySelect").value;
             const uiMonth = document.getElementById("monthSelect").value;
+
+            if (!uiRegion || !uiPharmacy || !uiMonth) {
+                showToast("Please select Region, Pharmacy and Month in the UI first.", true);
+                return null;
+            }
+
+            let addedCount = 0;
+            let duplicatesIgnored = 0;
+            let contextOverridden = false;
+            const uniqueFileItems = new Set();
 
             importedData.forEach(item => {
                 let productName = item.name;
                 let unit = item.unit || "";
                 let unitsSold = item.unitSold;
-                
-                let itemRegion = item.region || uiRegion;
-                let itemPharmacy = item.pharmacy || uiPharmacy;
-                let itemMonth = item.month || uiMonth;
-                let itemMethod = item.method || 'import';
 
-                if (!itemRegion || !itemPharmacy || !itemMonth) {
-                    console.warn("Skipping item due to missing context:", item);
-                    return; 
+                if (!productName || unitsSold === undefined) return;
+
+                // Check for duplicates within file
+                const key = `${productName}|${unit}`;
+                if (uniqueFileItems.has(key)) {
+                    duplicatesIgnored++;
+                    return;
+                }
+                uniqueFileItems.add(key);
+
+                // Check context override
+                if ((item.region && item.region !== uiRegion) || 
+                    (item.pharmacy && item.pharmacy !== uiPharmacy) || 
+                    (item.month && item.month !== uiMonth)) {
+                    contextOverridden = true;
                 }
 
-                if (productName && unitsSold !== undefined) {
-                    processImportedItem(productName, unit, unitsSold, itemRegion, itemPharmacy, itemMonth, itemMethod);
-                    addedCount++;
-                }
+                processImportedItem(productName, unit, unitsSold, uiRegion, uiPharmacy, uiMonth);
+                addedCount++;
             });
 
-            if(addedCount > 0) { updateTable(); saveData(); alert(`Imported ${addedCount} items.`); } 
-            else alert("No valid data found or missing context (Region/Pharmacy/Month).");
+            let msg = `Imported ${addedCount} items.`;
+            if (duplicatesIgnored > 0) msg += ` Ignored ${duplicatesIgnored} duplicates (took first value).`;
+            if (contextOverridden) msg += ` Ignored file context, used selected dropdowns instead.`;
+            
+            if (addedCount > 0) { updateTable(); saveData(); }
+            
+            return msg;
         }
 
         function parseCSV(content) {
             const lines = content.match(/[^\r\n]+/g);
-            if (!lines || lines.length < 2) { alert("Empty or invalid CSV."); return; }
+            if (!lines || lines.length < 2) { showToast("Empty or invalid CSV.", true); return null; }
 
             const uiRegion = document.getElementById("regionSelect").value;
             const uiPharmacy = document.getElementById("pharmacySelect").value;
             const uiMonth = document.getElementById("monthSelect").value;
+
+            if (!uiRegion || !uiPharmacy || !uiMonth) {
+                showToast("Please select Region, Pharmacy and Month in the UI first.", true);
+                return null;
+            }
 
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
             
@@ -1538,45 +1773,65 @@
             const regionIndex = headers.indexOf('region');
             const pharmacyIndex = headers.indexOf('pharmacy');
             const monthIndex = headers.indexOf('month');
-            const methodIndex = headers.indexOf('method');
 
             if (nameIndex === -1 || soldIndex === -1) { 
-                alert("Missing required CSV headers: name, unitSold"); 
-                return; 
+                showToast("Missing required CSV headers: name, unitSold", true); 
+                return null; 
             }
 
             let addedCount = 0;
+            let duplicatesIgnored = 0;
+            let contextOverridden = false;
+            const uniqueFileItems = new Set();
             const csvSplitRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
-                
                 let row = lines[i].split(csvSplitRegex);
                 row = row.map(val => val ? val.trim().replace(/^"|"$/g, '') : "");
-
+                
                 const name = row[nameIndex];
                 const unit = (unitIndex !== -1) ? row[unitIndex] : "";
                 const sold = parseInt(row[soldIndex]);
+                const rowRegion = (regionIndex !== -1) ? row[regionIndex] : "";
+                const rowPharmacy = (pharmacyIndex !== -1) ? row[pharmacyIndex] : "";
+                const rowMonth = (monthIndex !== -1) ? row[monthIndex] : "";
 
-                const rowRegion = (regionIndex !== -1 && row[regionIndex]) ? row[regionIndex] : uiRegion;
-                const rowPharmacy = (pharmacyIndex !== -1 && row[pharmacyIndex]) ? row[pharmacyIndex] : uiPharmacy;
-                const rowMonth = (monthIndex !== -1 && row[monthIndex]) ? row[monthIndex] : uiMonth;
-                const rowMethod = (methodIndex !== -1 && row[methodIndex]) ? row[methodIndex] : 'import';
+                if (!name || isNaN(sold)) continue;
 
-                if (!rowRegion || !rowPharmacy || !rowMonth) continue;
-
-                if (name && !isNaN(sold)) {
-                    processImportedItem(name, unit, sold, rowRegion, rowPharmacy, rowMonth, rowMethod);
-                    addedCount++;
+                // Check for duplicates within file
+                const key = `${name}|${unit}`;
+                if (uniqueFileItems.has(key)) {
+                    duplicatesIgnored++;
+                    continue;
                 }
+                uniqueFileItems.add(key);
+
+                // Check context override
+                if ((rowRegion && rowRegion !== uiRegion) || 
+                    (rowPharmacy && rowPharmacy !== uiPharmacy) || 
+                    (rowMonth && rowMonth !== uiMonth)) {
+                    contextOverridden = true;
+                }
+
+                processImportedItem(name, unit, sold, uiRegion, uiPharmacy, uiMonth);
+                addedCount++;
             }
 
-            if(addedCount > 0) { updateTable(); saveData(); alert(`Imported ${addedCount} items.`); } 
-            else alert("No valid data found or missing context.");
+            let msg = `Imported ${addedCount} items.`;
+            if (duplicatesIgnored > 0) msg += ` Ignored ${duplicatesIgnored} duplicates (took first value).`;
+            if (contextOverridden) msg += ` Ignored file context, used selected dropdowns instead.`;
+
+            if (addedCount > 0) { updateTable(); saveData(); }
+            
+            return msg;
         }
 
-        function processImportedItem(name, unit, unitsSold, region, pharmacy, month, method) {
+        function processImportedItem(name, unit, unitsSold, region, pharmacy, month) {
             let fullProductString = unit ? `${name}|${unit}` : name;
+            
+            const isKnown = products.includes(fullProductString);
+            const method = isKnown ? 'old' : 'new';
             
             const existingEntry = data.find(entry => entry.product === fullProductString);
             
@@ -1585,6 +1840,7 @@
                 existingEntry.region = region;
                 existingEntry.pharmacy = pharmacy;
                 existingEntry.month = month;
+                if(method === 'new' && !existingEntry.category) existingEntry.method = 'new';
             } else {
                 data.push({
                     product: fullProductString,
@@ -1592,28 +1848,54 @@
                     month: month, 
                     region: region, 
                     pharmacy: pharmacy,
-                    method: method
+                    method: method,
+                    category: null 
                 });
             }
         }
 
         function downloadTemplate(type) {
+            const hasData = data.length > 0;
+            
             if (type === 'csv') {
-                const csvContent = "month,region,pharmacy,name,unit,unitSold,method\nJanuary,first,MyPharmacy,Acetazolamide 250mg,10 T,50,old";
-                downloadFile(csvContent, 'pharmacy_template.csv', 'text/csv');
+                let csvContent = "month,region,pharmacy,name,unit,unitSold\n";
+                if (hasData) {
+                    data.forEach(item => {
+                        const [name, unit] = item.product.split('|');
+                        csvContent += `${item.month},${item.region},"${item.pharmacy}","${name}","${unit}",${item.unitsSold}\n`;
+                    });
+                } else {
+                     csvContent += "January,first,MyPharmacy,Acetazolamide 250mg,10 T,50";
+                }
+                downloadFile(csvContent, 'pharmacy_data.csv', 'text/csv');
             } else if (type === 'json') {
-                const jsonContent = JSON.stringify([
-                    { 
-                        "month": "January", 
-                        "region": "first", 
-                        "pharmacy": "MyPharmacy",
-                        "name": "Acetazolamide 250mg", 
-                        "unit": "10 T", 
-                        "unitSold": 50, 
-                        "method": "old"
-                    }
-                ], null, 2);
-                downloadFile(jsonContent, 'pharmacy_template.json', 'application/json');
+                let jsonContent;
+                if (hasData) {
+                    const exportData = data.map(item => {
+                        const [name, unit] = item.product.split('|');
+                        return {
+                            month: item.month,
+                            region: item.region,
+                            pharmacy: item.pharmacy,
+                            name: name,
+                            unit: unit,
+                            unitSold: item.unitsSold
+                        };
+                    });
+                    jsonContent = JSON.stringify(exportData, null, 2);
+                } else {
+                    jsonContent = JSON.stringify([
+                        { 
+                            "month": "January", 
+                            "region": "first", 
+                            "pharmacy": "MyPharmacy",
+                            "name": "Acetazolamide 250mg", 
+                            "unit": "10 T", 
+                            "unitSold": 50
+                        }
+                    ], null, 2);
+                }
+                downloadFile(jsonContent, 'pharmacy_data.json', 'application/json');
             }
         }
 
