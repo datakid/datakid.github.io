@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
-<title>بيان الخارجي</title>
+<title>خارجي قوي عاملة</title>
 <style>
 :root {
 --primary-color: #4a90e2;
@@ -163,6 +164,8 @@ padding-left: 2.5rem;
 font-family: monospace;
 font-size: 1.2rem;
 letter-spacing: 2px;
+color: var(--primary-color);
+font-weight: bold;
 }
 
 .id-icon {
@@ -172,6 +175,17 @@ top: 50%;
 transform: translateY(-50%);
 color: var(--primary-color);
 pointer-events: none;
+}
+
+.id-enter-hint {
+position: absolute;
+right: 1rem;
+top: 50%;
+transform: translateY(-50%);
+font-size: 0.85rem;
+color: var(--text-muted);
+pointer-events: none;
+opacity: 0.7;
 }
 
 input, select {
@@ -315,12 +329,14 @@ overflow: hidden;
 th, td { padding: 1.2rem; text-align: left; }
 
 th {
-background-color: var(--primary-color);
+background: linear-gradient(135deg, var(--primary-color), #3a7bc8);
 color: #fff;
 text-transform: uppercase;
-letter-spacing: 1px;
-font-weight: 600;
-border-radius: 8px;
+letter-spacing: 1.5px;
+font-weight: 700;
+border-radius: 10px;
+box-shadow: 0 4px 12px rgba(74, 144, 226, 0.25);
+border: none;
 }
 
 tr { 
@@ -525,7 +541,7 @@ from { opacity: 0; transform: translateY(-50px) scale(0.95); }
 to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.modal-content h2 { color: var(--primary-color); margin-bottom: 25px; }
+.modal-content h2 { color: var(--primary-color); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
 .modal-content select, .modal-content input { width: 100%; margin-bottom: 20px; }
 .modal-content .button-container { justify-content: flex-end; margin-top: 25px; }
 
@@ -607,13 +623,13 @@ flex: 1; padding: 15px; border-radius: 8px; text-align: center; font-weight: bol
 .validation-section {
 margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
 }
-.validation-section h4 { margin-top: 0; margin-bottom: 10px; }
+.validation-section h4 { margin-top: 0; margin-bottom: 10px; color: var(--text-color); }
 .error-list { color: var(--danger-text); font-size: 0.9rem; margin: 0; padding-left: 20px; max-height: 150px; overflow-y: auto; }
 .error-list li { margin-bottom: 5px; }
 
 .bulk-table { width: 100%; border-collapse: collapse; }
 .bulk-table th, .bulk-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
-.bulk-table select { margin-bottom: 0; padding: 8px; }
+.bulk-table select, .bulk-table input { margin-bottom: 0; padding: 8px; font-size: 1rem; }
 
 #toast {
 visibility: hidden; min-width: 250px; max-width: 400px; margin-left: -125px;
@@ -636,6 +652,7 @@ position: absolute; left: 50%; top: 50%; margin-left: -10px; margin-top: -10px;
 .btn.loading { color: transparent; pointer-events: none; }
 
 @media print {
+@page { margin: 1.5cm; }
 :root {
 --bg-color: #ffffff !important;
 --surface-color: #ffffff !important;
@@ -644,16 +661,17 @@ position: absolute; left: 50%; top: 50%; margin-left: -10px; margin-top: -10px;
 --row-bg: #f9f9f9 !important;
 --shadow-color: transparent !important;
 }
-body { padding: 25px; margin: 0; padding-bottom: 0; background-color: #ffffff !important; color: #000000 !important; }
-.container { box-shadow: none; padding: 0; margin: 0; width: 100%; animation: none; background-color: #ffffff !important; border: none; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; margin: 0; background-color: #ffffff !important; color: #000000 !important; }
+.container { box-shadow: none; padding: 0; margin: 0; width: 100%; max-width: 100%; border: none; }
 .title, .top-controls, #legacyMode, #saveAndExitBtn, .action-dock, .no-print { display: none !important; }
-.report-header { display: block !important; page-break-after: avoid; margin-bottom: 35px; border-color: #000; box-shadow: none; }
-.report-header p, .report-header span { color: #000 !important; }
-#results { margin-top: 0; display: block !important; }
-table { page-break-inside: auto; margin-top: 25px; box-shadow: none; border: 1px solid #ddd; }
-tr, td, th { page-break-inside: avoid; page-break-after: auto; border-bottom: 1px solid #ddd; color: #000 !important; background-color: #fff !important; box-shadow: none; transform: none !important; }
-th { background-color: #f2f2f2 !important; color: #000 !important; border-bottom: 2px solid #000; }
-td[contenteditable="true"] { background-image: none !important; padding: 1.2rem !important; border: none !important; }
+.report-header { display: block !important; margin-bottom: 25px; border: 1px solid #000; box-shadow: none; padding: 1.5rem; border-radius: 0; break-inside: avoid; }
+.report-header p, .report-header span { color: #000 !important; margin: 0.5rem 0; font-size: 1.1rem; }
+#results { margin-top: 0; display: block !important; overflow: visible; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: none; }
+tr { break-inside: avoid; background-color: #fff !important; box-shadow: none; transform: none !important; border-radius: 0; }
+th, td { border: 1px solid #ddd; padding: 10px; color: #000 !important; border-radius: 0 !important; }
+th { background: #f2f2f2 !important; color: #000 !important; font-weight: bold; border: 1px solid #000; box-shadow: none; }
+td[contenteditable="true"] { background-image: none !important; border: 1px solid #ddd !important; }
 }
 
 @media (max-width: 768px) {
@@ -688,7 +706,7 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <h1 class="title">خارجي قوي عاملة</h1>
+    <h1 class="title">بيان الخارجي</h1>
 
     <div class="report-header print-only">
         <p>مرسل الي ادارة التموين الطبي والصيدليات</p>
@@ -707,6 +725,7 @@ to { opacity: 1; transform: translateY(0); }
             <div class="id-input-wrapper">
                 <svg class="id-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
                 <input type="text" id="quickIdInput" placeholder="Quick ID" title="Enter Quick ID" maxlength="5">
+                <span class="id-enter-hint">Press Enter</span>
             </div>
         </div>
 
@@ -766,9 +785,9 @@ to { opacity: 1; transform: translateY(0); }
         <table>
             <thead>
                 <tr>
-                    <th>Product</th>
+                    <th>Product / Unit</th>
                     <th>Units Sold</th>
-                    <th class="no-print"></th>
+                    <th class="no-print" style="width: 50px;"></th>
                 </tr>
             </thead>
             <tbody id="dataTable">
@@ -780,7 +799,7 @@ to { opacity: 1; transform: translateY(0); }
         <table>
             <thead>
                 <tr>
-                    <th>Product</th>
+                    <th>Product / Unit</th>
                     <th>Units Sold</th>
                 </tr>
             </thead>
@@ -812,9 +831,9 @@ to { opacity: 1; transform: translateY(0); }
     <div id="addNameModal" class="modal">
         <div class="modal-content">
             <h2>Add New Name</h2>
-            <label for="nameCategory">سبب الاضافة</label>
-            <select id="nameCategory" title="Select reason for addition" required>
-                <option value="">سبب الاضافة</option>
+            <label for="nameCategory">Context</label>
+            <select id="nameCategory" title="Select context for addition" required>
+                <option value="">Context</option>
                 <option value="قرار لجنة">قرار لجنة</option>
                 <option value="حكم قضائي">حكم قضائي</option>
                 <option value="داخل اللستة">داخل اللستة</option>
@@ -833,24 +852,24 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <div id="bulkReasonModal" class="modal">
+    <div id="bulkContextModal" class="modal">
         <div class="modal-content">
-            <h2>Select Reason for New Items</h2>
-            <p>The following items are not in the main list. Please select a reason for addition.</p>
+            <h2>Select Context for New Items</h2>
+            <p>The following items are not in the main list. Please select a context for addition.</p>
             <div style="max-height: 400px; overflow-y: auto;">
                 <table class="bulk-table">
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th>Reason</th>
+                            <th>Product / Unit</th>
+                            <th>Context</th>
                         </tr>
                     </thead>
-                    <tbody id="bulkReasonTableBody">
+                    <tbody id="bulkContextTableBody">
                     </tbody>
                 </table>
             </div>
             <div class="button-container">
-                <button class="btn" onclick="saveBulkReasons()">Save & Continue</button>
+                <button class="btn" onclick="saveBulkContexts()">Save & Continue</button>
             </div>
         </div>
     </div>
@@ -858,11 +877,11 @@ to { opacity: 1; transform: translateY(0); }
     <div id="importModal" class="modal">
         <div class="modal-content">
             <h2>Direct DB File Import</h2>
-            <p style="margin-bottom: 20px; color: var(--text-muted);">Uploaded files will bypass the table UI and be verified before pushing directly to the database.</p>
+            <p style="margin-bottom: 20px; color: var(--text-muted);">Uploaded files will bypass the table UI and be verified before pushing directly to the database. You can select multiple files.</p>
             <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                <div class="drop-zone-text">Drag & Drop file here or Click to Browse</div>
-                <input type="file" id="fileInput" accept=".csv, .json" style="display: none;" onchange="handleFileSelect(this)">
+                <div class="drop-zone-text">Drag & Drop files here or Click to Browse</div>
+                <input type="file" id="fileInput" accept=".csv, .json" multiple style="display: none;" onchange="handleFileSelect(this)">
             </div>
 
             <div class="format-guide">
@@ -884,7 +903,10 @@ to { opacity: 1; transform: translateY(0); }
 
     <div id="fileValidationModal" class="modal">
         <div class="modal-content">
-            <h2>File Verification</h2>
+            <h2>
+                File Verification: 
+                <span id="currentFileName" style="color: var(--text-color); margin-left: 10px; font-weight: normal; background: var(--bg-color); padding: 4px 12px; border-radius: 8px; font-size: 1.2rem; border: 1px solid var(--border-color);"></span>
+            </h2>
             
             <div class="validation-stats">
                 <div class="stat-card valid">
@@ -893,7 +915,7 @@ to { opacity: 1; transform: translateY(0); }
                 </div>
                 <div class="stat-card pending">
                     <div id="valPendingCount" style="font-size: 2rem;">0</div>
-                    <div>Need Reason</div>
+                    <div>Need Context</div>
                 </div>
                 <div class="stat-card invalid">
                     <div id="valInvalidCount" style="font-size: 2rem;">0</div>
@@ -902,13 +924,14 @@ to { opacity: 1; transform: translateY(0); }
             </div>
 
             <div id="valPendingSection" class="validation-section" style="display: none;">
-                <h4>Items requiring a reason</h4>
+                <h4>Items requiring a context</h4>
                 <div style="max-height: 250px; overflow-y: auto;">
                     <table class="bulk-table">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Reason</th>
+                                <th>Product / Unit</th>
+                                <th style="width: 120px;">Units Sold</th>
+                                <th>Context</th>
                             </tr>
                         </thead>
                         <tbody id="valPendingTableBody">
@@ -924,7 +947,7 @@ to { opacity: 1; transform: translateY(0); }
 
             <div class="button-container">
                 <button class="btn" id="valSubmitBtn" onclick="submitValidatedFile()">Confirm & Submit Valid</button>
-                <button class="btn" onclick="closeValidationModal()" style="background-color: #64748b;">Cancel File</button>
+                <button class="btn" onclick="skipCurrentFileValidation()" style="background-color: #64748b;">Cancel File</button>
             </div>
         </div>
     </div>
@@ -1172,6 +1195,7 @@ to { opacity: 1; transform: translateY(0); }
     let selectedProducts = new Set();
     let isLegacyMode = false;
     let currentLegacyCell = null;
+    let fileQueue = [];
     let fileValidationData = { valid: [], pending: [], invalid: [] };
 
     document.addEventListener('keydown', (e) => {
@@ -1181,37 +1205,33 @@ to { opacity: 1; transform: translateY(0); }
         }
     });
 
-    document.getElementById('quickIdInput').addEventListener('input', function(e) {
-        let val = this.value.toLowerCase().trim();
-        const match = val.match(/^([a-c])([1-3])(\d+)$/);
-        
-        if (match) {
-            const clsChar = match[1];
-            const regChar = match[2];
-            const pharmIndex = match[3];
+    document.getElementById('quickIdInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            let val = this.value.toLowerCase().trim();
+            let found = false;
 
-            const classMap = { 'a': 'student', 'b': 'workforce', 'c': 'infants' };
-            const regionMap = { '1': 'first', '2': 'second', '3': 'third' };
-            
-            const selectedClass = classMap[clsChar];
-            const selectedRegion = regionMap[regChar];
-            
-            const targetId = val;
-
-            if (pharmacyOptions[selectedClass] && pharmacyOptions[selectedClass][selectedRegion]) {
-                const pharmacyList = pharmacyOptions[selectedClass][selectedRegion];
-                const foundPharmacy = pharmacyList.find(p => p.id === targetId);
-                
-                if (foundPharmacy) {
-                    document.getElementById('classSelect').value = selectedClass;
-                    handleClassChange();
-                    document.getElementById('regionSelect').value = selectedRegion;
-                    handleRegionChange();
-                    document.getElementById('pharmacySelect').value = foundPharmacy.name;
-                    handleStateChange();
-                    this.blur();
-                    showToast("ID recognized: " + foundPharmacy.name);
+            for (const cls in pharmacyOptions) {
+                for (const reg in pharmacyOptions[cls]) {
+                    const pharm = pharmacyOptions[cls][reg].find(p => p.id === val);
+                    if (pharm) {
+                        document.getElementById('classSelect').value = cls;
+                        handleClassChange(false);
+                        document.getElementById('regionSelect').value = reg;
+                        handleRegionChange(false);
+                        document.getElementById('pharmacySelect').value = pharm.name;
+                        handleStateChange(false);
+                        showToast("ID recognized: " + pharm.name);
+                        found = true;
+                        this.blur();
+                        break;
+                    }
                 }
+                if (found) break;
+            }
+
+            if (!found && val.length > 0) {
+                showToast("Invalid Quick ID", true);
             }
         }
     });
@@ -1277,7 +1297,7 @@ to { opacity: 1; transform: translateY(0); }
 
     autocomplete(document.getElementById("searchInput"));
 
-    function handleClassChange() {
+    function handleClassChange(syncId = true) {
         const cls = document.getElementById("classSelect").value;
         const regionSelect = document.getElementById("regionSelect");
         const pharmacySelect = document.getElementById("pharmacySelect");
@@ -1289,10 +1309,10 @@ to { opacity: 1; transform: translateY(0); }
         if (cls) { regionSelect.disabled = false; }
         else { regionSelect.disabled = true; }
         
-        handleStateChange();
+        handleStateChange(syncId);
     }
 
-    function handleRegionChange() {
+    function handleRegionChange(syncId = true) {
         const cls = document.getElementById("classSelect").value;
         const region = document.getElementById("regionSelect").value;
         const pharmacySelect = document.getElementById("pharmacySelect");
@@ -1310,21 +1330,36 @@ to { opacity: 1; transform: translateY(0); }
         } else {
             pharmacySelect.disabled = true;
         }
-        handleStateChange();
+        handleStateChange(syncId);
     }
 
-    function handleStateChange() {
+    function handleStateChange(syncId = true) {
         updateAllRows();
         saveData();
         updateLegacyModeVisibility();
         updateAddNameButtonState();
         updateHeaderInfo();
+        
+        if (syncId && document.activeElement.id !== 'quickIdInput') {
+            const cls = document.getElementById("classSelect").value;
+            const region = document.getElementById("regionSelect").value;
+            const pharmacyName = document.getElementById("pharmacySelect").value;
+
+            if (cls && region && pharmacyName && pharmacyOptions[cls] && pharmacyOptions[cls][region]) {
+                const found = pharmacyOptions[cls][region].find(p => p.name === pharmacyName);
+                if (found) {
+                    document.getElementById("quickIdInput").value = found.id;
+                    return;
+                }
+            }
+            document.getElementById("quickIdInput").value = '';
+        }
     }
 
-    document.getElementById("classSelect").addEventListener("change", handleClassChange);
-    document.getElementById("regionSelect").addEventListener("change", handleRegionChange);
-    document.getElementById("pharmacySelect").addEventListener("change", handleStateChange);
-    document.getElementById("monthSelect").addEventListener("change", handleStateChange);
+    document.getElementById("classSelect").addEventListener("change", () => handleClassChange(true));
+    document.getElementById("regionSelect").addEventListener("change", () => handleRegionChange(true));
+    document.getElementById("pharmacySelect").addEventListener("change", () => handleStateChange(true));
+    document.getElementById("monthSelect").addEventListener("change", () => handleStateChange(true));
 
     document.getElementById('dataTable').addEventListener('input', function(e) {
         if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
@@ -1422,7 +1457,7 @@ to { opacity: 1; transform: translateY(0); }
             if(isExternal) {
                 extraInfo = ` <span style="color: #e74c3c; font-size:0.8em;">(ext)</span>`;
                 if(entry.category) extraInfo += ` <span style="color: #2ecc71; font-size:0.8em;">[${entry.category}]</span>`;
-                else extraInfo += ` <span style="color: #f39c12; font-size:0.8em;">[Missing Category]</span>`;
+                else extraInfo += ` <span style="color: #f39c12; font-size:0.8em;">[Missing Context]</span>`;
             }
 
             row.innerHTML = `
@@ -1611,16 +1646,16 @@ to { opacity: 1; transform: translateY(0); }
         const savedData = localStorage.getItem('pharmacyData');
         if (savedData) { data = JSON.parse(savedData); updateTable(); }
         const savedClass = localStorage.getItem('selectedClass');
-        if (savedClass) { document.getElementById("classSelect").value = savedClass; handleClassChange(); }
+        if (savedClass) { document.getElementById("classSelect").value = savedClass; handleClassChange(false); }
         const savedRegion = localStorage.getItem('selectedRegion');
-        if (savedRegion) { document.getElementById("regionSelect").value = savedRegion; handleRegionChange(); }
+        if (savedRegion) { document.getElementById("regionSelect").value = savedRegion; handleRegionChange(false); }
         const savedPharmacy = localStorage.getItem('selectedPharmacy');
         if (savedPharmacy) { document.getElementById("pharmacySelect").value = savedPharmacy; }
         const savedMonth = localStorage.getItem('selectedMonth');
         if (savedMonth) { document.getElementById("monthSelect").value = savedMonth; }
         
         document.getElementById("saveAndExitBtn").textContent = "Save and Exit";
-        handleStateChange();
+        handleStateChange(true);
     }
 
     function saveAndExit() {
@@ -1700,13 +1735,24 @@ to { opacity: 1; transform: translateY(0); }
 
     function printReport() { updateHeaderInfo(); window.print(); }
 
+    function generateAndDownloadFiles(dataset) {
+        let csvContent = "\uFEFFclass,month,region,pharmacy,name,unit,unitSold,method,category\n";
+        dataset.forEach(item => {
+            csvContent += `${item.class},${item.month},${item.region},"${item.pharmacy}","${item.name}","${item.unit}",${item.unitSold},"${item.method}","${item.category}"\n`;
+        });
+        downloadFile(csvContent, `pharmacy_data_${Date.now()}.csv`, 'text/csv;charset=utf-8;');
+
+        const jsonContent = JSON.stringify(dataset, null, 2);
+        downloadFile(jsonContent, `pharmacy_data_${Date.now()}.json`, 'application/json');
+    }
+
     let isSubmitting = false;
 
     function submitData() {
         if (isSubmitting) return;
 
-        if (checkMissingReasons()) {
-            showBulkReasonModal();
+        if (checkMissingContexts()) {
+            showBulkContextModal();
             return;
         }
 
@@ -1748,6 +1794,7 @@ to { opacity: 1; transform: translateY(0); }
         database.ref('pharmacyData').push(submissionData)
         .then(() => {
             showToast('Data submitted successfully!');
+            generateAndDownloadFiles(submissionData);
             data = [];
             updateTable();
             saveData();
@@ -1774,12 +1821,12 @@ to { opacity: 1; transform: translateY(0); }
         }, 4000);
     }
 
-    function checkMissingReasons() {
+    function checkMissingContexts() {
         return data.some(item => item.method === 'new' && !item.category);
     }
 
-    function showBulkReasonModal() {
-        const tableBody = document.getElementById("bulkReasonTableBody");
+    function showBulkContextModal() {
+        const tableBody = document.getElementById("bulkContextTableBody");
         tableBody.innerHTML = "";
         const newItems = data.filter(item => item.method === 'new' && !item.category);
         
@@ -1791,8 +1838,8 @@ to { opacity: 1; transform: translateY(0); }
             tr.innerHTML = `
                 <td>${name} <span class="product-unit">${unit}</span></td>
                 <td>
-                    <select class="bulk-reason-select" data-product="${item.product}">
-                        <option value="">Select Reason</option>
+                    <select class="bulk-context-select" data-product="${item.product}">
+                        <option value="">Select Context</option>
                         <option value="قرار لجنة">قرار لجنة</option>
                         <option value="حكم قضائي">حكم قضائي</option>
                         <option value="داخل اللستة">داخل اللستة</option>
@@ -1802,16 +1849,16 @@ to { opacity: 1; transform: translateY(0); }
             `;
             tableBody.appendChild(tr);
         });
-        document.getElementById("bulkReasonModal").style.display = "block";
+        document.getElementById("bulkContextModal").style.display = "block";
     }
 
-    function saveBulkReasons() {
-        const selects = document.querySelectorAll(".bulk-reason-select");
+    function saveBulkContexts() {
+        const selects = document.querySelectorAll(".bulk-context-select");
         let allSelected = true;
         
         selects.forEach(select => { if(!select.value) allSelected = false; });
 
-        if (!allSelected) { alert("Please select a reason for all items."); return; }
+        if (!allSelected) { alert("Please select a context for all items."); return; }
 
         selects.forEach(select => {
             const product = select.getAttribute("data-product");
@@ -1819,41 +1866,72 @@ to { opacity: 1; transform: translateY(0); }
             if (item) { item.category = select.value; }
         });
 
-        document.getElementById("bulkReasonModal").style.display = "none";
+        document.getElementById("bulkContextModal").style.display = "none";
         updateTable();
         saveData();
     }
 
     function openImportModal() { document.getElementById("importModal").style.display = "block"; }
     function closeImportModal() { document.getElementById("importModal").style.display = "none"; }
-    function closeValidationModal() { document.getElementById("fileValidationModal").style.display = "none"; fileValidationData = { valid: [], pending: [], invalid: [] }; }
+    
+    function closeValidationModal() { 
+        document.getElementById("fileValidationModal").style.display = "none"; 
+        fileValidationData = { valid: [], pending: [], invalid: [] };
+        fileQueue = [];
+    }
 
-    function handleFileSelect(input) {
-        const file = input.files[0];
-        if (!file) return;
+    async function handleFileSelect(input) {
+        const files = Array.from(input.files);
+        if (!files.length) return;
         closeImportModal();
         
-        if (file.name.endsWith('.csv')) {
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) { validateFileBatch(results.data); },
-                error: function(err) { showToast("Error parsing CSV.", true); }
-            });
-        } else if (file.name.endsWith('.json')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsedData = JSON.parse(e.target.result);
-                    if (!Array.isArray(parsedData)) throw new Error("JSON must be an array.");
-                    validateFileBatch(parsedData);
-                } catch (err) { showToast("Invalid JSON format.", true); }
-            };
-            reader.readAsText(file, 'UTF-8');
-        } else {
-            showToast("Unsupported file format.", true);
-        }
+        fileQueue = files;
+        processNextFileInQueue();
         input.value = '';
+    }
+
+    async function processNextFileInQueue() {
+        if (fileQueue.length === 0) {
+            closeValidationModal();
+            return;
+        }
+
+        const currentFile = fileQueue[0];
+        document.getElementById('currentFileName').textContent = currentFile.name;
+
+        try {
+            const data = await parseFile(currentFile);
+            validateFileBatch(data);
+        } catch (err) {
+            showToast(`Error processing ${currentFile.name}`, true);
+            fileQueue.shift();
+            processNextFileInQueue();
+        }
+    }
+
+    function parseFile(file) {
+        return new Promise((resolve, reject) => {
+            if (file.name.endsWith('.csv')) {
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) { resolve(results.data); },
+                    error: function(err) { reject(err); }
+                });
+            } else if (file.name.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const parsedData = JSON.parse(e.target.result);
+                        if (!Array.isArray(parsedData)) throw new Error("JSON must be an array.");
+                        resolve(parsedData);
+                    } catch (err) { reject(err); }
+                };
+                reader.readAsText(file, 'UTF-8');
+            } else {
+                resolve([]);
+            }
+        });
     }
 
     function validateFileBatch(importedItems) {
@@ -1863,6 +1941,9 @@ to { opacity: 1; transform: translateY(0); }
         const uiRegion = document.getElementById("regionSelect").value;
         const uiPharmacy = document.getElementById("pharmacySelect").value;
         const uiMonth = document.getElementById("monthSelect").value;
+
+        const validMap = new Map();
+        const pendingMap = new Map();
 
         importedItems.forEach((item, index) => {
             const normItem = {};
@@ -1903,12 +1984,25 @@ to { opacity: 1; transform: translateY(0); }
                 originalString: fullProductString
             };
 
+            const key = fullProductString;
+
             if (method === 'new') {
-                fileValidationData.pending.push(parsedObj);
+                if (pendingMap.has(key)) {
+                    pendingMap.get(key).unitSold += sold;
+                } else {
+                    pendingMap.set(key, parsedObj);
+                }
             } else {
-                fileValidationData.valid.push(parsedObj);
+                if (validMap.has(key)) {
+                    validMap.get(key).unitSold += sold;
+                } else {
+                    validMap.set(key, parsedObj);
+                }
             }
         });
+
+        fileValidationData.valid = Array.from(validMap.values());
+        fileValidationData.pending = Array.from(pendingMap.values());
 
         document.getElementById('valValidCount').textContent = fileValidationData.valid.length;
         document.getElementById('valPendingCount').textContent = fileValidationData.pending.length;
@@ -1924,9 +2018,10 @@ to { opacity: 1; transform: translateY(0); }
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${item.name} <span class="product-unit">${item.unit}</span></td>
+                    <td><input type="number" class="file-bulk-unit" data-index="${i}" value="${item.unitSold}" min="0"></td>
                     <td>
-                        <select class="file-bulk-reason" data-index="${i}">
-                            <option value="">Select Reason</option>
+                        <select class="file-bulk-context" data-index="${i}">
+                            <option value="">Select Context</option>
                             <option value="قرار لجنة">قرار لجنة</option>
                             <option value="حكم قضائي">حكم قضائي</option>
                             <option value="داخل اللستة">داخل اللستة</option>
@@ -1958,28 +2053,40 @@ to { opacity: 1; transform: translateY(0); }
         document.getElementById("fileValidationModal").style.display = "block";
     }
 
+    function skipCurrentFileValidation() {
+        fileQueue.shift();
+        processNextFileInQueue();
+    }
+
     function submitValidatedFile() {
         if (isSubmitting) return;
 
-        let allReasonsFilled = true;
-        const selects = document.querySelectorAll(".file-bulk-reason");
+        let allContextsFilled = true;
+        const selects = document.querySelectorAll(".file-bulk-context");
+        const units = document.querySelectorAll(".file-bulk-unit");
+        
         selects.forEach(select => {
-            if (!select.value) allReasonsFilled = false;
+            const idx = select.getAttribute('data-index');
+            if (!select.value) allContextsFilled = false;
             else {
-                const idx = select.getAttribute('data-index');
                 fileValidationData.pending[idx].category = select.value;
             }
         });
 
-        if (!allReasonsFilled) {
-            alert("Please select a reason for all pending items before submitting.");
+        units.forEach(unit => {
+            const idx = unit.getAttribute('data-index');
+            fileValidationData.pending[idx].unitSold = parseInt(unit.value) || 0;
+        });
+
+        if (!allContextsFilled) {
+            alert("Please select a context for all pending items before submitting.");
             return;
         }
 
         const allValidItems = [...fileValidationData.valid, ...fileValidationData.pending];
         if (allValidItems.length === 0) {
             showToast("No valid items to submit.", true);
-            closeValidationModal();
+            skipCurrentFileValidation();
             return;
         }
 
@@ -2010,8 +2117,9 @@ to { opacity: 1; transform: translateY(0); }
 
         database.ref('pharmacyData').push(submissionData)
         .then(() => {
-            showToast(`Direct file submission successful! (${allValidItems.length} items)`);
-            closeValidationModal();
+            showToast(`File submission successful! (${allValidItems.length} items)`);
+            fileQueue.shift();
+            processNextFileInQueue();
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -2047,9 +2155,9 @@ to { opacity: 1; transform: translateY(0); }
                     csvContent += `${item.cls},${item.month},${item.region},"${item.pharmacy}","${name}","${unit}",${item.unitsSold}\n`;
                 });
             } else {
-                 csvContent += "workforce,January,first,MyPharmacy,Acetazolamide 250mg,10 T,50";
+                 csvContent += "workforce,January,first,MyPharmacy,Acetazolamide 250mg,10 T,50\n";
             }
-            downloadFile(csvContent, 'pharmacy_data.csv', 'text/csv;charset=utf-8;');
+            downloadFile(csvContent, 'pharmacy_data_template.csv', 'text/csv;charset=utf-8;');
         } else if (type === 'json') {
             let jsonContent;
             if (hasData) {
@@ -2079,7 +2187,7 @@ to { opacity: 1; transform: translateY(0); }
                     }
                 ], null, 2);
             }
-            downloadFile(jsonContent, 'pharmacy_data.json', 'application/json');
+            downloadFile(jsonContent, 'pharmacy_data_template.json', 'application/json');
         }
     }
 
