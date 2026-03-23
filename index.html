@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -706,7 +705,7 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <h1 class="title">بيان الخارجي</h1>
+    <h1 class="title">خارجي قوي عاملة</h1>
 
     <div class="report-header print-only">
         <p>مرسل الي ادارة التموين الطبي والصيدليات</p>
@@ -1942,6 +1941,10 @@ to { opacity: 1; transform: translateY(0); }
         const uiPharmacy = document.getElementById("pharmacySelect").value;
         const uiMonth = document.getElementById("monthSelect").value;
 
+        const validMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const validClasses = ["student", "workforce", "infants"];
+        const validRegions = ["first", "second", "third"];
+
         const validMap = new Map();
         const pendingMap = new Map();
 
@@ -1960,7 +1963,19 @@ to { opacity: 1; transform: translateY(0); }
 
             if (!name) { fileValidationData.invalid.push(`Row ${index + 1}: Missing Product Name`); return; }
             if (isNaN(sold) || sold < 0) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Units Sold`); return; }
-            if (!cls || !region || !pharmacy || !month) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Missing required context fields (Class, Region, Pharmacy, Month)`); return; }
+            
+            if (!validClasses.includes(cls)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Class '${cls}'`); return; }
+            if (!validRegions.includes(region)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Region '${region}'`); return; }
+            if (!validMonths.includes(month)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Month '${month}'`); return; }
+
+            let validPharmacy = false;
+            if (pharmacyOptions[cls] && pharmacyOptions[cls][region]) {
+                validPharmacy = pharmacyOptions[cls][region].some(p => p.name === pharmacy);
+            }
+            if (!validPharmacy) {
+                fileValidationData.invalid.push(`Row ${index + 1} (${name}): Pharmacy '${pharmacy}' does not exist in ${cls}/${region}`); 
+                return; 
+            }
 
             let fullProductString = unit ? `${name}|${unit}` : name;
             let method = 'new';
