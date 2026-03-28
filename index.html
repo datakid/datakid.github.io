@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
-<title>خارجي قوي عاملة</title>
+<title>بيان الخارجي</title>
 <style>
 :root {
 --primary-color: #4a90e2;
@@ -329,16 +329,30 @@ th, td { padding: 1.2rem; text-align: left; }
 
 th {
 background: linear-gradient(135deg, var(--primary-color), #3a7bc8);
-color: #fff;
+color: #ffffff;
 text-transform: uppercase;
-letter-spacing: 1.5px;
-font-weight: 700;
-border-radius: 10px;
-box-shadow: 0 4px 12px rgba(74, 144, 226, 0.25);
+letter-spacing: 1.2px;
+font-weight: 600;
 border: none;
 }
 
-tr { 
+th:first-child {
+border-top-left-radius: 12px;
+border-bottom-left-radius: 12px;
+}
+
+th:last-child {
+border-top-right-radius: 12px;
+border-bottom-right-radius: 12px;
+}
+
+thead tr {
+box-shadow: 0 6px 15px rgba(74, 144, 226, 0.15);
+background-color: transparent;
+border-radius: 12px;
+}
+
+tbody tr { 
 background-color: var(--row-bg); 
 transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 position: relative;
@@ -347,7 +361,7 @@ border-radius: 8px;
 box-shadow: 0 2px 8px var(--shadow-color);
 }
 
-tr:hover { 
+tbody tr:hover { 
 transform: translateY(-4px) scale(1.01); 
 box-shadow: 0 12px 24px var(--shadow-hover); 
 z-index: 2;
