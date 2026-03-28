@@ -707,9 +707,18 @@ to { opacity: 1; transform: translateY(0); }
 <div id="toast"></div>
 <div class="container">
     <div class="top-controls no-print">
-        <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
-            <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-        </button>
+        <div style="display: flex; gap: 8px;">
+            <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
+                <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </button>
+            <button class="theme-toggle-btn" onclick="exportSession()" title="Save Session">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            </button>
+            <button class="theme-toggle-btn" onclick="document.getElementById('sessionFileInput').click()" title="Load Session">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+            <input type="file" id="sessionFileInput" accept=".json" style="display: none;" onchange="importSession(this)">
+        </div>
         <div class="legacy-mode-toggle">
             <span>Legacy Mode</span>
             <label class="toggle-switch">
@@ -2230,6 +2239,61 @@ to { opacity: 1; transform: translateY(0); }
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    function exportSession() {
+        const sessionData = {
+            data: data,
+            cls: document.getElementById("classSelect").value,
+            region: document.getElementById("regionSelect").value,
+            pharmacy: document.getElementById("pharmacySelect").value,
+            month: document.getElementById("monthSelect").value
+        };
+        const blob = new Blob([JSON.stringify(sessionData)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `session_${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importSession(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const sessionData = JSON.parse(e.target.result);
+                if (sessionData.cls) {
+                    document.getElementById("classSelect").value = sessionData.cls;
+                    handleClassChange(false);
+                }
+                if (sessionData.region) {
+                    document.getElementById("regionSelect").value = sessionData.region;
+                    handleRegionChange(false);
+                }
+                if (sessionData.pharmacy) {
+                    document.getElementById("pharmacySelect").value = sessionData.pharmacy;
+                }
+                if (sessionData.month) {
+                    document.getElementById("monthSelect").value = sessionData.month;
+                }
+                if (sessionData.data && Array.isArray(sessionData.data)) {
+                    data = sessionData.data;
+                }
+                handleStateChange(false);
+                updateTable();
+                saveData();
+                showToast("Session loaded successfully!");
+            } catch (err) {
+                showToast("Invalid session file.", true);
+            }
+            input.value = '';
+        };
+        reader.readAsText(file);
     }
 
     document.addEventListener('DOMContentLoaded', loadData);
