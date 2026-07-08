@@ -5,114 +5,160 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <title>بيان الخارجي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
---primary-color: #4a90e2;
---secondary-color: #2ecc71;
---border-radius: 12px;
+--primary-color: #3f6fd8;
+--primary-color-dark: #2f56b0;
+--primary-glow: rgba(63, 111, 216, 0.28);
+--secondary-color: #17a673;
+--accent-amber: #e8912d;
+--border-radius: 14px;
 --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+--font-ui: 'Inter', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+--font-ar: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+--font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
 
 [data-theme="light"] {
---bg-color: #f8fafc;
+--bg-color: #eef2fa;
 --surface-color: #ffffff;
---text-color: #1e293b;
+--text-color: #1c2536;
 --text-muted: #64748b;
---border-color: #e2e8f0;
+--border-color: #e4e9f2;
 --input-bg: #ffffff;
 --input-disabled: #f1f5f9;
 --row-bg: #ffffff;
---hover-bg: #f8fafc;
+--hover-bg: #f4f7fd;
 --dock-bg: rgba(255, 255, 255, 0.85);
 --dock-border: rgba(255, 255, 255, 0.4);
---shadow-color: rgba(15, 23, 42, 0.06);
---shadow-hover: rgba(15, 23, 42, 0.12);
---tooltip-bg: #1e293b;
+--shadow-color: rgba(30, 41, 76, 0.07);
+--shadow-hover: rgba(30, 41, 76, 0.14);
+--tooltip-bg: #1c2536;
 --tooltip-text: #ffffff;
 --danger-bg: #fef2f2;
 --danger-text: #dc2626;
 --drop-bg: #f8fafc;
 --guide-bg: #f1f5f9;
---focus-ring: 0 0 0 3px rgba(74, 144, 226, 0.25);
+--focus-ring: 0 0 0 3px var(--primary-glow);
 --editable-bg: #f8fafc;
---editable-hover: #f1f5f9;
---modal-overlay: rgba(15, 23, 42, 0.6);
---icon-stroke: #1e293b;
+--editable-hover: #eef2fa;
+--modal-overlay: rgba(20, 27, 45, 0.55);
+--icon-stroke: #1c2536;
 --edit-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
---edit-icon-focus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%234a90e2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
+--edit-icon-focus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%233f6fd8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
 }
 
 [data-theme="dark"] {
---bg-color: #0b0f19;
---surface-color: #111827;
---text-color: #f8fafc;
---text-muted: #94a3b8;
---border-color: #1e293b;
---input-bg: #0b0f19;
---input-disabled: #0f172a;
---row-bg: #111827;
---hover-bg: #1e293b;
---dock-bg: rgba(15, 23, 42, 0.85);
+--bg-color: #090c14;
+--surface-color: #121826;
+--text-color: #f1f5fb;
+--text-muted: #8fa0bc;
+--border-color: #212b40;
+--input-bg: #0d1220;
+--input-disabled: #0f1524;
+--row-bg: #141b2c;
+--hover-bg: #1b2438;
+--dock-bg: rgba(13, 18, 32, 0.85);
 --dock-border: rgba(255, 255, 255, 0.08);
 --shadow-color: rgba(0,0,0,0.5);
 --shadow-hover: rgba(0,0,0,0.7);
---tooltip-bg: #f8fafc;
---tooltip-text: #0f172a;
+--tooltip-bg: #f1f5fb;
+--tooltip-text: #0d1220;
 --danger-bg: rgba(220, 38, 38, 0.15);
 --danger-text: #fca5a5;
---drop-bg: #0b0f19;
---guide-bg: #0f172a;
---focus-ring: 0 0 0 3px rgba(74, 144, 226, 0.4);
---editable-bg: #0f172a;
---editable-hover: #1e293b;
---modal-overlay: rgba(0,0,0,0.8);
---icon-stroke: #f8fafc;
---edit-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
---edit-icon-focus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%234a90e2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
+--drop-bg: #0d1220;
+--guide-bg: #0f1524;
+--focus-ring: 0 0 0 3px var(--primary-glow);
+--editable-bg: #0f1524;
+--editable-hover: #1b2438;
+--modal-overlay: rgba(3, 5, 10, 0.8);
+--icon-stroke: #f1f5fb;
+--edit-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%238fa0bc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
+--edit-icon-focus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%233f6fd8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'%3E%3C/path%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'%3E%3C/path%3E%3C/svg%3E");
 }
 
+* { scrollbar-width: thin; scrollbar-color: var(--border-color) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color: var(--text-muted); background-clip: padding-box; }
+
+:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+
 body {
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+font-family: var(--font-ui);
 display: flex;
 justify-content: center;
-align-items: center;
+align-items: flex-start;
 min-height: 100vh;
 margin: 0;
 background-color: var(--bg-color);
+background-image:
+    radial-gradient(circle at 15% -10%, var(--primary-glow) 0%, transparent 45%),
+    radial-gradient(circle at 100% 10%, rgba(23, 166, 115, 0.12) 0%, transparent 40%);
+background-attachment: fixed;
 color: var(--text-color);
 line-height: 1.6;
-padding-bottom: 100px;
+padding: 3.5rem 1rem 100px;
+box-sizing: border-box;
 transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
 background-color: var(--surface-color);
-padding: 2.5rem;
-border-radius: var(--border-radius);
-box-shadow: 0 10px 40px var(--shadow-color);
+padding: 2.75rem;
+border-radius: 20px;
+box-shadow: 0 20px 60px var(--shadow-color);
 width: 95%;
 max-width: 1000px;
 position: relative;
 overflow: hidden;
-transition: var(--transition);
+transition: box-shadow 0.4s ease;
 animation: fadeIn 0.6s ease-out;
-border: 1px solid rgba(255, 255, 255, 0.05);
+border: 1px solid var(--border-color);
+}
+
+.container::before {
+content: '';
+position: absolute; top: 0; left: 0; right: 0; height: 4px;
+background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
 }
 
 .container:hover {
-box-shadow: 0 15px 50px var(--shadow-hover);
+box-shadow: 0 24px 70px var(--shadow-hover);
 }
 
+.title-wrap { text-align: center; margin-bottom: 1.75rem; }
+
+.legacy-pill {
+display: inline-flex; align-items: center; gap: 6px;
+font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700;
+letter-spacing: 1px; text-transform: uppercase;
+color: var(--accent-amber); background: rgba(232, 145, 45, 0.12);
+border: 1px solid rgba(232, 145, 45, 0.3);
+padding: 5px 14px; border-radius: 50px; margin-bottom: 1rem;
+}
+.legacy-pill svg { width: 13px; height: 13px; stroke: var(--accent-amber); }
+
 .title {
+font-family: var(--font-ar);
 text-align: center;
 font-size: 2.75rem;
-color: var(--primary-color);
-margin-bottom: 2.5rem;
-text-transform: uppercase;
-letter-spacing: 2px;
+background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+margin: 0;
+letter-spacing: 1px;
 position: relative;
-font-weight: 700;
-text-shadow: 2px 2px 8px var(--shadow-color);
+font-weight: 800;
 }
 
 .title::after {
@@ -120,10 +166,23 @@ content: '';
 display: block;
 width: 60px;
 height: 4px;
-background-color: var(--primary-color);
-margin: 15px auto 0;
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+margin: 18px auto 0;
 border-radius: 2px;
 }
+
+.stats-strip {
+display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+margin: 1.25rem 0 0.5rem;
+}
+.stats-chip {
+display: flex; align-items: center; gap: 8px;
+background: var(--bg-color); border: 1px solid var(--border-color);
+padding: 8px 16px; border-radius: 50px; font-size: 0.9rem; color: var(--text-muted);
+transition: var(--transition);
+}
+.stats-chip strong { color: var(--text-color); font-family: var(--font-mono); font-weight: 600; }
+.stats-chip svg { width: 15px; height: 15px; stroke: var(--primary-color); flex-shrink: 0; }
 
 .id-container {
 position: relative;
@@ -209,7 +268,7 @@ box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
 }
 
 select {
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a90e2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233f6fd8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 background-repeat: no-repeat;
 background-position: right 1.2rem center;
 background-size: 1.5em;
@@ -264,7 +323,7 @@ z-index: -1;
 }
 
 .btn:hover {
-background-color: #3a7bc8;
+background-color: var(--primary-color-dark);
 transform: translateY(-3px);
 box-shadow: 0 8px 18px var(--shadow-hover);
 }
@@ -314,6 +373,10 @@ transform: translateX(8px);
 }
 
 .already-in-table { background-color: var(--danger-bg) !important; color: var(--danger-text) !important; }
+.added-badge {
+float: right; background: var(--danger-text); color: #fff; font-size: 0.7rem; font-weight: 700;
+padding: 2px 9px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
+}
 
 table {
 width: 100%;
@@ -328,7 +391,7 @@ overflow: hidden;
 th, td { padding: 1.2rem; text-align: left; }
 
 th {
-background: linear-gradient(135deg, var(--primary-color), #3a7bc8);
+background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
 color: #ffffff;
 text-transform: uppercase;
 letter-spacing: 1.2px;
@@ -388,6 +451,30 @@ opacity: 1;
 
 .delete-btn svg { width: 26px; height: 26px; stroke: #e74c3c; }
 .product-unit { color: var(--primary-color); font-weight: bold; }
+
+.empty-row td { padding: 0 !important; box-shadow: none !important; }
+.empty-state {
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+gap: 0.5rem; padding: 3.5rem 1rem; text-align: center; color: var(--text-muted);
+background-color: var(--bg-color); border: 1.5px dashed var(--border-color); border-radius: var(--border-radius);
+}
+.empty-state svg { width: 44px; height: 44px; stroke: var(--primary-color); opacity: 0.5; margin-bottom: 4px; }
+.empty-state p { margin: 0; font-weight: 700; font-size: 1.05rem; color: var(--text-color); }
+.empty-state span { font-size: 0.9rem; }
+
+@keyframes rowIn {
+from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+tbody tr.row-enter { animation: rowIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+.total-row td {
+background: var(--bg-color) !important;
+font-weight: 700;
+box-shadow: none !important;
+border-top: 2px solid var(--border-color);
+}
+.total-row:hover { transform: none !important; }
 
 #legacyMode {
 display: none;
@@ -524,7 +611,7 @@ transition: none;
 }
 
 #saveAndExitBtn:hover {
-background-color: #3a7bc8;
+background-color: var(--primary-color-dark);
 transform: translateX(-50%) translateY(-3px);
 box-shadow: 0 10px 25px var(--shadow-hover);
 }
@@ -589,6 +676,14 @@ align-items: center; justify-content: center;
 .dock-item:hover { background-color: rgba(74, 144, 226, 0.15); transform: translateY(-5px) scale(1.15); box-shadow: 0 5px 15px rgba(74, 144, 226, 0.2); }
 .dock-item svg { width: 26px; height: 26px; stroke-width: 2.2; }
 
+@keyframes successPulse {
+0% { box-shadow: 0 0 0 0 rgba(23, 166, 115, 0.5); }
+70% { box-shadow: 0 0 0 12px rgba(23, 166, 115, 0); }
+100% { box-shadow: 0 0 0 0 rgba(23, 166, 115, 0); }
+}
+.dock-item.success-pulse { animation: successPulse 0.8s ease-out; background-color: rgba(23, 166, 115, 0.18); }
+.dock-item.success-pulse svg { stroke: var(--secondary-color) !important; }
+
 .dock-item[data-tooltip]::after {
 content: attr(data-tooltip); position: absolute; bottom: 140%; left: 50%;
 transform: translateX(-50%) translateY(10px); background-color: var(--tooltip-bg);
@@ -645,10 +740,11 @@ margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px
 .bulk-table select, .bulk-table input { margin-bottom: 0; padding: 8px; font-size: 1rem; }
 
 #toast {
-visibility: hidden; min-width: 250px; max-width: 400px; margin-left: -125px;
+visibility: hidden; min-width: 250px; max-width: 420px; margin-left: -125px;
 background-color: var(--secondary-color); color: #fff; text-align: center; border-radius: 50px;
-padding: 16px; position: fixed; z-index: 3000; left: 50%; top: 30px;
+padding: 14px 20px; position: fixed; z-index: 3000; left: 50%; top: 30px;
 box-shadow: 0 8px 20px var(--shadow-color); opacity: 0; transition: opacity 0.5s, top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: bold;
+display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: nowrap;
 }
 
 #toast.show { visibility: visible; opacity: 1; top: 50px; }
@@ -676,7 +772,7 @@ position: absolute; left: 50%; top: 50%; margin-left: -10px; margin-top: -10px;
 }
 body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; margin: 0; background-color: #ffffff !important; color: #000000 !important; }
 .container { box-shadow: none; padding: 0; margin: 0; width: 100%; max-width: 100%; border: none; }
-.title, .top-controls, #legacyMode, #saveAndExitBtn, .action-dock, .no-print { display: none !important; }
+.title, .title-wrap, .top-controls, #legacyMode, #saveAndExitBtn, .action-dock, .no-print { display: none !important; }
 .report-header { display: block !important; margin-bottom: 25px; border: 1px solid #000; box-shadow: none; padding: 1.5rem; border-radius: 0; break-inside: avoid; }
 .report-header p, .report-header span { color: #000 !important; margin: 0.5rem 0; font-size: 1.1rem; }
 #results { margin-top: 0; display: block !important; overflow: visible; }
@@ -685,14 +781,18 @@ tr { break-inside: avoid; background-color: #fff !important; box-shadow: none; t
 th, td { border: 1px solid #ddd; padding: 10px; color: #000 !important; border-radius: 0 !important; }
 th { background: #f2f2f2 !important; color: #000 !important; font-weight: bold; border: 1px solid #000; box-shadow: none; }
 td[contenteditable="true"] { background-image: none !important; border: 1px solid #ddd !important; }
+.total-row td { background: #f2f2f2 !important; }
 }
 
 @media (max-width: 768px) {
 .container { width: 95%; padding: 1.5rem; padding-top: 4.5rem; }
 .button-container { flex-direction: column; }
-.title { font-size: 2.2rem; margin-top: 1rem; }
+.title { font-size: 1.9rem; margin-top: 1rem; }
 .top-controls { top: 15px; width: calc(100% - 30px); }
 .action-dock { width: 90%; justify-content: space-between; padding: 12px 15px; }
+.stats-strip { gap: 8px; }
+.stats-chip { font-size: 0.8rem; padding: 6px 12px; }
+body { padding-top: 2rem; }
 }
 
 @keyframes fadeIn {
@@ -728,7 +828,27 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <h1 class="title">بيان الخارجي</h1>
+    <div class="title-wrap no-print">
+        <span class="legacy-pill">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Legacy tool
+        </span>
+        <h1 class="title">بيان الخارجي</h1>
+        <div class="stats-strip">
+            <span class="stats-chip">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"></path></svg>
+                <strong id="statEntries">0</strong>&nbsp;entries
+            </span>
+            <span class="stats-chip">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V6a5 5 0 0 1 10 0v2"></path></svg>
+                <strong id="statUnits">0</strong>&nbsp;units sold
+            </span>
+            <span class="stats-chip" id="statPendingChip" style="display:none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <strong id="statPending">0</strong>&nbsp;need context
+            </span>
+        </div>
+    </div>
 
     <div class="report-header print-only">
         <p>مرسل الي ادارة التموين الطبي والصيدليات</p>
@@ -798,8 +918,14 @@ to { opacity: 1; transform: translateY(0); }
         <input type="number" id="unitsSold" placeholder="Units sold" step="1" min="0" title="Enter units sold">
 
         <div class="button-container">
-            <button class="btn" onclick="addData()" title="Add Data">Add Data</button>
-            <button class="btn" id="addNameBtn" onclick="showAddNameModal()" disabled title="Add Name">Add Name</button>
+            <button class="btn" onclick="addData()" title="Add Data">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:-3px;margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Add Data
+            </button>
+            <button class="btn" id="addNameBtn" onclick="showAddNameModal()" disabled title="Add Name">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:-3px;margin-right:6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                Add Name
+            </button>
         </div>
     </div>
 
@@ -1236,6 +1362,28 @@ to { opacity: 1; transform: translateY(0); }
         }
     });
 
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(m => {
+                if (m.style.display === 'block') {
+                    if (m.id === 'addNameModal') closeAddNameModal();
+                    else if (m.id === 'importModal') closeImportModal();
+                    else m.style.display = 'none';
+                }
+            });
+        }
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('mousedown', (e) => {
+            if (e.target === modal) {
+                if (modal.id === 'addNameModal') closeAddNameModal();
+                else if (modal.id === 'importModal') closeImportModal();
+                else modal.style.display = 'none';
+            }
+        });
+    });
+
     document.getElementById('quickIdInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -1286,15 +1434,20 @@ to { opacity: 1; transform: translateY(0); }
             for (i = 0; i < Math.min(itemsToShow.length, 50); i++) {
                 b = document.createElement("DIV");
                 const item = itemsToShow[i];
-                b.innerHTML = `<span class="product-name">${esc(item.name)}</span> <span class="product-unit">${esc(item.unit)}</span>`;
+                const already = isDuplicate(item.fullString);
+                b.innerHTML = `<span class="product-name">${esc(item.name)}</span> <span class="product-unit">${esc(item.unit)}</span>${already ? ' <span class="added-badge">Added</span>' : ''}`;
                 b.innerHTML += `<input type='hidden' value='${esc(item.fullString)}'>`;
                 
                 if (selectedProducts.has(item.fullString)) b.classList.add("highlighted");
-                if (isDuplicate(item.fullString)) b.classList.add("already-in-table");
+                if (already) b.classList.add("already-in-table");
                 
                 b.addEventListener("click", function(e) {
                     inp.value = this.getElementsByTagName("input")[0].value;
                     closeAllLists();
+                    if (inp.id === 'searchInput') {
+                        const unitsInput = document.getElementById('unitsSold');
+                        if (unitsInput) unitsInput.focus();
+                    }
                 });
                 a.appendChild(b);
             }
@@ -1327,6 +1480,13 @@ to { opacity: 1; transform: translateY(0); }
     }
 
     autocomplete(document.getElementById("searchInput"));
+
+    document.getElementById("unitsSold").addEventListener("keydown", function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addData();
+        }
+    });
 
     function handleClassChange(syncId = true) {
         const cls = document.getElementById("classSelect").value;
@@ -1490,9 +1650,39 @@ to { opacity: 1; transform: translateY(0); }
         if (!isLegacyMode) resetSelections();
     }
 
+    function updateStats() {
+        const entries = data.length;
+        const units = data.reduce((sum, e) => sum + (parseInt(e.unitsSold) || 0), 0);
+        const pending = data.filter(e => e.method === 'new' && !e.category).length;
+        const statEntries = document.getElementById('statEntries');
+        const statUnits = document.getElementById('statUnits');
+        const statPendingChip = document.getElementById('statPendingChip');
+        const statPending = document.getElementById('statPending');
+        if (statEntries) statEntries.textContent = entries;
+        if (statUnits) statUnits.textContent = units;
+        if (statPending) statPending.textContent = pending;
+        if (statPendingChip) statPendingChip.style.display = pending > 0 ? 'flex' : 'none';
+    }
+
     function updateTable() {
+        updateStats();
         const table = document.getElementById("dataTable");
         table.innerHTML = '';
+
+        if (data.length === 0) {
+            table.innerHTML = `
+                <tr class="empty-row">
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M9 15l2 2 4-4"></path></svg>
+                            <p>No entries yet</p>
+                            <span>Search a product above and press Enter to add your first row.</span>
+                        </div>
+                    </td>
+                </tr>`;
+            return;
+        }
+
         data.sort((a, b) => a.product.localeCompare(b.product)).forEach((entry, index) => {
             const row = document.createElement("tr");
             const parts = entry.product.split('|');
@@ -1521,8 +1711,37 @@ to { opacity: 1; transform: translateY(0); }
                     </button>
                 </td>
             `;
+            row.classList.add('row-enter');
             table.appendChild(row);
         });
+
+        const totalUnits = data.reduce((sum, e) => sum + (parseInt(e.unitsSold) || 0), 0);
+        const totalRow = document.createElement("tr");
+        totalRow.className = "total-row no-print";
+        totalRow.innerHTML = `<td>Total (${data.length} ${data.length === 1 ? 'item' : 'items'})</td><td>${totalUnits}</td><td></td>`;
+        table.appendChild(totalRow);
+    }
+
+    let lastDeletedEntry = null;
+    let undoTimeout = null;
+    function showUndoToast(message, entry) {
+        lastDeletedEntry = entry;
+        const toast = document.getElementById("toast");
+        toast.className = "show";
+        toast.innerHTML = `<span>${esc(message)}</span> <button id="undoBtn" style="margin-left:10px; background:rgba(255,255,255,0.25); border:none; color:#fff; padding:5px 12px; border-radius:50px; cursor:pointer; font-weight:bold;">Undo</button>`;
+        document.getElementById("undoBtn").onclick = () => {
+            if (lastDeletedEntry) {
+                data.push(lastDeletedEntry);
+                updateTable();
+                saveData();
+                lastDeletedEntry = null;
+                toast.className = toast.className.replace("show", "");
+            }
+        };
+        clearTimeout(undoTimeout);
+        undoTimeout = setTimeout(function(){
+            toast.className = toast.className.replace("show", "").replace("error", "").replace("warning", "");
+        }, 5000);
     }
 
     function deleteRow(index) {
@@ -1531,6 +1750,7 @@ to { opacity: 1; transform: translateY(0); }
         data.splice(index, 1);
         updateTable();
         saveData();
+        showUndoToast(`Removed ${entry.product.split('|')[0]}`, entry);
     }
 
     function updateUnitsSold(index, element) {
@@ -1542,6 +1762,7 @@ to { opacity: 1; transform: translateY(0); }
             data[index].unitsSold = newValue;
         }
         saveData();
+        updateStats();
     }
 
     function updateAllRows() {
@@ -1561,7 +1782,7 @@ to { opacity: 1; transform: translateY(0); }
     }
 
     function isDuplicate(product) { return data.some(entry => entry.product === product); }
-    function resetSelections() { document.getElementById("searchInput").value = ''; document.getElementById("unitsSold").value = ''; }
+    function resetSelections() { document.getElementById("searchInput").value = ''; document.getElementById("unitsSold").value = ''; document.getElementById("searchInput").focus(); }
 
     function toggleLegacyMode() {
         const cls = document.getElementById("classSelect").value;
@@ -1619,10 +1840,11 @@ to { opacity: 1; transform: translateY(0); }
         if (isNaN(newValue) || newValue < 0) { 
             element.textContent = ''; 
             const existingIndex = data.findIndex(e => e.product === product);
-            if(existingIndex > -1) { data.splice(existingIndex, 1); saveData(); }
+            if(existingIndex > -1) { data.splice(existingIndex, 1); saveData(); updateStats(); }
             return; 
         }
         addDataSilent(product, newValue);
+        updateStats();
     }
 
     document.getElementById('legacyTable').addEventListener('focus', function(e) {
@@ -1863,6 +2085,8 @@ to { opacity: 1; transform: translateY(0); }
             isResolved = true;
             clearTimeout(timeout);
             showToast('Data submitted successfully!');
+            btn.classList.add('success-pulse');
+            setTimeout(() => btn.classList.remove('success-pulse'), 900);
             generateAndDownloadFiles(submissionData);
             data = [];
             updateTable();
