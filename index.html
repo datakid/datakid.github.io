@@ -1237,6 +1237,20 @@ to { opacity: 1; transform: translateY(0); }
             </div>
         </div>
     </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content" style="max-width: 460px;">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Did you mean&hellip;?
+            </h2>
+            <p class="modal-desc" id="confirmModalMessage" style="margin: 0 0 0.5rem;"></p>
+            <div class="button-container">
+                <button class="btn" id="confirmModalYes" onclick="resolveConfirmModal(true)">Yes, use this</button>
+                <button class="btn btn-muted" id="confirmModalNo" onclick="resolveConfirmModal(false)">No, cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -1525,6 +1539,7 @@ to { opacity: 1; transform: translateY(0); }
                     if (m.id === 'addNameModal') closeAddNameModal();
                     else if (m.id === 'importModal') closeImportModal();
                     else if (m.id === 'fileValidationModal') closeValidationModal();
+                    else if (m.id === 'confirmModal') resolveConfirmModal(false);
                     else m.style.display = 'none';
                 }
             });
@@ -1537,6 +1552,7 @@ to { opacity: 1; transform: translateY(0); }
                 if (modal.id === 'addNameModal') closeAddNameModal();
                 else if (modal.id === 'importModal') closeImportModal();
                 else if (modal.id === 'fileValidationModal') closeValidationModal();
+                else if (modal.id === 'confirmModal') resolveConfirmModal(false);
                 else modal.style.display = 'none';
             }
         });
@@ -1761,7 +1777,7 @@ to { opacity: 1; transform: translateY(0); }
         saveData();
     }
 
-    function addData(product, unitsSold) {
+    async function addData(product, unitsSold) {
         const cls = document.getElementById("classSelect").value;
         const region = document.getElementById("regionSelect").value;
         const pharmacy = document.getElementById("pharmacySelect").value;
@@ -1793,7 +1809,8 @@ to { opacity: 1; transform: translateY(0); }
                     const searchRes = fuseSearcher.search(product);
                     if (searchRes.length > 0 && searchRes[0].score <= 0.4) {
                         const bestMatch = searchRes[0].item;
-                        if (confirm(`Product not found. Did you mean: "${bestMatch.name} | ${bestMatch.unit}"?`)) {
+                        const confirmed = await showConfirmModal(`Product not found. Did you mean "${bestMatch.name} | ${bestMatch.unit}"?`);
+                        if (confirmed) {
                             product = bestMatch.fullString;
                             document.getElementById("searchInput").value = product;
                         } else {
@@ -1956,7 +1973,7 @@ to { opacity: 1; transform: translateY(0); }
         const pharmacy = document.getElementById("pharmacySelect").value;
         const month = document.getElementById("monthSelect").value;
         if (!cls || !region || !pharmacy || !month) {
-            alert("Please fill in Class, Region, Pharmacy, and Month before entering Legacy Mode.");
+            showToast("Please fill in Class, Region, Pharmacy, and Month before entering Legacy Mode.", true);
             document.getElementById("legacyModeToggle").checked = false;
             return;
         }
@@ -2133,9 +2150,9 @@ to { opacity: 1; transform: translateY(0); }
         const unit = document.getElementById("newProductUnit").value;
         const unitsSold = document.getElementById("newProductUnitsSold").value;
 
-        if (!category || !name || !unit || !unitsSold) { alert("Please fill in all fields"); return; }
+        if (!category || !name || !unit || !unitsSold) { showToast("Please fill in all fields", true); return; }
         if (isNaN(unitsSold) || parseInt(unitsSold) < 0 || !Number.isInteger(parseFloat(unitsSold))) {
-            alert("Please enter a valid number for Units Sold");
+            showToast("Please enter a valid number for Units Sold", true);
             return;
         }
 
@@ -2281,6 +2298,26 @@ to { opacity: 1; transform: translateY(0); }
         }, 4000);
     }
 
+    let confirmModalResolver = null;
+
+    function showConfirmModal(message) {
+        return new Promise(resolve => {
+            confirmModalResolver = resolve;
+            document.getElementById('confirmModalMessage').textContent = message;
+            document.getElementById('confirmModal').style.display = 'block';
+            document.getElementById('confirmModalYes').focus();
+        });
+    }
+
+    function resolveConfirmModal(result) {
+        document.getElementById('confirmModal').style.display = 'none';
+        if (confirmModalResolver) {
+            const resolve = confirmModalResolver;
+            confirmModalResolver = null;
+            resolve(result);
+        }
+    }
+
     function checkMissingContexts() {
         return data.some(item => item.method === 'new' && !item.category);
     }
@@ -2318,7 +2355,7 @@ to { opacity: 1; transform: translateY(0); }
         
         selects.forEach(select => { if(!select.value) allSelected = false; });
 
-        if (!allSelected) { alert("Please select a context for all items."); return; }
+        if (!allSelected) { showToast("Please select a context for all items.", true); return; }
 
         selects.forEach(select => {
             const product = select.getAttribute("data-product");
@@ -2588,7 +2625,7 @@ to { opacity: 1; transform: translateY(0); }
         });
 
         if (!allContextsFilled) {
-            alert("Please select a context for all pending items before submitting.");
+            showToast("Please select a context for all pending items before submitting.", true);
             return;
         }
 
