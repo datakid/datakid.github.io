@@ -3,8 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef2f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a121a" media="(prefers-color-scheme: dark)">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://firecloud.rubberylock7.workers.dev; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <title>بيان الخارجي</title>
+<script>
+(function() {
+    try {
+        var t = localStorage.getItem('app-theme') || 'system';
+        var resolved = t === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : t;
+        document.documentElement.setAttribute('data-theme', resolved);
+    } catch (err) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&family=Amiri:wght@400;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -409,6 +424,8 @@ animation: sheen 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
 .btn.btn-muted { background-color: #7c8fa0; }
 .btn.btn-muted:hover { background-color: #6a7c8c; }
+.btn.btn-small { padding: 0.5rem 1rem; font-size: 0.82rem; border-radius: 9px; box-shadow: none; }
+.btn.btn-small:hover { transform: translateY(-1px); box-shadow: 0 4px 10px var(--shadow-color); }
 
 .btn:disabled {
 background-color: #97a9b8;
@@ -454,7 +471,6 @@ background-color: var(--hover-bg);
 transform: translateX(6px);
 }
 
-.autocomplete-items div.highlighted { border-left: 3px solid var(--primary-color); }
 
 .already-in-table { background-color: var(--danger-bg) !important; color: var(--danger-text) !important; }
 .added-badge {
@@ -486,6 +502,8 @@ border: none;
 
 th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
 th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+#results table thead.no-print th { position: sticky; top: 0; z-index: 5; }
 
 thead tr {
 box-shadow: 0 6px 16px var(--primary-glow);
@@ -568,6 +586,14 @@ overflow-y: auto;
 z-index: 1000;
 }
 
+body.scroll-locked { overflow: hidden; }
+
+#legacyFilterInput {
+display: block; width: 100%; max-width: 420px; margin: 0 auto 1.25rem; padding: 0.7rem 1rem;
+font-size: 0.95rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+background: var(--input-bg); color: var(--text-color); font-family: var(--font-ui);
+}
+
 .selected-row { background-color: var(--hover-bg) !important; transform: scale(1.015); box-shadow: 0 10px 22px var(--shadow-hover); z-index: 10; }
 
 .top-controls {
@@ -614,6 +640,13 @@ stroke-linejoin: round;
 display: flex; align-items: center; gap: 4px; font-size: 0.88rem; font-weight: 600; color: var(--text-muted);
 background: var(--surface-alt); padding: 6px 10px 6px 16px; border-radius: 50px; border: 1px solid var(--border-color);
 }
+
+.queue-badge {
+display: none; align-items: center; font-size: 0.76rem; font-weight: 700;
+background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger);
+padding: 6px 12px; border-radius: 50px; cursor: pointer; transition: var(--transition);
+}
+.queue-badge:hover { transform: translateY(-1px); }
 
 .toggle-switch {
 position: relative;
@@ -755,6 +788,7 @@ display: none; box-shadow: 0 8px 20px var(--shadow-color); font-family: var(--fo
 
 .report-header p { margin: 0.85rem 0; font-size: 1.35rem; color: var(--text-color); }
 .report-header span { font-weight: bold; color: var(--primary-color); }
+.print-table-header, .print-footer { display: none; }
 
 .action-dock {
 position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
@@ -770,6 +804,7 @@ border: 1px solid var(--dock-border); z-index: 100; transition: var(--transition
 position: relative; cursor: pointer; padding: 12px; border-radius: 13px;
 transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex;
 align-items: center; justify-content: center;
+background: transparent; border: none; font: inherit; color: inherit; appearance: none;
 }
 
 .dock-item:hover { background-color: var(--primary-glow); transform: translateY(-4px) scale(1.1); }
@@ -884,6 +919,12 @@ th { background: #f2f2f2 !important; color: #000 !important; font-weight: bold; 
 td[contenteditable="true"] { background-image: none !important; border: 1px solid #ddd !important; font-family: inherit; }
 .total-row td { background: #f2f2f2 !important; }
 .product-unit { color: #000 !important; }
+#results table { direction: rtl; text-align: right; }
+#results table thead { display: table-header-group; }
+.print-table-header { display: table-header-group !important; }
+.print-footer { display: block !important; margin-top: 20px; direction: rtl; text-align: right; border-top: 1.5px solid #000; padding-top: 14px; font-family: var(--font-serif-ar); }
+.print-footer p { margin: 0 0 30px; font-size: 1.05rem; }
+.print-signature { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; }
 }
 
 @media (max-width: 768px) {
@@ -905,24 +946,45 @@ from { opacity: 0; transform: translateY(-25px); }
 to { opacity: 1; transform: translateY(0); }
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+/**
+ * Fuse.js v6.6.2 - Lightweight fuzzy-search (http://fusejs.io)
+ *
+ * Copyright (c) 2022 Kiro Risk (http://kiro.me)
+ * All Rights Reserved. Apache Software License 2.0
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+var e,t;e=this,t=function(){"use strict";function e(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),n.push.apply(n,r)}return n}function t(t){for(var n=1;n<arguments.length;n++){var r=null!=arguments[n]?arguments[n]:{};n%2?e(Object(r),!0).forEach((function(e){c(t,e,r[e])})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(r)):e(Object(r)).forEach((function(e){Object.defineProperty(t,e,Object.getOwnPropertyDescriptor(r,e))}))}return t}function n(e){return n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},n(e)}function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}function o(e,t,n){return t&&i(e.prototype,t),n&&i(e,n),Object.defineProperty(e,"prototype",{writable:!1}),e}function c(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function a(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");Object.defineProperty(e,"prototype",{value:Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),writable:!1}),t&&u(e,t)}function s(e){return s=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)},s(e)}function u(e,t){return u=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e},u(e,t)}function h(e,t){if(t&&("object"==typeof t||"function"==typeof t))return t;if(void 0!==t)throw new TypeError("Derived constructors may only return object or undefined");return function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}(e)}function l(e){var t=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(e){return!1}}();return function(){var n,r=s(e);if(t){var i=s(this).constructor;n=Reflect.construct(r,arguments,i)}else n=r.apply(this,arguments);return h(this,n)}}function f(e){return function(e){if(Array.isArray(e))return d(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||function(e,t){if(e){if("string"==typeof e)return d(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);return"Object"===n&&e.constructor&&(n=e.constructor.name),"Map"===n||"Set"===n?Array.from(e):"Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)?d(e,t):void 0}}(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function d(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,r=new Array(t);n<t;n++)r[n]=e[n];return r}function v(e){return Array.isArray?Array.isArray(e):"[object Array]"===b(e)}function g(e){return"string"==typeof e}function y(e){return"number"==typeof e}function p(e){return!0===e||!1===e||function(e){return m(e)&&null!==e}(e)&&"[object Boolean]"==b(e)}function m(e){return"object"===n(e)}function k(e){return null!=e}function M(e){return!e.trim().length}function b(e){return null==e?void 0===e?"[object Undefined]":"[object Null]":Object.prototype.toString.call(e)}var x=function(e){return"Invalid value for key ".concat(e)},w=function(e){return"Pattern length exceeds max of ".concat(e,".")},L=Object.prototype.hasOwnProperty,S=function(){function e(t){var n=this;r(this,e),this._keys=[],this._keyMap={};var i=0;t.forEach((function(e){var t=_(e);i+=t.weight,n._keys.push(t),n._keyMap[t.id]=t,i+=t.weight})),this._keys.forEach((function(e){e.weight/=i}))}return o(e,[{key:"get",value:function(e){return this._keyMap[e]}},{key:"keys",value:function(){return this._keys}},{key:"toJSON",value:function(){return JSON.stringify(this._keys)}}]),e}();function _(e){var t=null,n=null,r=null,i=1,o=null;if(g(e)||v(e))r=e,t=O(e),n=j(e);else{if(!L.call(e,"name"))throw new Error(function(e){return"Missing ".concat(e," property in key")}("name"));var c=e.name;if(r=c,L.call(e,"weight")&&(i=e.weight)<=0)throw new Error(function(e){return"Property 'weight' in key '".concat(e,"' must be a positive integer")}(c));t=O(c),n=j(c),o=e.getFn}return{path:t,id:n,weight:i,src:r,getFn:o}}function O(e){return v(e)?e:e.split(".")}function j(e){return v(e)?e.join("."):e}var A={useExtendedSearch:!1,getFn:function(e,t){var n=[],r=!1;return function e(t,i,o){if(k(t))if(i[o]){var c=t[i[o]];if(!k(c))return;if(o===i.length-1&&(g(c)||y(c)||p(c)))n.push(function(e){return null==e?"":function(e){if("string"==typeof e)return e;var t=e+"";return"0"==t&&1/e==-1/0?"-0":t}(e)}(c));else if(v(c)){r=!0;for(var a=0,s=c.length;a<s;a+=1)e(c[a],i,o+1)}else i.length&&e(c,i,o+1)}else n.push(t)}(e,g(t)?t.split("."):t,0),r?n:n[0]},ignoreLocation:!1,ignoreFieldNorm:!1,fieldNormWeight:1},I=t(t(t(t({},{isCaseSensitive:!1,includeScore:!1,keys:[],shouldSort:!0,sortFn:function(e,t){return e.score===t.score?e.idx<t.idx?-1:1:e.score<t.score?-1:1}}),{includeMatches:!1,findAllMatches:!1,minMatchCharLength:1}),{location:0,threshold:.6,distance:100}),A),C=/[^ ]+/g;function E(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1,t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:3,n=new Map,r=Math.pow(10,t);return{get:function(t){var i=t.match(C).length;if(n.has(i))return n.get(i);var o=1/Math.pow(i,.5*e),c=parseFloat(Math.round(o*r)/r);return n.set(i,c),c},clear:function(){n.clear()}}}var $=function(){function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},n=t.getFn,i=void 0===n?I.getFn:n,o=t.fieldNormWeight,c=void 0===o?I.fieldNormWeight:o;r(this,e),this.norm=E(c,3),this.getFn=i,this.isCreated=!1,this.setIndexRecords()}return o(e,[{key:"setSources",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];this.docs=e}},{key:"setIndexRecords",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];this.records=e}},{key:"setKeys",value:function(){var e=this,t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];this.keys=t,this._keysMap={},t.forEach((function(t,n){e._keysMap[t.id]=n}))}},{key:"create",value:function(){var e=this;!this.isCreated&&this.docs.length&&(this.isCreated=!0,g(this.docs[0])?this.docs.forEach((function(t,n){e._addString(t,n)})):this.docs.forEach((function(t,n){e._addObject(t,n)})),this.norm.clear())}},{key:"add",value:function(e){var t=this.size();g(e)?this._addString(e,t):this._addObject(e,t)}},{key:"removeAt",value:function(e){this.records.splice(e,1);for(var t=e,n=this.size();t<n;t+=1)this.records[t].i-=1}},{key:"getValueForItemAtKeyId",value:function(e,t){return e[this._keysMap[t]]}},{key:"size",value:function(){return this.records.length}},{key:"_addString",value:function(e,t){if(k(e)&&!M(e)){var n={v:e,i:t,n:this.norm.get(e)};this.records.push(n)}}},{key:"_addObject",value:function(e,t){var n=this,r={i:t,$:{}};this.keys.forEach((function(t,i){var o=t.getFn?t.getFn(e):n.getFn(e,t.path);if(k(o))if(v(o))!function(){for(var e=[],t=[{nestedArrIndex:-1,value:o}];t.length;){var c=t.pop(),a=c.nestedArrIndex,s=c.value;if(k(s))if(g(s)&&!M(s)){var u={v:s,i:a,n:n.norm.get(s)};e.push(u)}else v(s)&&s.forEach((function(e,n){t.push({nestedArrIndex:n,value:e})}))}r.$[i]=e}();else if(g(o)&&!M(o)){var c={v:o,n:n.norm.get(o)};r.$[i]=c}})),this.records.push(r)}},{key:"toJSON",value:function(){return{keys:this.keys,records:this.records}}}]),e}();function F(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},r=n.getFn,i=void 0===r?I.getFn:r,o=n.fieldNormWeight,c=void 0===o?I.fieldNormWeight:o,a=new $({getFn:i,fieldNormWeight:c});return a.setKeys(e.map(_)),a.setSources(t),a.create(),a}function R(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=t.errors,r=void 0===n?0:n,i=t.currentLocation,o=void 0===i?0:i,c=t.expectedLocation,a=void 0===c?0:c,s=t.distance,u=void 0===s?I.distance:s,h=t.ignoreLocation,l=void 0===h?I.ignoreLocation:h,f=r/e.length;if(l)return f;var d=Math.abs(a-o);return u?f+d/u:d?1:f}function N(){for(var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[],t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:I.minMatchCharLength,n=[],r=-1,i=-1,o=0,c=e.length;o<c;o+=1){var a=e[o];a&&-1===r?r=o:a||-1===r||((i=o-1)-r+1>=t&&n.push([r,i]),r=-1)}return e[o-1]&&o-r>=t&&n.push([r,o-1]),n}var P=32;function W(e){for(var t={},n=0,r=e.length;n<r;n+=1){var i=e.charAt(n);t[i]=(t[i]||0)|1<<r-n-1}return t}var T=function(){function e(t){var n=this,i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=i.location,c=void 0===o?I.location:o,a=i.threshold,s=void 0===a?I.threshold:a,u=i.distance,h=void 0===u?I.distance:u,l=i.includeMatches,f=void 0===l?I.includeMatches:l,d=i.findAllMatches,v=void 0===d?I.findAllMatches:d,g=i.minMatchCharLength,y=void 0===g?I.minMatchCharLength:g,p=i.isCaseSensitive,m=void 0===p?I.isCaseSensitive:p,k=i.ignoreLocation,M=void 0===k?I.ignoreLocation:k;if(r(this,e),this.options={location:c,threshold:s,distance:h,includeMatches:f,findAllMatches:v,minMatchCharLength:y,isCaseSensitive:m,ignoreLocation:M},this.pattern=m?t:t.toLowerCase(),this.chunks=[],this.pattern.length){var b=function(e,t){n.chunks.push({pattern:e,alphabet:W(e),startIndex:t})},x=this.pattern.length;if(x>P){for(var w=0,L=x%P,S=x-L;w<S;)b(this.pattern.substr(w,P),w),w+=P;if(L){var _=x-P;b(this.pattern.substr(_),_)}}else b(this.pattern,0)}}return o(e,[{key:"searchIn",value:function(e){var t=this.options,n=t.isCaseSensitive,r=t.includeMatches;if(n||(e=e.toLowerCase()),this.pattern===e){var i={isMatch:!0,score:0};return r&&(i.indices=[[0,e.length-1]]),i}var o=this.options,c=o.location,a=o.distance,s=o.threshold,u=o.findAllMatches,h=o.minMatchCharLength,l=o.ignoreLocation,d=[],v=0,g=!1;this.chunks.forEach((function(t){var n=t.pattern,i=t.alphabet,o=t.startIndex,y=function(e,t,n){var r=arguments.length>3&&void 0!==arguments[3]?arguments[3]:{},i=r.location,o=void 0===i?I.location:i,c=r.distance,a=void 0===c?I.distance:c,s=r.threshold,u=void 0===s?I.threshold:s,h=r.findAllMatches,l=void 0===h?I.findAllMatches:h,f=r.minMatchCharLength,d=void 0===f?I.minMatchCharLength:f,v=r.includeMatches,g=void 0===v?I.includeMatches:v,y=r.ignoreLocation,p=void 0===y?I.ignoreLocation:y;if(t.length>P)throw new Error(w(P));for(var m,k=t.length,M=e.length,b=Math.max(0,Math.min(o,M)),x=u,L=b,S=d>1||g,_=S?Array(M):[];(m=e.indexOf(t,L))>-1;){var O=R(t,{currentLocation:m,expectedLocation:b,distance:a,ignoreLocation:p});if(x=Math.min(O,x),L=m+k,S)for(var j=0;j<k;)_[m+j]=1,j+=1}L=-1;for(var A=[],C=1,E=k+M,$=1<<k-1,F=0;F<k;F+=1){for(var W=0,T=E;W<T;)R(t,{errors:F,currentLocation:b+T,expectedLocation:b,distance:a,ignoreLocation:p})<=x?W=T:E=T,T=Math.floor((E-W)/2+W);E=T;var z=Math.max(1,b-T+1),D=l?M:Math.min(b+T,M)+k,K=Array(D+2);K[D+1]=(1<<F)-1;for(var q=D;q>=z;q-=1){var B=q-1,J=n[e.charAt(B)];if(S&&(_[B]=+!!J),K[q]=(K[q+1]<<1|1)&J,F&&(K[q]|=(A[q+1]|A[q])<<1|1|A[q+1]),K[q]&$&&(C=R(t,{errors:F,currentLocation:B,expectedLocation:b,distance:a,ignoreLocation:p}))<=x){if(x=C,(L=B)<=b)break;z=Math.max(1,2*b-L)}}if(R(t,{errors:F+1,currentLocation:b,expectedLocation:b,distance:a,ignoreLocation:p})>x)break;A=K}var U={isMatch:L>=0,score:Math.max(.001,C)};if(S){var V=N(_,d);V.length?g&&(U.indices=V):U.isMatch=!1}return U}(e,n,i,{location:c+o,distance:a,threshold:s,findAllMatches:u,minMatchCharLength:h,includeMatches:r,ignoreLocation:l}),p=y.isMatch,m=y.score,k=y.indices;p&&(g=!0),v+=m,p&&k&&(d=[].concat(f(d),f(k)))}));var y={isMatch:g,score:g?v/this.chunks.length:1};return g&&r&&(y.indices=d),y}}]),e}(),z=function(){function e(t){r(this,e),this.pattern=t}return o(e,[{key:"search",value:function(){}}],[{key:"isMultiMatch",value:function(e){return D(e,this.multiRegex)}},{key:"isSingleMatch",value:function(e){return D(e,this.singleRegex)}}]),e}();function D(e,t){var n=e.match(t);return n?n[1]:null}var K=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){var t=e===this.pattern;return{isMatch:t,score:t?0:1,indices:[0,this.pattern.length-1]}}}],[{key:"type",get:function(){return"exact"}},{key:"multiRegex",get:function(){return/^="(.*)"$/}},{key:"singleRegex",get:function(){return/^=(.*)$/}}]),n}(z),q=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){var t=-1===e.indexOf(this.pattern);return{isMatch:t,score:t?0:1,indices:[0,e.length-1]}}}],[{key:"type",get:function(){return"inverse-exact"}},{key:"multiRegex",get:function(){return/^!"(.*)"$/}},{key:"singleRegex",get:function(){return/^!(.*)$/}}]),n}(z),B=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){var t=e.startsWith(this.pattern);return{isMatch:t,score:t?0:1,indices:[0,this.pattern.length-1]}}}],[{key:"type",get:function(){return"prefix-exact"}},{key:"multiRegex",get:function(){return/^\^"(.*)"$/}},{key:"singleRegex",get:function(){return/^\^(.*)$/}}]),n}(z),J=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){var t=!e.startsWith(this.pattern);return{isMatch:t,score:t?0:1,indices:[0,e.length-1]}}}],[{key:"type",get:function(){return"inverse-prefix-exact"}},{key:"multiRegex",get:function(){return/^!\^"(.*)"$/}},{key:"singleRegex",get:function(){return/^!\^(.*)$/}}]),n}(z),U=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){var t=e.endsWith(this.pattern);return{isMatch:t,score:t?0:1,indices:[e.length-this.pattern.length,e.length-1]}}}],[{key:"type",get:function(){return"suffix-exact"}},{key:"multiRegex",get:function(){return/^"(.*)"\$$/}},{key:"singleRegex",get:function(){return/^(.*)\$$/}}]),n}(z),V=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){var t=!e.endsWith(this.pattern);return{isMatch:t,score:t?0:1,indices:[0,e.length-1]}}}],[{key:"type",get:function(){return"inverse-suffix-exact"}},{key:"multiRegex",get:function(){return/^!"(.*)"\$$/}},{key:"singleRegex",get:function(){return/^!(.*)\$$/}}]),n}(z),G=function(e){a(n,e);var t=l(n);function n(e){var i,o=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},c=o.location,a=void 0===c?I.location:c,s=o.threshold,u=void 0===s?I.threshold:s,h=o.distance,l=void 0===h?I.distance:h,f=o.includeMatches,d=void 0===f?I.includeMatches:f,v=o.findAllMatches,g=void 0===v?I.findAllMatches:v,y=o.minMatchCharLength,p=void 0===y?I.minMatchCharLength:y,m=o.isCaseSensitive,k=void 0===m?I.isCaseSensitive:m,M=o.ignoreLocation,b=void 0===M?I.ignoreLocation:M;return r(this,n),(i=t.call(this,e))._bitapSearch=new T(e,{location:a,threshold:u,distance:l,includeMatches:d,findAllMatches:g,minMatchCharLength:p,isCaseSensitive:k,ignoreLocation:b}),i}return o(n,[{key:"search",value:function(e){return this._bitapSearch.searchIn(e)}}],[{key:"type",get:function(){return"fuzzy"}},{key:"multiRegex",get:function(){return/^"(.*)"$/}},{key:"singleRegex",get:function(){return/^(.*)$/}}]),n}(z),H=function(e){a(n,e);var t=l(n);function n(e){return r(this,n),t.call(this,e)}return o(n,[{key:"search",value:function(e){for(var t,n=0,r=[],i=this.pattern.length;(t=e.indexOf(this.pattern,n))>-1;)n=t+i,r.push([t,n-1]);var o=!!r.length;return{isMatch:o,score:o?0:1,indices:r}}}],[{key:"type",get:function(){return"include"}},{key:"multiRegex",get:function(){return/^'"(.*)"$/}},{key:"singleRegex",get:function(){return/^'(.*)$/}}]),n}(z),Q=[K,H,B,J,V,U,q,G],X=Q.length,Y=/ +(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/;function Z(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return e.split("|").map((function(e){for(var n=e.trim().split(Y).filter((function(e){return e&&!!e.trim()})),r=[],i=0,o=n.length;i<o;i+=1){for(var c=n[i],a=!1,s=-1;!a&&++s<X;){var u=Q[s],h=u.isMultiMatch(c);h&&(r.push(new u(h,t)),a=!0)}if(!a)for(s=-1;++s<X;){var l=Q[s],f=l.isSingleMatch(c);if(f){r.push(new l(f,t));break}}}return r}))}var ee=new Set([G.type,H.type]),te=function(){function e(t){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=n.isCaseSensitive,o=void 0===i?I.isCaseSensitive:i,c=n.includeMatches,a=void 0===c?I.includeMatches:c,s=n.minMatchCharLength,u=void 0===s?I.minMatchCharLength:s,h=n.ignoreLocation,l=void 0===h?I.ignoreLocation:h,f=n.findAllMatches,d=void 0===f?I.findAllMatches:f,v=n.location,g=void 0===v?I.location:v,y=n.threshold,p=void 0===y?I.threshold:y,m=n.distance,k=void 0===m?I.distance:m;r(this,e),this.query=null,this.options={isCaseSensitive:o,includeMatches:a,minMatchCharLength:u,findAllMatches:d,ignoreLocation:l,location:g,threshold:p,distance:k},this.pattern=o?t:t.toLowerCase(),this.query=Z(this.pattern,this.options)}return o(e,[{key:"searchIn",value:function(e){var t=this.query;if(!t)return{isMatch:!1,score:1};var n=this.options,r=n.includeMatches;e=n.isCaseSensitive?e:e.toLowerCase();for(var i=0,o=[],c=0,a=0,s=t.length;a<s;a+=1){var u=t[a];o.length=0,i=0;for(var h=0,l=u.length;h<l;h+=1){var d=u[h],v=d.search(e),g=v.isMatch,y=v.indices,p=v.score;if(!g){c=0,i=0,o.length=0;break}if(i+=1,c+=p,r){var m=d.constructor.type;ee.has(m)?o=[].concat(f(o),f(y)):o.push(y)}}if(i){var k={isMatch:!0,score:c/i};return r&&(k.indices=o),k}}return{isMatch:!1,score:1}}}],[{key:"condition",value:function(e,t){return t.useExtendedSearch}}]),e}(),ne=[];function re(e,t){for(var n=0,r=ne.length;n<r;n+=1){var i=ne[n];if(i.condition(e,t))return new i(e,t)}return new T(e,t)}var ie="$and",oe="$or",ce="$path",ae="$val",se=function(e){return!(!e[ie]&&!e[oe])},ue=function(e){return!!e[ce]},he=function(e){return!v(e)&&m(e)&&!se(e)},le=function(e){return c({},ie,Object.keys(e).map((function(t){return c({},t,e[t])})))};function fe(e,t){var n=t.ignoreFieldNorm,r=void 0===n?I.ignoreFieldNorm:n;e.forEach((function(e){var t=1;e.matches.forEach((function(e){var n=e.key,i=e.norm,o=e.score,c=n?n.weight:null;t*=Math.pow(0===o&&c?Number.EPSILON:o,(c||1)*(r?1:i))})),e.score=t}))}function de(e,t){var n=e.matches;t.matches=[],k(n)&&n.forEach((function(e){if(k(e.indices)&&e.indices.length){var n={indices:e.indices,value:e.value};e.key&&(n.key=e.key.src),e.idx>-1&&(n.refIndex=e.idx),t.matches.push(n)}}))}function ve(e,t){t.score=e.score}function ge(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},r=n.includeMatches,i=void 0===r?I.includeMatches:r,o=n.includeScore,c=void 0===o?I.includeScore:o,a=[];return i&&a.push(de),c&&a.push(ve),e.map((function(e){var n=e.idx,r={item:t[n],refIndex:n};return a.length&&a.forEach((function(t){t(e,r)})),r}))}var ye=function(){function e(n){var i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=arguments.length>2?arguments[2]:void 0;r(this,e),this.options=t(t({},I),i),this.options.useExtendedSearch,this._keyStore=new S(this.options.keys),this.setCollection(n,o)}return o(e,[{key:"setCollection",value:function(e,t){if(this._docs=e,t&&!(t instanceof $))throw new Error("Incorrect 'index' type");this._myIndex=t||F(this.options.keys,this._docs,{getFn:this.options.getFn,fieldNormWeight:this.options.fieldNormWeight})}},{key:"add",value:function(e){k(e)&&(this._docs.push(e),this._myIndex.add(e))}},{key:"remove",value:function(){for(var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:function(){return!1},t=[],n=0,r=this._docs.length;n<r;n+=1){var i=this._docs[n];e(i,n)&&(this.removeAt(n),n-=1,r-=1,t.push(i))}return t}},{key:"removeAt",value:function(e){this._docs.splice(e,1),this._myIndex.removeAt(e)}},{key:"getIndex",value:function(){return this._myIndex}},{key:"search",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=t.limit,r=void 0===n?-1:n,i=this.options,o=i.includeMatches,c=i.includeScore,a=i.shouldSort,s=i.sortFn,u=i.ignoreFieldNorm,h=g(e)?g(this._docs[0])?this._searchStringList(e):this._searchObjectList(e):this._searchLogical(e);return fe(h,{ignoreFieldNorm:u}),a&&h.sort(s),y(r)&&r>-1&&(h=h.slice(0,r)),ge(h,this._docs,{includeMatches:o,includeScore:c})}},{key:"_searchStringList",value:function(e){var t=re(e,this.options),n=this._myIndex.records,r=[];return n.forEach((function(e){var n=e.v,i=e.i,o=e.n;if(k(n)){var c=t.searchIn(n),a=c.isMatch,s=c.score,u=c.indices;a&&r.push({item:n,idx:i,matches:[{score:s,value:n,norm:o,indices:u}]})}})),r}},{key:"_searchLogical",value:function(e){var t=this,n=function(e,t){var n=(arguments.length>2&&void 0!==arguments[2]?arguments[2]:{}).auto,r=void 0===n||n,i=function e(n){var i=Object.keys(n),o=ue(n);if(!o&&i.length>1&&!se(n))return e(le(n));if(he(n)){var c=o?n[ce]:i[0],a=o?n[ae]:n[c];if(!g(a))throw new Error(x(c));var s={keyId:j(c),pattern:a};return r&&(s.searcher=re(a,t)),s}var u={children:[],operator:i[0]};return i.forEach((function(t){var r=n[t];v(r)&&r.forEach((function(t){u.children.push(e(t))}))})),u};return se(e)||(e=le(e)),i(e)}(e,this.options),r=function e(n,r,i){if(!n.children){var o=n.keyId,c=n.searcher,a=t._findMatches({key:t._keyStore.get(o),value:t._myIndex.getValueForItemAtKeyId(r,o),searcher:c});return a&&a.length?[{idx:i,item:r,matches:a}]:[]}for(var s=[],u=0,h=n.children.length;u<h;u+=1){var l=e(n.children[u],r,i);if(l.length)s.push.apply(s,f(l));else if(n.operator===ie)return[]}return s},i=this._myIndex.records,o={},c=[];return i.forEach((function(e){var t=e.$,i=e.i;if(k(t)){var a=r(n,t,i);a.length&&(o[i]||(o[i]={idx:i,item:t,matches:[]},c.push(o[i])),a.forEach((function(e){var t,n=e.matches;(t=o[i].matches).push.apply(t,f(n))})))}})),c}},{key:"_searchObjectList",value:function(e){var t=this,n=re(e,this.options),r=this._myIndex,i=r.keys,o=r.records,c=[];return o.forEach((function(e){var r=e.$,o=e.i;if(k(r)){var a=[];i.forEach((function(e,i){a.push.apply(a,f(t._findMatches({key:e,value:r[i],searcher:n})))})),a.length&&c.push({idx:o,item:r,matches:a})}})),c}},{key:"_findMatches",value:function(e){var t=e.key,n=e.value,r=e.searcher;if(!k(n))return[];var i=[];if(v(n))n.forEach((function(e){var n=e.v,o=e.i,c=e.n;if(k(n)){var a=r.searchIn(n),s=a.isMatch,u=a.score,h=a.indices;s&&i.push({score:u,key:t,value:n,idx:o,norm:c,indices:h})}}));else{var o=n.v,c=n.n,a=r.searchIn(o),s=a.isMatch,u=a.score,h=a.indices;s&&i.push({score:u,key:t,value:o,norm:c,indices:h})}return i}}]),e}();return ye.version="6.6.2",ye.createIndex=F,ye.parseIndex=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=t.getFn,r=void 0===n?I.getFn:n,i=t.fieldNormWeight,o=void 0===i?I.fieldNormWeight:i,c=e.keys,a=e.records,s=new $({getFn:r,fieldNormWeight:o});return s.setKeys(c),s.setIndexRecords(a),s},ye.config=I,function(){ne.push.apply(ne,arguments)}(te),ye},"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).Fuse=t();
+</script>
+<script>
+/* @license
+Papa Parse
+v5.4.1
+https://github.com/mholt/PapaParse
+License: MIT
+*/
+!function(e,t){"function"==typeof define&&define.amd?define([],t):"object"==typeof module&&"undefined"!=typeof exports?module.exports=t():e.Papa=t()}(this,function s(){"use strict";var f="undefined"!=typeof self?self:"undefined"!=typeof window?window:void 0!==f?f:{};var n=!f.document&&!!f.postMessage,o=f.IS_PAPA_WORKER||!1,a={},u=0,b={parse:function(e,t){var r=(t=t||{}).dynamicTyping||!1;J(r)&&(t.dynamicTypingFunction=r,r={});if(t.dynamicTyping=r,t.transform=!!J(t.transform)&&t.transform,t.worker&&b.WORKERS_SUPPORTED){var i=function(){if(!b.WORKERS_SUPPORTED)return!1;var e=(r=f.URL||f.webkitURL||null,i=s.toString(),b.BLOB_URL||(b.BLOB_URL=r.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ","(",i,")();"],{type:"text/javascript"})))),t=new f.Worker(e);var r,i;return t.onmessage=_,t.id=u++,a[t.id]=t}();return i.userStep=t.step,i.userChunk=t.chunk,i.userComplete=t.complete,i.userError=t.error,t.step=J(t.step),t.chunk=J(t.chunk),t.complete=J(t.complete),t.error=J(t.error),delete t.worker,void i.postMessage({input:e,config:t,workerId:i.id})}var n=null;b.NODE_STREAM_INPUT,"string"==typeof e?(e=function(e){if(65279===e.charCodeAt(0))return e.slice(1);return e}(e),n=t.download?new l(t):new p(t)):!0===e.readable&&J(e.read)&&J(e.on)?n=new g(t):(f.File&&e instanceof File||e instanceof Object)&&(n=new c(t));return n.stream(e)},unparse:function(e,t){var n=!1,_=!0,m=",",y="\r\n",s='"',a=s+s,r=!1,i=null,o=!1;!function(){if("object"!=typeof t)return;"string"!=typeof t.delimiter||b.BAD_DELIMITERS.filter(function(e){return-1!==t.delimiter.indexOf(e)}).length||(m=t.delimiter);("boolean"==typeof t.quotes||"function"==typeof t.quotes||Array.isArray(t.quotes))&&(n=t.quotes);"boolean"!=typeof t.skipEmptyLines&&"string"!=typeof t.skipEmptyLines||(r=t.skipEmptyLines);"string"==typeof t.newline&&(y=t.newline);"string"==typeof t.quoteChar&&(s=t.quoteChar);"boolean"==typeof t.header&&(_=t.header);if(Array.isArray(t.columns)){if(0===t.columns.length)throw new Error("Option columns is empty");i=t.columns}void 0!==t.escapeChar&&(a=t.escapeChar+s);("boolean"==typeof t.escapeFormulae||t.escapeFormulae instanceof RegExp)&&(o=t.escapeFormulae instanceof RegExp?t.escapeFormulae:/^[=+\-@\t\r].*$/)}();var u=new RegExp(Q(s),"g");"string"==typeof e&&(e=JSON.parse(e));if(Array.isArray(e)){if(!e.length||Array.isArray(e[0]))return h(null,e,r);if("object"==typeof e[0])return h(i||Object.keys(e[0]),e,r)}else if("object"==typeof e)return"string"==typeof e.data&&(e.data=JSON.parse(e.data)),Array.isArray(e.data)&&(e.fields||(e.fields=e.meta&&e.meta.fields||i),e.fields||(e.fields=Array.isArray(e.data[0])?e.fields:"object"==typeof e.data[0]?Object.keys(e.data[0]):[]),Array.isArray(e.data[0])||"object"==typeof e.data[0]||(e.data=[e.data])),h(e.fields||[],e.data||[],r);throw new Error("Unable to serialize unrecognized input");function h(e,t,r){var i="";"string"==typeof e&&(e=JSON.parse(e)),"string"==typeof t&&(t=JSON.parse(t));var n=Array.isArray(e)&&0<e.length,s=!Array.isArray(t[0]);if(n&&_){for(var a=0;a<e.length;a++)0<a&&(i+=m),i+=v(e[a],a);0<t.length&&(i+=y)}for(var o=0;o<t.length;o++){var u=n?e.length:t[o].length,h=!1,f=n?0===Object.keys(t[o]).length:0===t[o].length;if(r&&!n&&(h="greedy"===r?""===t[o].join("").trim():1===t[o].length&&0===t[o][0].length),"greedy"===r&&n){for(var d=[],l=0;l<u;l++){var c=s?e[l]:l;d.push(t[o][c])}h=""===d.join("").trim()}if(!h){for(var p=0;p<u;p++){0<p&&!f&&(i+=m);var g=n&&s?e[p]:p;i+=v(t[o][g],p)}o<t.length-1&&(!r||0<u&&!f)&&(i+=y)}}return i}function v(e,t){if(null==e)return"";if(e.constructor===Date)return JSON.stringify(e).slice(1,25);var r=!1;o&&"string"==typeof e&&o.test(e)&&(e="'"+e,r=!0);var i=e.toString().replace(u,a);return(r=r||!0===n||"function"==typeof n&&n(e,t)||Array.isArray(n)&&n[t]||function(e,t){for(var r=0;r<t.length;r++)if(-1<e.indexOf(t[r]))return!0;return!1}(i,b.BAD_DELIMITERS)||-1<i.indexOf(m)||" "===i.charAt(0)||" "===i.charAt(i.length-1))?s+i+s:i}}};if(b.RECORD_SEP=String.fromCharCode(30),b.UNIT_SEP=String.fromCharCode(31),b.BYTE_ORDER_MARK="\ufeff",b.BAD_DELIMITERS=["\r","\n",'"',b.BYTE_ORDER_MARK],b.WORKERS_SUPPORTED=!n&&!!f.Worker,b.NODE_STREAM_INPUT=1,b.LocalChunkSize=10485760,b.RemoteChunkSize=5242880,b.DefaultDelimiter=",",b.Parser=E,b.ParserHandle=r,b.NetworkStreamer=l,b.FileStreamer=c,b.StringStreamer=p,b.ReadableStreamStreamer=g,f.jQuery){var d=f.jQuery;d.fn.parse=function(o){var r=o.config||{},u=[];return this.each(function(e){if(!("INPUT"===d(this).prop("tagName").toUpperCase()&&"file"===d(this).attr("type").toLowerCase()&&f.FileReader)||!this.files||0===this.files.length)return!0;for(var t=0;t<this.files.length;t++)u.push({file:this.files[t],inputElem:this,instanceConfig:d.extend({},r)})}),e(),this;function e(){if(0!==u.length){var e,t,r,i,n=u[0];if(J(o.before)){var s=o.before(n.file,n.inputElem);if("object"==typeof s){if("abort"===s.action)return e="AbortError",t=n.file,r=n.inputElem,i=s.reason,void(J(o.error)&&o.error({name:e},t,r,i));if("skip"===s.action)return void h();"object"==typeof s.config&&(n.instanceConfig=d.extend(n.instanceConfig,s.config))}else if("skip"===s)return void h()}var a=n.instanceConfig.complete;n.instanceConfig.complete=function(e){J(a)&&a(e,n.file,n.inputElem),h()},b.parse(n.file,n.instanceConfig)}else J(o.complete)&&o.complete()}function h(){u.splice(0,1),e()}}}function h(e){this._handle=null,this._finished=!1,this._completed=!1,this._halted=!1,this._input=null,this._baseIndex=0,this._partialLine="",this._rowCount=0,this._start=0,this._nextChunk=null,this.isFirstChunk=!0,this._completeResults={data:[],errors:[],meta:{}},function(e){var t=w(e);t.chunkSize=parseInt(t.chunkSize),e.step||e.chunk||(t.chunkSize=null);this._handle=new r(t),(this._handle.streamer=this)._config=t}.call(this,e),this.parseChunk=function(e,t){if(this.isFirstChunk&&J(this._config.beforeFirstChunk)){var r=this._config.beforeFirstChunk(e);void 0!==r&&(e=r)}this.isFirstChunk=!1,this._halted=!1;var i=this._partialLine+e;this._partialLine="";var n=this._handle.parse(i,this._baseIndex,!this._finished);if(!this._handle.paused()&&!this._handle.aborted()){var s=n.meta.cursor;this._finished||(this._partialLine=i.substring(s-this._baseIndex),this._baseIndex=s),n&&n.data&&(this._rowCount+=n.data.length);var a=this._finished||this._config.preview&&this._rowCount>=this._config.preview;if(o)f.postMessage({results:n,workerId:b.WORKER_ID,finished:a});else if(J(this._config.chunk)&&!t){if(this._config.chunk(n,this._handle),this._handle.paused()||this._handle.aborted())return void(this._halted=!0);n=void 0,this._completeResults=void 0}return this._config.step||this._config.chunk||(this._completeResults.data=this._completeResults.data.concat(n.data),this._completeResults.errors=this._completeResults.errors.concat(n.errors),this._completeResults.meta=n.meta),this._completed||!a||!J(this._config.complete)||n&&n.meta.aborted||(this._config.complete(this._completeResults,this._input),this._completed=!0),a||n&&n.meta.paused||this._nextChunk(),n}this._halted=!0},this._sendError=function(e){J(this._config.error)?this._config.error(e):o&&this._config.error&&f.postMessage({workerId:b.WORKER_ID,error:e,finished:!1})}}function l(e){var i;(e=e||{}).chunkSize||(e.chunkSize=b.RemoteChunkSize),h.call(this,e),this._nextChunk=n?function(){this._readChunk(),this._chunkLoaded()}:function(){this._readChunk()},this.stream=function(e){this._input=e,this._nextChunk()},this._readChunk=function(){if(this._finished)this._chunkLoaded();else{if(i=new XMLHttpRequest,this._config.withCredentials&&(i.withCredentials=this._config.withCredentials),n||(i.onload=v(this._chunkLoaded,this),i.onerror=v(this._chunkError,this)),i.open(this._config.downloadRequestBody?"POST":"GET",this._input,!n),this._config.downloadRequestHeaders){var e=this._config.downloadRequestHeaders;for(var t in e)i.setRequestHeader(t,e[t])}if(this._config.chunkSize){var r=this._start+this._config.chunkSize-1;i.setRequestHeader("Range","bytes="+this._start+"-"+r)}try{i.send(this._config.downloadRequestBody)}catch(e){this._chunkError(e.message)}n&&0===i.status&&this._chunkError()}},this._chunkLoaded=function(){4===i.readyState&&(i.status<200||400<=i.status?this._chunkError():(this._start+=this._config.chunkSize?this._config.chunkSize:i.responseText.length,this._finished=!this._config.chunkSize||this._start>=function(e){var t=e.getResponseHeader("Content-Range");if(null===t)return-1;return parseInt(t.substring(t.lastIndexOf("/")+1))}(i),this.parseChunk(i.responseText)))},this._chunkError=function(e){var t=i.statusText||e;this._sendError(new Error(t))}}function c(e){var i,n;(e=e||{}).chunkSize||(e.chunkSize=b.LocalChunkSize),h.call(this,e);var s="undefined"!=typeof FileReader;this.stream=function(e){this._input=e,n=e.slice||e.webkitSlice||e.mozSlice,s?((i=new FileReader).onload=v(this._chunkLoaded,this),i.onerror=v(this._chunkError,this)):i=new FileReaderSync,this._nextChunk()},this._nextChunk=function(){this._finished||this._config.preview&&!(this._rowCount<this._config.preview)||this._readChunk()},this._readChunk=function(){var e=this._input;if(this._config.chunkSize){var t=Math.min(this._start+this._config.chunkSize,this._input.size);e=n.call(e,this._start,t)}var r=i.readAsText(e,this._config.encoding);s||this._chunkLoaded({target:{result:r}})},this._chunkLoaded=function(e){this._start+=this._config.chunkSize,this._finished=!this._config.chunkSize||this._start>=this._input.size,this.parseChunk(e.target.result)},this._chunkError=function(){this._sendError(i.error)}}function p(e){var r;h.call(this,e=e||{}),this.stream=function(e){return r=e,this._nextChunk()},this._nextChunk=function(){if(!this._finished){var e,t=this._config.chunkSize;return t?(e=r.substring(0,t),r=r.substring(t)):(e=r,r=""),this._finished=!r,this.parseChunk(e)}}}function g(e){h.call(this,e=e||{});var t=[],r=!0,i=!1;this.pause=function(){h.prototype.pause.apply(this,arguments),this._input.pause()},this.resume=function(){h.prototype.resume.apply(this,arguments),this._input.resume()},this.stream=function(e){this._input=e,this._input.on("data",this._streamData),this._input.on("end",this._streamEnd),this._input.on("error",this._streamError)},this._checkIsFinished=function(){i&&1===t.length&&(this._finished=!0)},this._nextChunk=function(){this._checkIsFinished(),t.length?this.parseChunk(t.shift()):r=!0},this._streamData=v(function(e){try{t.push("string"==typeof e?e:e.toString(this._config.encoding)),r&&(r=!1,this._checkIsFinished(),this.parseChunk(t.shift()))}catch(e){this._streamError(e)}},this),this._streamError=v(function(e){this._streamCleanUp(),this._sendError(e)},this),this._streamEnd=v(function(){this._streamCleanUp(),i=!0,this._streamData("")},this),this._streamCleanUp=v(function(){this._input.removeListener("data",this._streamData),this._input.removeListener("end",this._streamEnd),this._input.removeListener("error",this._streamError)},this)}function r(m){var a,o,u,i=Math.pow(2,53),n=-i,s=/^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/,h=/^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/,t=this,r=0,f=0,d=!1,e=!1,l=[],c={data:[],errors:[],meta:{}};if(J(m.step)){var p=m.step;m.step=function(e){if(c=e,_())g();else{if(g(),0===c.data.length)return;r+=e.data.length,m.preview&&r>m.preview?o.abort():(c.data=c.data[0],p(c,t))}}}function y(e){return"greedy"===m.skipEmptyLines?""===e.join("").trim():1===e.length&&0===e[0].length}function g(){return c&&u&&(k("Delimiter","UndetectableDelimiter","Unable to auto-detect delimiting character; defaulted to '"+b.DefaultDelimiter+"'"),u=!1),m.skipEmptyLines&&(c.data=c.data.filter(function(e){return!y(e)})),_()&&function(){if(!c)return;function e(e,t){J(m.transformHeader)&&(e=m.transformHeader(e,t)),l.push(e)}if(Array.isArray(c.data[0])){for(var t=0;_()&&t<c.data.length;t++)c.data[t].forEach(e);c.data.splice(0,1)}else c.data.forEach(e)}(),function(){if(!c||!m.header&&!m.dynamicTyping&&!m.transform)return c;function e(e,t){var r,i=m.header?{}:[];for(r=0;r<e.length;r++){var n=r,s=e[r];m.header&&(n=r>=l.length?"__parsed_extra":l[r]),m.transform&&(s=m.transform(s,n)),s=v(n,s),"__parsed_extra"===n?(i[n]=i[n]||[],i[n].push(s)):i[n]=s}return m.header&&(r>l.length?k("FieldMismatch","TooManyFields","Too many fields: expected "+l.length+" fields but parsed "+r,f+t):r<l.length&&k("FieldMismatch","TooFewFields","Too few fields: expected "+l.length+" fields but parsed "+r,f+t)),i}var t=1;!c.data.length||Array.isArray(c.data[0])?(c.data=c.data.map(e),t=c.data.length):c.data=e(c.data,0);m.header&&c.meta&&(c.meta.fields=l);return f+=t,c}()}function _(){return m.header&&0===l.length}function v(e,t){return r=e,m.dynamicTypingFunction&&void 0===m.dynamicTyping[r]&&(m.dynamicTyping[r]=m.dynamicTypingFunction(r)),!0===(m.dynamicTyping[r]||m.dynamicTyping)?"true"===t||"TRUE"===t||"false"!==t&&"FALSE"!==t&&(function(e){if(s.test(e)){var t=parseFloat(e);if(n<t&&t<i)return!0}return!1}(t)?parseFloat(t):h.test(t)?new Date(t):""===t?null:t):t;var r}function k(e,t,r,i){var n={type:e,code:t,message:r};void 0!==i&&(n.row=i),c.errors.push(n)}this.parse=function(e,t,r){var i=m.quoteChar||'"';if(m.newline||(m.newline=function(e,t){e=e.substring(0,1048576);var r=new RegExp(Q(t)+"([^]*?)"+Q(t),"gm"),i=(e=e.replace(r,"")).split("\r"),n=e.split("\n"),s=1<n.length&&n[0].length<i[0].length;if(1===i.length||s)return"\n";for(var a=0,o=0;o<i.length;o++)"\n"===i[o][0]&&a++;return a>=i.length/2?"\r\n":"\r"}(e,i)),u=!1,m.delimiter)J(m.delimiter)&&(m.delimiter=m.delimiter(e),c.meta.delimiter=m.delimiter);else{var n=function(e,t,r,i,n){var s,a,o,u;n=n||[",","\t","|",";",b.RECORD_SEP,b.UNIT_SEP];for(var h=0;h<n.length;h++){var f=n[h],d=0,l=0,c=0;o=void 0;for(var p=new E({comments:i,delimiter:f,newline:t,preview:10}).parse(e),g=0;g<p.data.length;g++)if(r&&y(p.data[g]))c++;else{var _=p.data[g].length;l+=_,void 0!==o?0<_&&(d+=Math.abs(_-o),o=_):o=_}0<p.data.length&&(l/=p.data.length-c),(void 0===a||d<=a)&&(void 0===u||u<l)&&1.99<l&&(a=d,s=f,u=l)}return{successful:!!(m.delimiter=s),bestDelimiter:s}}(e,m.newline,m.skipEmptyLines,m.comments,m.delimitersToGuess);n.successful?m.delimiter=n.bestDelimiter:(u=!0,m.delimiter=b.DefaultDelimiter),c.meta.delimiter=m.delimiter}var s=w(m);return m.preview&&m.header&&s.preview++,a=e,o=new E(s),c=o.parse(a,t,r),g(),d?{meta:{paused:!0}}:c||{meta:{paused:!1}}},this.paused=function(){return d},this.pause=function(){d=!0,o.abort(),a=J(m.chunk)?"":a.substring(o.getCharIndex())},this.resume=function(){t.streamer._halted?(d=!1,t.streamer.parseChunk(a,!0)):setTimeout(t.resume,3)},this.aborted=function(){return e},this.abort=function(){e=!0,o.abort(),c.meta.aborted=!0,J(m.complete)&&m.complete(c),a=""}}function Q(e){return e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}function E(j){var z,M=(j=j||{}).delimiter,P=j.newline,U=j.comments,q=j.step,N=j.preview,B=j.fastMode,K=z=void 0===j.quoteChar||null===j.quoteChar?'"':j.quoteChar;if(void 0!==j.escapeChar&&(K=j.escapeChar),("string"!=typeof M||-1<b.BAD_DELIMITERS.indexOf(M))&&(M=","),U===M)throw new Error("Comment character same as delimiter");!0===U?U="#":("string"!=typeof U||-1<b.BAD_DELIMITERS.indexOf(U))&&(U=!1),"\n"!==P&&"\r"!==P&&"\r\n"!==P&&(P="\n");var W=0,H=!1;this.parse=function(i,t,r){if("string"!=typeof i)throw new Error("Input must be a string");var n=i.length,e=M.length,s=P.length,a=U.length,o=J(q),u=[],h=[],f=[],d=W=0;if(!i)return L();if(j.header&&!t){var l=i.split(P)[0].split(M),c=[],p={},g=!1;for(var _ in l){var m=l[_];J(j.transformHeader)&&(m=j.transformHeader(m,_));var y=m,v=p[m]||0;for(0<v&&(g=!0,y=m+"_"+v),p[m]=v+1;c.includes(y);)y=y+"_"+v;c.push(y)}if(g){var k=i.split(P);k[0]=c.join(M),i=k.join(P)}}if(B||!1!==B&&-1===i.indexOf(z)){for(var b=i.split(P),E=0;E<b.length;E++){if(f=b[E],W+=f.length,E!==b.length-1)W+=P.length;else if(r)return L();if(!U||f.substring(0,a)!==U){if(o){if(u=[],I(f.split(M)),F(),H)return L()}else I(f.split(M));if(N&&N<=E)return u=u.slice(0,N),L(!0)}}return L()}for(var w=i.indexOf(M,W),R=i.indexOf(P,W),C=new RegExp(Q(K)+Q(z),"g"),S=i.indexOf(z,W);;)if(i[W]!==z)if(U&&0===f.length&&i.substring(W,W+a)===U){if(-1===R)return L();W=R+s,R=i.indexOf(P,W),w=i.indexOf(M,W)}else if(-1!==w&&(w<R||-1===R))f.push(i.substring(W,w)),W=w+e,w=i.indexOf(M,W);else{if(-1===R)break;if(f.push(i.substring(W,R)),D(R+s),o&&(F(),H))return L();if(N&&u.length>=N)return L(!0)}else for(S=W,W++;;){if(-1===(S=i.indexOf(z,S+1)))return r||h.push({type:"Quotes",code:"MissingQuotes",message:"Quoted field unterminated",row:u.length,index:W}),T();if(S===n-1)return T(i.substring(W,S).replace(C,z));if(z!==K||i[S+1]!==K){if(z===K||0===S||i[S-1]!==K){-1!==w&&w<S+1&&(w=i.indexOf(M,S+1)),-1!==R&&R<S+1&&(R=i.indexOf(P,S+1));var O=A(-1===R?w:Math.min(w,R));if(i.substr(S+1+O,e)===M){f.push(i.substring(W,S).replace(C,z)),i[W=S+1+O+e]!==z&&(S=i.indexOf(z,W)),w=i.indexOf(M,W),R=i.indexOf(P,W);break}var x=A(R);if(i.substring(S+1+x,S+1+x+s)===P){if(f.push(i.substring(W,S).replace(C,z)),D(S+1+x+s),w=i.indexOf(M,W),S=i.indexOf(z,W),o&&(F(),H))return L();if(N&&u.length>=N)return L(!0);break}h.push({type:"Quotes",code:"InvalidQuotes",message:"Trailing quote on quoted field is malformed",row:u.length,index:W}),S++}}else S++}return T();function I(e){u.push(e),d=W}function A(e){var t=0;if(-1!==e){var r=i.substring(S+1,e);r&&""===r.trim()&&(t=r.length)}return t}function T(e){return r||(void 0===e&&(e=i.substring(W)),f.push(e),W=n,I(f),o&&F()),L()}function D(e){W=e,I(f),f=[],R=i.indexOf(P,W)}function L(e){return{data:u,errors:h,meta:{delimiter:M,linebreak:P,aborted:H,truncated:!!e,cursor:d+(t||0)}}}function F(){q(L()),u=[],h=[]}},this.abort=function(){H=!0},this.getCharIndex=function(){return W}}function _(e){var t=e.data,r=a[t.workerId],i=!1;if(t.error)r.userError(t.error,t.file);else if(t.results&&t.results.data){var n={abort:function(){i=!0,m(t.workerId,{data:[],errors:[],meta:{aborted:!0}})},pause:y,resume:y};if(J(r.userStep)){for(var s=0;s<t.results.data.length&&(r.userStep({data:t.results.data[s],errors:t.results.errors,meta:t.results.meta},n),!i);s++);delete t.results}else J(r.userChunk)&&(r.userChunk(t.results,n,t.file),delete t.results)}t.finished&&!i&&m(t.workerId,t.results)}function m(e,t){var r=a[e];J(r.userComplete)&&r.userComplete(t),r.terminate(),delete a[e]}function y(){throw new Error("Not implemented.")}function w(e){if("object"!=typeof e||null===e)return e;var t=Array.isArray(e)?[]:{};for(var r in e)t[r]=w(e[r]);return t}function v(e,t){return function(){e.apply(t,arguments)}}function J(e){return"function"==typeof e}return o&&(f.onmessage=function(e){var t=e.data;void 0===b.WORKER_ID&&t&&(b.WORKER_ID=t.workerId);if("string"==typeof t.input)f.postMessage({workerId:b.WORKER_ID,results:b.parse(t.input,t.config),finished:!0});else if(f.File&&t.input instanceof File||t.input instanceof Object){var r=b.parse(t.input,t.config);r&&f.postMessage({workerId:b.WORKER_ID,results:r,finished:!0})}}),(l.prototype=Object.create(h.prototype)).constructor=l,(c.prototype=Object.create(h.prototype)).constructor=c,(p.prototype=Object.create(p.prototype)).constructor=p,(g.prototype=Object.create(h.prototype)).constructor=g,b});
+</script>
 </head>
 <body>
 <div id="toast"></div>
 <div class="container">
     <div class="top-controls no-print">
         <div class="top-controls-group">
-            <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
-                <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme" aria-label="Toggle theme">
+                <svg id="themeIcon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
             </button>
-            <button class="theme-toggle-btn" onclick="exportSession()" title="Save Session">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <button class="theme-toggle-btn" onclick="exportSession()" title="Save Session" aria-label="Save session">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
             </button>
-            <button class="theme-toggle-btn" onclick="document.getElementById('sessionFileInput').click()" title="Load Session">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <button class="theme-toggle-btn" onclick="document.getElementById('sessionFileInput').click()" title="Load Session" aria-label="Load session">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             </button>
             <input type="file" id="sessionFileInput" accept=".json" style="display: none;" onchange="importSession(this)">
+        </div>
+        <div class="top-controls-group">
+            <button class="queue-badge" id="queueBadge" onclick="tryFlushOfflineQueue()" style="display:none;" title="Retry queued submissions" aria-label="Retry queued submissions"></button>
         </div>
         <div class="legacy-mode-toggle">
             <span>Legacy Mode</span>
@@ -935,22 +997,22 @@ to { opacity: 1; transform: translateY(0); }
 
     <div class="title-wrap no-print">
         <span class="legacy-pill">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             Legacy tool
         </span>
         <h1 class="title">بيان الخارجي</h1>
         <p class="subtitle">External supply statement &middot; pharmacy monthly report</p>
         <div class="stats-strip">
             <span class="stats-chip">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"></path></svg>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"></path></svg>
                 <strong id="statEntries">0</strong>&nbsp;entries
             </span>
             <span class="stats-chip">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V6a5 5 0 0 1 10 0v2"></path></svg>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V6a5 5 0 0 1 10 0v2"></path></svg>
                 <strong id="statUnits">0</strong>&nbsp;units sold
             </span>
             <span class="stats-chip" id="statPendingChip" style="display:none;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 <strong id="statPending">0</strong>&nbsp;need context
             </span>
         </div>
@@ -971,14 +1033,14 @@ to { opacity: 1; transform: translateY(0); }
                 <span style="color: var(--primary-color); font-weight: 600;">a=Students, b=Workforce, c=Infants</span>
             </div>
             <div class="id-input-wrapper">
-                <span class="id-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></span>
+                <span class="id-icon"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></span>
                 <input type="text" id="quickIdInput" placeholder="Quick ID" title="Enter Quick ID" maxlength="5">
                 <span class="id-enter-hint">Press Enter</span>
             </div>
         </div>
 
         <div class="section-label">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
             Location
         </div>
 
@@ -1021,7 +1083,7 @@ to { opacity: 1; transform: translateY(0); }
         </select>
 
         <div class="section-label">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             Product entry
         </div>
 
@@ -1035,11 +1097,11 @@ to { opacity: 1; transform: translateY(0); }
 
         <div class="button-container">
             <button class="btn" onclick="addData()" title="Add Data">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Add Data
             </button>
             <button class="btn" id="addNameBtn" onclick="showAddNameModal()" disabled title="Add Name">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
                 Add Name
             </button>
         </div>
@@ -1047,19 +1109,34 @@ to { opacity: 1; transform: translateY(0); }
 
     <div id="results">
         <table>
-            <thead>
+            <thead class="no-print">
                 <tr>
                     <th>Product / Unit</th>
                     <th>Units Sold</th>
                     <th class="no-print" style="width: 50px;"></th>
                 </tr>
             </thead>
+            <thead class="print-table-header">
+                <tr>
+                    <th>الصنف / العبوة</th>
+                    <th>الكمية المنصرفة</th>
+                    <th></th>
+                </tr>
+            </thead>
             <tbody id="dataTable">
             </tbody>
         </table>
+        <div class="print-footer">
+            <p>تاريخ الطباعة: <span id="printDate"></span> &middot; عدد الأصناف: <span id="printItemCount"></span></p>
+            <div class="print-signature">
+                <span>التوقيع: ______________________</span>
+                <span>الختم</span>
+            </div>
+        </div>
     </div>
 
     <div id="legacyMode">
+        <input type="text" id="legacyFilterInput" placeholder="Filter products…" aria-label="Filter products" oninput="filterLegacyTable(this.value)">
         <table>
             <thead>
                 <tr>
@@ -1074,31 +1151,34 @@ to { opacity: 1; transform: translateY(0); }
     </div>
 
     <div class="action-dock no-print">
-        <div class="dock-item csv-icon" onclick="downloadTemplate('csv')" data-tooltip="CSV Export">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 12H8"></path><path d="M16 12h-2"></path><path d="M12 18V12"></path></svg>
-        </div>
-        <div class="dock-item json-icon" onclick="downloadTemplate('json')" data-tooltip="JSON Export">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 13a2 2 0 0 0 1-1.99l-1 .01a2 2 0 0 0-3.98 0l-1-.01A2 2 0 0 0 7 13"></path><path d="M17 13a2 2 0 0 0 1-1.99l-1 .01a2 2 0 0 0-3.98 0l-1-.01A2 2 0 0 0 14 13"></path></svg>
-        </div>
-        <div class="dock-item upload-icon" onclick="openImportModal()" data-tooltip="Direct DB Import">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-        </div>
+        <button type="button" class="dock-item csv-icon" onclick="downloadTemplate('csv')" data-tooltip="CSV Export" aria-label="Export CSV">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 12H8"></path><path d="M16 12h-2"></path><path d="M12 18V12"></path></svg>
+        </button>
+        <button type="button" class="dock-item json-icon" onclick="downloadTemplate('json')" data-tooltip="JSON Export" aria-label="Export JSON">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 13a2 2 0 0 0 1-1.99l-1 .01a2 2 0 0 0-3.98 0l-1-.01A2 2 0 0 0 7 13"></path><path d="M17 13a2 2 0 0 0 1-1.99l-1 .01a2 2 0 0 0-3.98 0l-1-.01A2 2 0 0 0 14 13"></path></svg>
+        </button>
+        <button type="button" class="dock-item upload-icon" onclick="openImportModal()" data-tooltip="Direct DB Import" aria-label="Import from file">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        </button>
+        <button type="button" class="dock-item clear-icon" onclick="clearReport()" data-tooltip="Clear Report" aria-label="Clear report">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
         <div class="dock-divider"></div>
-        <div class="dock-item print-icon" onclick="printReport()" data-tooltip="Print Report">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-        </div>
-        <div class="dock-item submit-icon" id="submitBtnDock" onclick="submitData()" data-tooltip="Submit to Database">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-        </div>
+        <button type="button" class="dock-item print-icon" onclick="printReport()" data-tooltip="Print Report" aria-label="Print report">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        </button>
+        <button type="button" class="dock-item submit-icon" id="submitBtnDock" onclick="submitData()" data-tooltip="Submit to Database" aria-label="Submit to database">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
     </div>
 
-    <div id="addNameModal" class="modal">
+    <div id="addNameModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="addNameModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeAddNameModal()" title="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <button class="modal-close" onclick="closeAddNameModal()" title="Close" aria-label="Close">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+            <h2 id="addNameModalTitle">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
                 Add New Name
             </h2>
             <label for="nameCategory">Context</label>
@@ -1122,13 +1202,13 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <div id="bulkContextModal" class="modal">
+    <div id="bulkContextModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bulkContextModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="this.closest('.modal').style.display='none'" title="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <button class="modal-close" onclick="this.closest('.modal').style.display='none'" title="Close" aria-label="Close">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <h2 id="bulkContextModalTitle">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                 Select Context for New Items
             </h2>
             <p class="modal-desc">The following items are not in the main list. Please select a context for addition.</p>
@@ -1150,18 +1230,18 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <div id="importModal" class="modal">
+    <div id="importModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeImportModal()" title="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <button class="modal-close" onclick="closeImportModal()" title="Close" aria-label="Close">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <h2 id="importModalTitle">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 Direct DB File Import
             </h2>
             <p class="modal-desc">Uploaded files will bypass the table UI and be verified before pushing directly to the database. You can select multiple files.</p>
             <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 <div class="drop-zone-text">Drag &amp; drop files here or click to browse</div>
                 <div class="drop-zone-hint">Accepts .csv and .json &middot; multiple files supported</div>
                 <input type="file" id="fileInput" accept=".csv, .json" multiple style="display: none;" onchange="handleFileSelect(this)">
@@ -1184,12 +1264,12 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <div id="fileValidationModal" class="modal">
+    <div id="fileValidationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="fileValidationModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeValidationModal()" title="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <button class="modal-close" onclick="requestCancelValidationBatch()" title="Close" aria-label="Close">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-            <h2>
+            <h2 id="fileValidationModalTitle">
                 File Verification:
                 <span id="currentFileName" style="color: var(--text-color); margin-left: 6px; font-weight: 500; background: var(--surface-alt); padding: 4px 12px; border-radius: 8px; font-size: 1.1rem; border: 1px solid var(--border-color);"></span>
             </h2>
@@ -1203,9 +1283,28 @@ to { opacity: 1; transform: translateY(0); }
                     <div style="font-size: 2rem;" id="valPendingCount">0</div>
                     <div>Need Context</div>
                 </div>
+                <div class="stat-card pending">
+                    <div style="font-size: 2rem;" id="valRemapCount">0</div>
+                    <div>Suggested Matches</div>
+                </div>
                 <div class="stat-card invalid">
                     <div style="font-size: 2rem;" id="valInvalidCount">0</div>
                     <div>Errors</div>
+                </div>
+            </div>
+
+            <div id="valRemapSection" class="validation-section" style="display: none;">
+                <h4>Suggested matches — review before submitting</h4>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    <table class="bulk-table">
+                        <thead>
+                            <tr>
+                                <th>Imported name → Suggested match</th>
+                                <th style="width: 220px;">Decision</th>
+                            </tr>
+                        </thead>
+                        <tbody id="valRemapTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1238,24 +1337,73 @@ to { opacity: 1; transform: translateY(0); }
         </div>
     </div>
 
-    <div id="confirmModal" class="modal">
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
         <div class="modal-content" style="max-width: 460px;">
-            <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                Did you mean&hellip;?
+            <h2 id="confirmModalTitle">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Please confirm
             </h2>
             <p class="modal-desc" id="confirmModalMessage" style="margin: 0 0 0.5rem;"></p>
             <div class="button-container">
-                <button class="btn" id="confirmModalYes" onclick="resolveConfirmModal(true)">Yes, use this</button>
-                <button class="btn btn-muted" id="confirmModalNo" onclick="resolveConfirmModal(false)">No, cancel</button>
+                <button class="btn" id="confirmModalYes" onclick="resolveConfirmModal(true)">Confirm</button>
+                <button class="btn btn-muted" id="confirmModalNo" onclick="resolveConfirmModal(false)">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="relabelModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="relabelModalTitle">
+        <div class="modal-content" style="max-width: 480px;">
+            <h2 id="relabelModalTitle">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Location changed
+            </h2>
+            <p class="modal-desc" id="relabelModalMessage" style="margin: 0 0 0.5rem;"></p>
+            <div class="button-container">
+                <button class="btn" id="relabelModalRelabel">Relabel all rows</button>
+                <button class="btn btn-muted" id="relabelModalClear">Clear &amp; start new</button>
+                <button class="btn btn-muted" id="relabelModalCancel">Cancel</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const SUBMIT_ENDPOINT = "https://firecloud.rubberylock7.workers.dev/submit/plan-b";
-    const esc = s => (s||'').toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"\'":'&#39;'})[m]);
+    const esc = s => (s == null ? '' : String(s)).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"\'":'&#39;'})[m]);
+    const productCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    const numberFormatter = new Intl.NumberFormat();
+    let toastTimeout = null;
+
+    function csvField(value) {
+        let s = value == null ? '' : String(value);
+        if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+        s = s.replace(/"/g, '""');
+        return `"${s}"`;
+    }
+
+    function makeId() {
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+        return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+    }
+
+    const NUMERIC_NAV_KEYS = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End'];
+    function isNumericEditKey(key, allowEnter) {
+        if (/^[0-9]$/.test(key)) return true;
+        if (NUMERIC_NAV_KEYS.includes(key)) return true;
+        if (allowEnter && key === 'Enter') return true;
+        return false;
+    }
+    function sanitizeNumericPaste(e) {
+        if (e.target.tagName !== 'TD' || e.target.getAttribute('contenteditable') !== 'true') return;
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+        const sel = window.getSelection();
+        if (!sel.rangeCount) return;
+        sel.deleteFromDocument();
+        const range = sel.getRangeAt(0);
+        range.insertNode(document.createTextNode(text));
+        range.collapse(false);
+        e.target.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 
     const themeToggleBtn = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
@@ -1291,7 +1439,106 @@ to { opacity: 1; transform: translateY(0); }
 
     applyTheme(currentTheme);
 
-    const products = [
+    const SUBMIT_ENDPOINT = (typeof window.__BAYAN_SUBMIT_URL__ === 'string' && window.__BAYAN_SUBMIT_URL__)
+        ? window.__BAYAN_SUBMIT_URL__
+        : 'https://firecloud.rubberylock7.workers.dev/submit/plan-b';
+    const QUEUE_STORAGE_KEY = 'bayan:v3:offlineQueue';
+    const MONTH_NUMBERS = {
+        January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
+        July: 7, August: 8, September: 9, October: 10, November: 11, December: 12
+    };
+
+    function loadOfflineQueue() {
+        try {
+            const raw = localStorage.getItem(QUEUE_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (err) {
+            return [];
+        }
+    }
+
+    function saveOfflineQueue(queue) {
+        try { localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(queue)); } catch (err) {}
+    }
+
+    function enqueueOfflineSubmission(entry) {
+        const queue = loadOfflineQueue();
+        queue.push(entry);
+        saveOfflineQueue(queue);
+        updateQueueBadge();
+    }
+
+    function updateQueueBadge() {
+        const badge = document.getElementById('queueBadge');
+        if (!badge) return;
+        const queue = loadOfflineQueue();
+        if (queue.length > 0) {
+            badge.style.display = 'inline-flex';
+            badge.textContent = queue.length + ' queued — tap to retry';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    async function postSubmission(body) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        try {
+            const resp = await fetch(SUBMIT_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            if (resp.status >= 400 && resp.status < 500) {
+                let detail = 'invalid_request';
+                try { detail = (await resp.json()).error || detail; } catch (err) {}
+                return { status: 'invalid', detail };
+            }
+            if (!resp.ok) return { status: 'transient_error' };
+            return { status: 'success' };
+        } catch (err) {
+            clearTimeout(timeoutId);
+            return { status: 'transient_error' };
+        }
+    }
+
+    async function submitWithQueue(body) {
+        const result = await postSubmission(body);
+        if (result.status === 'success') return 'success';
+        if (result.status === 'invalid') return result;
+        enqueueOfflineSubmission(body);
+        return 'queued';
+    }
+
+    async function tryFlushOfflineQueue() {
+        const queue = loadOfflineQueue();
+        if (queue.length === 0) return;
+        const remaining = [];
+        let syncedCount = 0;
+        let droppedCount = 0;
+        for (const item of queue) {
+            const result = await postSubmission(item);
+            if (result.status === 'success') {
+                syncedCount++;
+            } else if (result.status === 'invalid') {
+                droppedCount++;
+            } else {
+                remaining.push(item);
+            }
+        }
+        saveOfflineQueue(remaining);
+        updateQueueBadge();
+        if (syncedCount > 0) showToast(`Synced ${syncedCount} queued submission(s).`);
+        if (droppedCount > 0) showToast(`${droppedCount} queued submission(s) were rejected by the server and dropped — please check that data.`, true);
+    }
+
+    window.addEventListener('online', tryFlushOfflineQueue);
+    updateQueueBadge();
+    tryFlushOfflineQueue();
+
+    const RAW_PRODUCTS = [
         "Antacid Syp|B", "Acetazolamide 250mg|10 T", "Acetylcysteine Sachets|10 Sach",
         "Acetylsalicylic Acid 75mg|10 T", "Acetylsalicylic Acid 81mg|10 T", "Acyclovir 0.05 cream|Tube",
         "Aescin gel|Tube", "Allopurinol 100mg|10 T", "Alpha Chymotrypsin|Amp", "Alpha Lipoic Acid 300mg|10 T",
@@ -1407,7 +1654,34 @@ to { opacity: 1; transform: translateY(0); }
         "Vinorelbine 50mg|Vial", "Vitamin A|10 T", "Vitamin B amp|Amp", "Vitamin B comp|10 T", "Vitamin E 400|12 Cap",
         "Vitamin K|10 T", "Voriconazole 50mg|10 T", "Warfarin 1mg|10 T", "Warfarin 3mg|10 T", "Warfarin 5 mg|10 T",
         "Xarelto 20mg|28 T", "Xgeva|Vial", "Zoledronic 4mg|Vial"
-    ].sort();
+    ];
+
+    function normalizeProductString(raw) {
+        const idx = raw.lastIndexOf('|');
+        if (idx === -1) return raw.trim();
+        const name = raw.slice(0, idx).trim();
+        const unit = raw.slice(idx + 1).trim().replace(/^(\d+)([A-Za-z])/, '$1 $2');
+        return `${name}|${unit}`;
+    }
+
+    const productAliasMap = new Map();
+    const seenNormalizedProducts = new Set();
+    const products = [];
+    RAW_PRODUCTS.forEach(raw => {
+        const corrected = raw.replace('Rivaroxban', 'Rivaroxaban');
+        const normalized = normalizeProductString(corrected);
+        if (!seenNormalizedProducts.has(normalized)) {
+            seenNormalizedProducts.add(normalized);
+            products.push(normalized);
+        }
+        if (raw !== normalized) productAliasMap.set(raw, normalized);
+        if (corrected !== normalized) productAliasMap.set(corrected, normalized);
+    });
+    products.sort();
+
+    function resolveProductAlias(raw) {
+        return productAliasMap.get(raw) || raw;
+    }
 
     const fuseData = products.map(p => {
         const [name, unit] = p.split('|');
@@ -1497,11 +1771,11 @@ to { opacity: 1; transform: translateY(0); }
     };
 
     let data = [];
-    let selectedProducts = new Set();
+    let previousRenderIds = new Set();
     let isLegacyMode = false;
     let currentLegacyCell = null;
     let fileQueue = [];
-    let fileValidationData = { valid: [], pending: [], invalid: [] };
+    let fileValidationData = { valid: [], pending: [], invalid: [], remap: [] };
 
     window.addEventListener('beforeunload', e => {
         if (data.length > 0) {
@@ -1523,8 +1797,9 @@ to { opacity: 1; transform: translateY(0); }
                 if (m.style.display === 'block') {
                     if (m.id === 'addNameModal') closeAddNameModal();
                     else if (m.id === 'importModal') closeImportModal();
-                    else if (m.id === 'fileValidationModal') closeValidationModal();
+                    else if (m.id === 'fileValidationModal') requestCancelValidationBatch();
                     else if (m.id === 'confirmModal') resolveConfirmModal(false);
+                    else if (m.id === 'relabelModal') resolveRelabelModal('cancel');
                     else m.style.display = 'none';
                 }
             });
@@ -1536,12 +1811,57 @@ to { opacity: 1; transform: translateY(0); }
             if (e.target === modal) {
                 if (modal.id === 'addNameModal') closeAddNameModal();
                 else if (modal.id === 'importModal') closeImportModal();
-                else if (modal.id === 'fileValidationModal') closeValidationModal();
+                else if (modal.id === 'fileValidationModal') requestCancelValidationBatch();
                 else if (modal.id === 'confirmModal') resolveConfirmModal(false);
+                else if (modal.id === 'relabelModal') resolveRelabelModal('cancel');
                 else modal.style.display = 'none';
             }
         });
     });
+
+    (function setupModalFocusManagement() {
+        let lastFocusedElement = null;
+        let activeModal = null;
+
+        function getFocusableElements(modal) {
+            return Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+                .filter(el => !el.disabled && el.offsetParent !== null);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!activeModal || e.key !== 'Tab') return;
+            const focusable = getFocusableElements(activeModal);
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        });
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            const observer = new MutationObserver(() => {
+                const isOpen = modal.style.display === 'block';
+                if (isOpen && activeModal !== modal) {
+                    lastFocusedElement = document.activeElement;
+                    activeModal = modal;
+                    const focusable = getFocusableElements(modal);
+                    if (focusable.length > 0) focusable[0].focus();
+                } else if (!isOpen && activeModal === modal) {
+                    activeModal = null;
+                    if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
+                        lastFocusedElement.focus();
+                    }
+                    lastFocusedElement = null;
+                }
+            });
+            observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+        });
+    })();
 
     document.getElementById('quickIdInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
@@ -1597,7 +1917,6 @@ to { opacity: 1; transform: translateY(0); }
                 const row = document.createElement("DIV");
                 row.innerHTML = `<span class="product-name">${esc(item.name)}</span> <span class="product-unit">${esc(item.unit)}</span>${already ? ' <span class="added-badge">Added</span>' : ''}<input type='hidden' value='${esc(item.fullString)}'>`;
 
-                if (selectedProducts.has(item.fullString)) row.classList.add("highlighted");
                 if (already) row.classList.add("already-in-table");
 
                 row.addEventListener("click", function(e) {
@@ -1721,11 +2040,13 @@ to { opacity: 1; transform: translateY(0); }
 
     document.getElementById('dataTable').addEventListener('keydown', function(e) {
         if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
-            if(!/[\d\bArrowLeftArrowRightArrowUpArrowDownTab]/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+            if(!isNumericEditKey(e.key, false) && !e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
             }
         }
     });
+
+    document.getElementById('dataTable').addEventListener('paste', sanitizeNumericPaste);
 
     document.getElementById('dataTable').addEventListener('input', function(e) {
         if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
@@ -1748,16 +2069,15 @@ to { opacity: 1; transform: translateY(0); }
         const pharmacy = document.getElementById("pharmacySelect").value;
         const month = document.getElementById("monthSelect").value;
 
-        const isKnown = products.includes(product);
-        const method = isKnown ? 'old' : 'new';
-        const category = isKnown ? null : (data.find(e => e.product === product)?.category || null);
-
         const existingEntry = data.find(entry => entry.product === product);
-        
+
         if (existingEntry) {
+            const previous = existingEntry.unitsSold;
             existingEntry.unitsSold = unitsSold;
+            if (previous !== unitsSold) showToast(`Updated existing row: ${previous} → ${unitsSold}`);
         } else {
-            data.push({ product, unitsSold, cls, region, pharmacy, month, method, category });
+            const method = products.includes(product) ? 'old' : 'new';
+            data.push({ id: makeId(), product, unitsSold, cls, region, pharmacy, month, method, category: null });
         }
         saveData();
     }
@@ -1842,17 +2162,21 @@ to { opacity: 1; transform: translateY(0); }
                 <tr class="empty-row">
                     <td colspan="3">
                         <div class="empty-state">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M9 15l2 2 4-4"></path></svg>
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M9 15l2 2 4-4"></path></svg>
                             <p>No entries yet</p>
                             <span>Search a product above and press Enter to add your first row.</span>
                         </div>
                     </td>
                 </tr>`;
+            previousRenderIds = new Set();
             return;
         }
 
-        data.sort((a, b) => a.product.localeCompare(b.product)).forEach((entry, index) => {
+        const nextRenderIds = new Set();
+        data.sort((a, b) => productCollator.compare(a.product, b.product)).forEach((entry) => {
+            nextRenderIds.add(entry.id);
             const row = document.createElement("tr");
+            row.setAttribute('data-id', entry.id);
             const parts = entry.product.split('|');
             const name = parts[0];
             const unit = parts.length > 1 ? parts[1] : '';
@@ -1867,10 +2191,10 @@ to { opacity: 1; transform: translateY(0); }
 
             row.innerHTML = `
                 <td><span class="product-name">${esc(name)}</span> <span class="product-unit">${esc(unit)}</span>${extraInfo}</td>
-                <td contenteditable="true" onblur="updateUnitsSold(${index}, this)">${entry.unitsSold}</td>
+                <td contenteditable="true" data-role="units">${entry.unitsSold}</td>
                 <td class="no-print">
-                    <button class="delete-btn" onclick="deleteRow(${index})" title="Delete">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="delete-btn" data-role="delete" title="Delete" aria-label="Delete row">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -1879,74 +2203,120 @@ to { opacity: 1; transform: translateY(0); }
                     </button>
                 </td>
             `;
-            row.classList.add('row-enter');
+            if (!previousRenderIds.has(entry.id)) row.classList.add('row-enter');
             table.appendChild(row);
         });
+        previousRenderIds = nextRenderIds;
 
         const totalUnits = data.reduce((sum, e) => sum + (parseInt(e.unitsSold) || 0), 0);
         const totalRow = document.createElement("tr");
-        totalRow.className = "total-row no-print";
-        totalRow.innerHTML = `<td>Total (${data.length} ${data.length === 1 ? 'item' : 'items'})</td><td>${totalUnits}</td><td></td>`;
+        totalRow.className = "total-row";
+        totalRow.innerHTML = `<td>Total (${data.length} ${data.length === 1 ? 'item' : 'items'})</td><td>${numberFormatter.format(totalUnits)}</td><td class="no-print"></td>`;
         table.appendChild(totalRow);
     }
 
-    let lastDeletedEntry = null;
-    let undoTimeout = null;
-    function showUndoToast(message, entry) {
-        lastDeletedEntry = entry;
+    const dataTableEl = document.getElementById('dataTable');
+    dataTableEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-role="delete"]');
+        if (!btn) return;
+        const tr = btn.closest('tr[data-id]');
+        if (tr) deleteRow(tr.getAttribute('data-id'));
+    });
+    dataTableEl.addEventListener('focusout', (e) => {
+        const td = e.target.closest('td[data-role="units"]');
+        if (!td) return;
+        const tr = td.closest('tr[data-id]');
+        if (tr) updateUnitsSold(tr.getAttribute('data-id'), td);
+    });
+
+    let toastRestoreFn = null;
+    function showUndoToast(message, restoreFn) {
+        toastRestoreFn = restoreFn;
         const toast = document.getElementById("toast");
         toast.className = "show";
         toast.innerHTML = `<span>${esc(message)}</span> <button id="undoBtn" style="margin-left:10px; background:rgba(255,255,255,0.25); border:none; color:#fff; padding:5px 12px; border-radius:50px; cursor:pointer; font-weight:bold;">Undo</button>`;
         document.getElementById("undoBtn").onclick = () => {
-            if (lastDeletedEntry) {
-                data.push(lastDeletedEntry);
-                updateTable();
-                saveData();
-                lastDeletedEntry = null;
+            if (toastRestoreFn) {
+                toastRestoreFn();
+                toastRestoreFn = null;
                 toast.className = toast.className.replace("show", "");
             }
         };
-        clearTimeout(undoTimeout);
-        undoTimeout = setTimeout(function(){
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(function(){
             toast.className = toast.className.replace("show", "").replace("error", "").replace("warning", "");
         }, 5000);
     }
 
-    function deleteRow(index) {
+    function deleteRow(id) {
+        const index = data.findIndex(e => e.id === id);
+        if (index === -1) return;
         const entry = data[index];
-        selectedProducts.delete(entry.product);
         data.splice(index, 1);
         updateTable();
         saveData();
-        showUndoToast(`Removed ${entry.product.split('|')[0]}`, entry);
+        showUndoToast(`Removed ${entry.product.split('|')[0]}`, () => {
+            data.push(entry);
+            updateTable();
+            saveData();
+        });
     }
 
-    function updateUnitsSold(index, element) {
+    function updateUnitsSold(id, element) {
+        const entry = data.find(e => e.id === id);
+        if (!entry) return;
         const newValue = parseInt(element.textContent);
         if (isNaN(newValue) || newValue < 0) {
             showToast("Please enter a valid number.", true);
-            element.textContent = data[index].unitsSold;
+            element.textContent = entry.unitsSold;
         } else {
-            data[index].unitsSold = newValue;
+            entry.unitsSold = newValue;
         }
         saveData();
         updateStats();
     }
 
-    function updateAllRows() {
+    async function updateAllRows() {
         const cls = document.getElementById("classSelect").value;
         const region = document.getElementById("regionSelect").value;
         const pharmacy = document.getElementById("pharmacySelect").value;
         const month = document.getElementById("monthSelect").value;
-        if (cls && region && pharmacy && month) {
-            data.forEach(entry => {
-                entry.cls = cls;
-                entry.region = region;
-                entry.pharmacy = pharmacy;
-                entry.month = month;
-            });
-            updateTable();
+        if (!(cls && region && pharmacy && month)) return;
+
+        const hasOtherLabel = data.some(e => e.cls !== cls || e.region !== region || e.pharmacy !== pharmacy || e.month !== month);
+        if (data.length > 0 && hasOtherLabel) {
+            const choice = await showRelabelModal(`You already have ${data.length} ${data.length === 1 ? 'entry' : 'entries'} in this report. Relabel them all to the new selection, or clear the report and start fresh?`);
+            if (choice === 'cancel') return;
+            if (choice === 'clear') {
+                data = [];
+                updateTable();
+                saveData();
+                return;
+            }
         }
+        data.forEach(entry => {
+            entry.cls = cls;
+            entry.region = region;
+            entry.pharmacy = pharmacy;
+            entry.month = month;
+        });
+        updateTable();
+        saveData();
+    }
+
+    async function clearReport() {
+        if (data.length === 0) { showToast("There's nothing to clear."); return; }
+        const confirmed = await showConfirmModal(`Clear all ${data.length} ${data.length === 1 ? 'entry' : 'entries'} from this report?`);
+        if (!confirmed) return;
+        const previousData = [...data];
+        data = [];
+        updateTable();
+        saveData();
+        showUndoToast(`Cleared ${previousData.length} ${previousData.length === 1 ? 'entry' : 'entries'}`, () => {
+            data = previousData;
+            updateTable();
+            saveData();
+        });
     }
 
     function isDuplicate(product) { return data.some(entry => entry.product === product); }
@@ -1976,16 +2346,31 @@ to { opacity: 1; transform: translateY(0); }
 
         document.getElementById("results").style.display = isLegacyMode && allFieldsFilled ? "none" : "block";
         document.getElementById("legacyMode").style.display = isLegacyMode && allFieldsFilled ? "block" : "none";
+        document.body.classList.toggle('scroll-locked', isLegacyMode && allFieldsFilled);
         document.getElementById("classSelect").disabled = isLegacyMode && allFieldsFilled;
         document.getElementById("regionSelect").disabled = isLegacyMode && allFieldsFilled;
         document.getElementById("pharmacySelect").disabled = isLegacyMode && allFieldsFilled;
         document.getElementById("monthSelect").disabled = isLegacyMode && allFieldsFilled;
         document.getElementById("saveAndExitBtn").style.display = isLegacyMode && allFieldsFilled ? "block" : "none";
 
+        if (isLegacyMode && allFieldsFilled) {
+            const filterInput = document.getElementById('legacyFilterInput');
+            filterInput.value = '';
+            filterLegacyTable('');
+        }
+
         if (!allFieldsFilled) {
             isLegacyMode = false;
             document.getElementById("legacyModeToggle").checked = false;
+            document.body.classList.remove('scroll-locked');
         }
+    }
+
+    function filterLegacyTable(query) {
+        const q = query.trim().toLowerCase();
+        Array.from(document.getElementById('legacyTable').children).forEach(row => {
+            row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
+        });
     }
 
     function updateLegacyTable() {
@@ -2031,7 +2416,7 @@ to { opacity: 1; transform: translateY(0); }
 
     document.getElementById('legacyTable').addEventListener('keydown', function(e) {
         if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
-            if(!/[\d\bArrowLeftArrowRightArrowUpArrowDownTab]/.test(e.key) && !e.ctrlKey && !e.metaKey && e.key !== 'Enter') {
+            if(!isNumericEditKey(e.key, true) && !e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
             }
         }
@@ -2052,6 +2437,8 @@ to { opacity: 1; transform: translateY(0); }
             if (currentIndex < totalRows - 1) navigateToCell(currentIndex + 1);
         }
     });
+
+    document.getElementById('legacyTable').addEventListener('paste', sanitizeNumericPaste);
 
     document.getElementById('legacyTable').addEventListener('input', function(e) {
         if (e.target.tagName === 'TD' && e.target.getAttribute('contenteditable') === 'true') {
@@ -2080,28 +2467,62 @@ to { opacity: 1; transform: translateY(0); }
     function unhighlightRow(row) { row.classList.remove('selected-row'); }
     function unhighlightAllRows() { document.querySelectorAll('#legacyTable tr').forEach(row => unhighlightRow(row)); }
 
+    const STORAGE_PREFIX = 'bayan:v3:';
+    const LEGACY_STORAGE_KEYS = {
+        pharmacyData: 'pharmacyData',
+        selectedClass: 'selectedClass',
+        selectedRegion: 'selectedRegion',
+        selectedPharmacy: 'selectedPharmacy',
+        selectedMonth: 'selectedMonth'
+    };
+
+    function storageGet(key) {
+        try {
+            const v = localStorage.getItem(STORAGE_PREFIX + key);
+            if (v !== null) return v;
+            return localStorage.getItem(LEGACY_STORAGE_KEYS[key]);
+        } catch (err) {
+            return null;
+        }
+    }
+
+    function storageSet(key, value) {
+        try { localStorage.setItem(STORAGE_PREFIX + key, value); } catch (err) {}
+    }
+
     function saveData() {
-        localStorage.setItem('pharmacyData', JSON.stringify(data));
-        localStorage.setItem('selectedClass', document.getElementById("classSelect").value);
-        localStorage.setItem('selectedRegion', document.getElementById("regionSelect").value);
-        localStorage.setItem('selectedPharmacy', document.getElementById("pharmacySelect").value);
-        localStorage.setItem('selectedMonth', document.getElementById("monthSelect").value);
+        storageSet('pharmacyData', JSON.stringify(data));
+        storageSet('selectedClass', document.getElementById("classSelect").value);
+        storageSet('selectedRegion', document.getElementById("regionSelect").value);
+        storageSet('selectedPharmacy', document.getElementById("pharmacySelect").value);
+        storageSet('selectedMonth', document.getElementById("monthSelect").value);
     }
 
     function loadData() {
-        const savedData = localStorage.getItem('pharmacyData');
-        if (savedData) { data = JSON.parse(savedData); updateTable(); }
-        const savedClass = localStorage.getItem('selectedClass');
+        const savedData = storageGet('pharmacyData');
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                data = Array.isArray(parsed) ? parsed : [];
+            } catch (err) {
+                data = [];
+                showToast('Saved data was corrupted and could not be loaded. Starting fresh.', true);
+            }
+            data.forEach(entry => { if (!entry.id) entry.id = makeId(); });
+            updateTable();
+        }
+        const savedClass = storageGet('selectedClass');
         if (savedClass) { document.getElementById("classSelect").value = savedClass; handleClassChange(false); }
-        const savedRegion = localStorage.getItem('selectedRegion');
+        const savedRegion = storageGet('selectedRegion');
         if (savedRegion) { document.getElementById("regionSelect").value = savedRegion; handleRegionChange(false); }
-        const savedPharmacy = localStorage.getItem('selectedPharmacy');
+        const savedPharmacy = storageGet('selectedPharmacy');
         if (savedPharmacy) { document.getElementById("pharmacySelect").value = savedPharmacy; }
-        const savedMonth = localStorage.getItem('selectedMonth');
+        const savedMonth = storageGet('selectedMonth');
         if (savedMonth) { document.getElementById("monthSelect").value = savedMonth; }
         
         document.getElementById("saveAndExitBtn").textContent = "Save and Exit";
         handleStateChange(true);
+        saveData();
     }
 
     function saveAndExit() {
@@ -2131,8 +2552,8 @@ to { opacity: 1; transform: translateY(0); }
 
     function addNewName() {
         const category = document.getElementById("nameCategory").value;
-        const name = document.getElementById("newProductName").value;
-        const unit = document.getElementById("newProductUnit").value;
+        const name = document.getElementById("newProductName").value.trim();
+        const unit = document.getElementById("newProductUnit").value.trim();
         const unitsSold = document.getElementById("newProductUnitsSold").value;
 
         if (!category || !name || !unit || !unitsSold) { showToast("Please fill in all fields", true); return; }
@@ -2143,16 +2564,30 @@ to { opacity: 1; transform: translateY(0); }
 
         const newProduct = `${name}|${unit}`;
 
-        data.push({
-            product: newProduct,
-            unitsSold: parseInt(unitsSold),
-            cls: document.getElementById("classSelect").value,
-            region: document.getElementById("regionSelect").value,
-            pharmacy: document.getElementById("pharmacySelect").value,
-            month: document.getElementById("monthSelect").value,
-            method: 'new',
-            category: category
-        });
+        if (products.includes(newProduct)) {
+            showToast("That product is already on the master list — use the search box instead.", true);
+            return;
+        }
+
+        const existingEntry = data.find(entry => entry.product === newProduct);
+        if (existingEntry) {
+            const previous = existingEntry.unitsSold;
+            existingEntry.unitsSold = parseInt(unitsSold);
+            existingEntry.category = category;
+            if (previous !== existingEntry.unitsSold) showToast(`Updated existing row: ${previous} → ${existingEntry.unitsSold}`);
+        } else {
+            data.push({
+                id: makeId(),
+                product: newProduct,
+                unitsSold: parseInt(unitsSold),
+                cls: document.getElementById("classSelect").value,
+                region: document.getElementById("regionSelect").value,
+                pharmacy: document.getElementById("pharmacySelect").value,
+                month: document.getElementById("monthSelect").value,
+                method: 'new',
+                category: category
+            });
+        }
 
         saveData();
         updateTable();
@@ -2178,30 +2613,50 @@ to { opacity: 1; transform: translateY(0); }
         document.getElementById("regionDisplay").textContent = regionMap[region] || "";
         document.getElementById("pharmacyDisplay").textContent = pharmacy || "";
         document.getElementById("monthDisplay").textContent = monthMap[month] || "";
+        document.getElementById("printDate").textContent = new Intl.DateTimeFormat('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date());
+        document.getElementById("printItemCount").textContent = numberFormatter.format(data.length);
     }
 
     function printReport() { updateHeaderInfo(); window.print(); }
 
-    function generateAndDownloadFiles(dataset) {
+    function generateAndDownloadFiles(exportRows) {
         let csvContent = "\uFEFFclass,month,region,pharmacy,name,unit,unitSold,method,category\n";
-        dataset.forEach(item => {
-            csvContent += `${item.class},${item.month},${item.region},"${item.pharmacy}","${item.name}","${item.unit}",${item.unitSold},"${item.method}","${item.category}"\n`;
+        exportRows.forEach(item => {
+            csvContent += [item.class, item.month, item.region, item.pharmacy, item.name, item.unit, item.unitSold, item.method, item.category]
+                .map(csvField).join(',') + '\n';
         });
         downloadFile(csvContent, `pharmacy_data_${Date.now()}.csv`, 'text/csv;charset=utf-8;');
 
-        const jsonContent = JSON.stringify(dataset, null, 2);
-        downloadFile(jsonContent, `pharmacy_data_${Date.now()}.json`, 'application/json');
+        const jsonContent = JSON.stringify(exportRows, null, 2);
+        setTimeout(() => downloadFile(jsonContent, `pharmacy_data_${Date.now()}.json`, 'application/json'), 200);
     }
 
     let isSubmitting = false;
+    let pendingSubmitAfterContext = false;
+
+    function buildSubmissionRow(name, unit, unitsSold, method, category, cls, region, pharmacy, monthName) {
+        return {
+            class: cls,
+            region: region,
+            pharmacy: pharmacy,
+            month: MONTH_NUMBERS[monthName],
+            name: name,
+            unit: unit || '',
+            unitSold: unitsSold,
+            method: method,
+            category: category || 'N/A'
+        };
+    }
 
     function submitData() {
         if (isSubmitting) return;
 
         if (checkMissingContexts()) {
+            pendingSubmitAfterContext = true;
             showBulkContextModal();
             return;
         }
+        pendingSubmitAfterContext = false;
 
         if (data.length === 0) { showToast("There is nothing to submit."); return; }
         
@@ -2211,67 +2666,55 @@ to { opacity: 1; transform: translateY(0); }
         const month = document.getElementById("monthSelect").value;
         
         if (!cls || !region || !pharmacy || !month) { showToast("Please select all fields."); return; }
+
+        if (data.some(item => !(item.unitsSold > 0))) {
+            showToast("Every row needs units sold greater than 0 before submitting — fix or remove zero-quantity rows.", true);
+            return;
+        }
         
         isSubmitting = true;
         const btn = document.getElementById('submitBtnDock');
         const originalContent = btn.innerHTML;
         btn.innerHTML = '<div class="loading-icon"></div>';
         btn.classList.add('loading');
-        
-        const submissionData = data.map(item => {
+
+        const submissionRows = data.map(item => {
             const [name, unit] = item.product.split('|');
             const finalName = (item.method === 'new' && item.category && item.category !== 'داخل اللستة') 
                 ? `${name} (${item.category})` 
                 : name;
-
+            return buildSubmissionRow(
+                finalName, unit, item.unitsSold, item.method, item.category,
+                item.cls || cls, item.region || region, item.pharmacy || pharmacy, item.month || month
+            );
+        });
+        const exportRows = data.map(item => {
+            const [name, unit] = item.product.split('|');
             return {
-                class: item.cls || cls,
-                region: item.region || region, 
-                pharmacy: item.pharmacy || pharmacy,
-                month: item.month || month, 
-                name: finalName, 
-                unit: unit || "", 
-                unitSold: item.unitsSold,
-                method: item.method,
-                category: item.category || 'N/A',
-                timestamp: new Date().toISOString()
+                class: item.cls || cls, region: item.region || region, pharmacy: item.pharmacy || pharmacy, month: item.month || month,
+                name: name, unit: unit || "", unitSold: item.unitsSold, method: item.method, category: item.category || ''
             };
         });
 
-        let isResolved = false;
-        const timeout = setTimeout(() => {
-            if(!isResolved) {
-                showToast('Network timeout. Data saved locally, will sync later.', true);
-                isSubmitting = false;
-                btn.innerHTML = originalContent;
-                btn.classList.remove('loading');
+        submitWithQueue(submissionRows).then(result => {
+            const status = typeof result === 'string' ? result : result.status;
+            if (status === 'invalid') {
+                showToast(`The server rejected this submission (${result.detail}). Please check the data.`, true);
+                return;
             }
-        }, 8000);
-
-        fetch(SUBMIT_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(submissionData)
-        })
-        .then(res => { if(!res.ok) throw new Error('submit_failed'); return res.json(); })
-        .then(() => {
-            isResolved = true;
-            clearTimeout(timeout);
-            showToast('Data submitted successfully!');
-            btn.classList.add('success-pulse');
-            setTimeout(() => btn.classList.remove('success-pulse'), 900);
-            generateAndDownloadFiles(submissionData);
+            if (status === 'queued') {
+                showToast('Offline — saved and queued. It will sync automatically.', true);
+            } else {
+                showToast('Data submitted successfully!');
+                btn.classList.add('success-pulse');
+                setTimeout(() => btn.classList.remove('success-pulse'), 900);
+            }
+            generateAndDownloadFiles(exportRows);
             data = [];
             updateTable();
             saveData();
-        })
-        .catch((error) => {
-            isResolved = true;
-            clearTimeout(timeout);
-            showToast('Error submitting data.', true);
-        })
-        .finally(() => { 
-            isSubmitting = false; 
+        }).finally(() => {
+            isSubmitting = false;
             btn.innerHTML = originalContent;
             btn.classList.remove('loading');
         });
@@ -2307,6 +2750,29 @@ to { opacity: 1; transform: translateY(0); }
             resolve(result);
         }
     }
+
+    let relabelModalResolver = null;
+
+    function showRelabelModal(message) {
+        return new Promise(resolve => {
+            relabelModalResolver = resolve;
+            document.getElementById('relabelModalMessage').textContent = message;
+            document.getElementById('relabelModal').style.display = 'block';
+            document.getElementById('relabelModalRelabel').focus();
+        });
+    }
+
+    function resolveRelabelModal(result) {
+        document.getElementById('relabelModal').style.display = 'none';
+        if (relabelModalResolver) {
+            const resolve = relabelModalResolver;
+            relabelModalResolver = null;
+            resolve(result);
+        }
+    }
+    document.getElementById('relabelModalRelabel').addEventListener('click', () => resolveRelabelModal('relabel'));
+    document.getElementById('relabelModalClear').addEventListener('click', () => resolveRelabelModal('clear'));
+    document.getElementById('relabelModalCancel').addEventListener('click', () => resolveRelabelModal('cancel'));
 
     function checkMissingContexts() {
         return data.some(item => item.method === 'new' && !item.category);
@@ -2349,13 +2815,18 @@ to { opacity: 1; transform: translateY(0); }
 
         selects.forEach(select => {
             const product = select.getAttribute("data-product");
-            const item = data.find(d => d.product === product);
-            if (item) { item.category = select.value; }
+            const category = select.value;
+            data.filter(d => d.product === product).forEach(item => { item.category = category; });
         });
 
         document.getElementById("bulkContextModal").style.display = "none";
         updateTable();
         saveData();
+
+        if (pendingSubmitAfterContext) {
+            pendingSubmitAfterContext = false;
+            submitData();
+        }
     }
 
     function openImportModal() { document.getElementById("importModal").style.display = "block"; }
@@ -2363,8 +2834,16 @@ to { opacity: 1; transform: translateY(0); }
     
     function closeValidationModal() { 
         document.getElementById("fileValidationModal").style.display = "none"; 
-        fileValidationData = { valid: [], pending: [], invalid: [] };
+        fileValidationData = { valid: [], pending: [], invalid: [], remap: [] };
         fileQueue = [];
+    }
+
+    async function requestCancelValidationBatch() {
+        if (fileQueue.length > 1) {
+            const confirmed = await showConfirmModal(`This will also cancel the ${fileQueue.length - 1} remaining queued file(s). Continue?`);
+            if (!confirmed) return;
+        }
+        closeValidationModal();
     }
 
     function queueFiles(fileList) {
@@ -2454,8 +2933,10 @@ to { opacity: 1; transform: translateY(0); }
         });
     }
 
+    const VALID_CATEGORIES = ['قرار لجنة', 'حكم قضائي', 'داخل اللستة', 'شئون طبية'];
+
     function validateFileBatch(importedItems) {
-        fileValidationData = { valid: [], pending: [], invalid: [] };
+        fileValidationData = { valid: [], pending: [], invalid: [], remap: [] };
         
         const uiCls = document.getElementById("classSelect").value;
         const uiRegion = document.getElementById("regionSelect").value;
@@ -2468,6 +2949,7 @@ to { opacity: 1; transform: translateY(0); }
 
         const validMap = new Map();
         const pendingMap = new Map();
+        const remapMap = new Map();
 
         importedItems.forEach((item, index) => {
             const normItem = {};
@@ -2481,47 +2963,63 @@ to { opacity: 1; transform: translateY(0); }
             let region = normItem.region || uiRegion;
             let pharmacy = normItem.pharmacy || uiPharmacy;
             let month = normItem.month || uiMonth;
+            let importedMethod = normItem.method;
+            let importedCategory = normItem.category;
 
             if (!name) { fileValidationData.invalid.push(`Row ${index + 1}: Missing Product Name`); return; }
-            if (isNaN(sold) || sold < 0) { fileValidationData.invalid.push(`Row ${index + 1} (${esc(name)}): Invalid Units Sold`); return; }
+            if (isNaN(sold) || sold < 0) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Units Sold`); return; }
             
-            if (!validClasses.includes(cls)) { fileValidationData.invalid.push(`Row ${index + 1} (${esc(name)}): Invalid Class '${esc(cls)}'`); return; }
-            if (!validRegions.includes(region)) { fileValidationData.invalid.push(`Row ${index + 1} (${esc(name)}): Invalid Region '${esc(region)}'`); return; }
-            if (!validMonths.includes(month)) { fileValidationData.invalid.push(`Row ${index + 1} (${esc(name)}): Invalid Month '${esc(month)}'`); return; }
+            if (!validClasses.includes(cls)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Class '${cls}'`); return; }
+            if (!validRegions.includes(region)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Region '${region}'`); return; }
+            if (!validMonths.includes(month)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Month '${month}'`); return; }
 
             let validPharmacy = false;
             if (pharmacyOptions[cls] && pharmacyOptions[cls][region]) {
                 validPharmacy = pharmacyOptions[cls][region].some(p => p.name === pharmacy);
             }
             if (!validPharmacy) {
-                fileValidationData.invalid.push(`Row ${index + 1} (${esc(name)}): Pharmacy '${esc(pharmacy)}' does not exist in ${cls}/${region}`); 
+                fileValidationData.invalid.push(`Row ${index + 1} (${name}): Pharmacy '${pharmacy}' does not exist in ${cls}/${region}`); 
                 return; 
             }
 
-            let fullProductString = unit ? `${name}|${unit}` : name;
+            let fullProductString = resolveProductAlias(unit ? `${name}|${unit}` : name);
             let method = 'new';
             let mappedName = name;
+            let category = null;
+            let remapSuggestion = null;
 
             if (products.includes(fullProductString)) {
                 method = 'old';
+                const parts = fullProductString.split('|');
+                mappedName = parts[0];
+                unit = parts.length > 1 ? parts[1] : '';
+            } else if (importedMethod === 'new' && VALID_CATEGORIES.includes(importedCategory)) {
+                method = 'new';
+                category = importedCategory;
             } else {
                 const matchRes = fuseSearcher.search(name);
-                if (matchRes.length > 0 && matchRes[0].score <= 0.2) { 
-                    fullProductString = matchRes[0].item.fullString;
-                    mappedName = matchRes[0].item.name;
-                    unit = matchRes[0].item.unit;
-                    method = 'old';
+                if (matchRes.length > 0 && matchRes[0].score <= 0.2) {
+                    remapSuggestion = { fullString: matchRes[0].item.fullString, name: matchRes[0].item.name, unit: matchRes[0].item.unit };
                 }
             }
 
             const parsedObj = {
                 class: cls, region: region, pharmacy: pharmacy, month: month,
-                name: mappedName, unit: unit, unitSold: sold, method: method, category: null,
+                name: mappedName, unit: unit, unitSold: sold, method: method, category: category,
                 originalString: fullProductString
             };
 
-            const key = fullProductString;
+            if (remapSuggestion) {
+                const rkey = fullProductString;
+                if (remapMap.has(rkey)) {
+                    remapMap.get(rkey).parsed.unitSold += sold;
+                } else {
+                    remapMap.set(rkey, { parsed: parsedObj, suggestion: remapSuggestion, resolved: false });
+                }
+                return;
+            }
 
+            const key = fullProductString;
             if (method === 'new') {
                 if (pendingMap.has(key)) {
                     pendingMap.get(key).unitSold += sold;
@@ -2539,10 +3037,38 @@ to { opacity: 1; transform: translateY(0); }
 
         fileValidationData.valid = Array.from(validMap.values());
         fileValidationData.pending = Array.from(pendingMap.values());
+        fileValidationData.remap = Array.from(remapMap.values());
 
+        renderValidationModal();
+    }
+
+    function renderValidationModal() {
         document.getElementById('valValidCount').textContent = fileValidationData.valid.length;
         document.getElementById('valPendingCount').textContent = fileValidationData.pending.length;
+        const unresolvedRemap = fileValidationData.remap.filter(r => !r.resolved);
+        document.getElementById('valRemapCount').textContent = unresolvedRemap.length;
         document.getElementById('valInvalidCount').textContent = fileValidationData.invalid.length;
+
+        const valRemapSection = document.getElementById('valRemapSection');
+        const valRemapTableBody = document.getElementById('valRemapTableBody');
+        if (unresolvedRemap.length > 0) {
+            valRemapSection.style.display = "block";
+            valRemapTableBody.innerHTML = "";
+            fileValidationData.remap.forEach((entry, i) => {
+                if (entry.resolved) return;
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${esc(entry.parsed.name)} <span class="product-unit">${esc(entry.parsed.unit)}</span> → <strong>${esc(entry.suggestion.name)}</strong> <span class="product-unit">${esc(entry.suggestion.unit)}</span></td>
+                    <td>
+                        <button class="btn btn-small" onclick="resolveRemap(${i}, true)">Accept match</button>
+                        <button class="btn btn-small btn-muted" onclick="resolveRemap(${i}, false)">Keep as new</button>
+                    </td>
+                `;
+                valRemapTableBody.appendChild(tr);
+            });
+        } else {
+            valRemapSection.style.display = "none";
+        }
 
         const valPendingSection = document.getElementById('valPendingSection');
         const valPendingTableBody = document.getElementById('valPendingTableBody');
@@ -2558,10 +3084,10 @@ to { opacity: 1; transform: translateY(0); }
                     <td>
                         <select class="file-bulk-context" data-index="${i}">
                             <option value="">Select Context</option>
-                            <option value="قرار لجنة">قرار لجنة</option>
-                            <option value="حكم قضائي">حكم قضائي</option>
-                            <option value="داخل اللستة">داخل اللستة</option>
-                            <option value="شئون طبية">شئون طبية</option>
+                            <option value="قرار لجنة" ${item.category === 'قرار لجنة' ? 'selected' : ''}>قرار لجنة</option>
+                            <option value="حكم قضائي" ${item.category === 'حكم قضائي' ? 'selected' : ''}>حكم قضائي</option>
+                            <option value="داخل اللستة" ${item.category === 'داخل اللستة' ? 'selected' : ''}>داخل اللستة</option>
+                            <option value="شئون طبية" ${item.category === 'شئون طبية' ? 'selected' : ''}>شئون طبية</option>
                         </select>
                     </td>
                 `;
@@ -2589,6 +3115,23 @@ to { opacity: 1; transform: translateY(0); }
         document.getElementById("fileValidationModal").style.display = "block";
     }
 
+    function resolveRemap(i, accept) {
+        const entry = fileValidationData.remap[i];
+        if (!entry || entry.resolved) return;
+        entry.resolved = true;
+        if (accept) {
+            entry.parsed.method = 'old';
+            entry.parsed.name = entry.suggestion.name;
+            entry.parsed.unit = entry.suggestion.unit;
+            entry.parsed.originalString = entry.suggestion.fullString;
+            fileValidationData.valid.push(entry.parsed);
+        } else {
+            entry.parsed.method = 'new';
+            fileValidationData.pending.push(entry.parsed);
+        }
+        renderValidationModal();
+    }
+
     function skipCurrentFileValidation() {
         fileQueue.shift();
         processNextFileInQueue();
@@ -2596,6 +3139,11 @@ to { opacity: 1; transform: translateY(0); }
 
     function submitValidatedFile() {
         if (isSubmitting) return;
+
+        if (fileValidationData.remap.some(r => !r.resolved)) {
+            showToast("Please resolve the suggested matches before submitting.", true);
+            return;
+        }
 
         let allContextsFilled = true;
         const selects = document.querySelectorAll(".file-bulk-context");
@@ -2626,61 +3174,46 @@ to { opacity: 1; transform: translateY(0); }
             return;
         }
 
+        if (allValidItems.some(item => !(item.unitSold > 0))) {
+            showToast("Every item needs units sold greater than 0 — fix the values above before submitting.", true);
+            return;
+        }
+
         isSubmitting = true;
         const btn = document.getElementById('valSubmitBtn');
         const originalContent = btn.textContent;
         btn.textContent = 'Submitting...';
         btn.classList.add('loading');
 
-        const submissionData = allValidItems.map(item => {
+        const exportRows = allValidItems.map(item => ({
+            class: item.class, region: item.region, pharmacy: item.pharmacy, month: item.month,
+            name: item.name, unit: item.unit, unitSold: item.unitSold, method: item.method, category: item.category || ''
+        }));
+
+        const submissionRows = allValidItems.map(item => {
             const finalName = (item.method === 'new' && item.category && item.category !== 'داخل اللستة') 
                 ? `${item.name} (${item.category})` 
                 : item.name;
-
-            return {
-                class: item.class,
-                region: item.region, 
-                pharmacy: item.pharmacy,
-                month: item.month,
-                name: finalName, 
-                unit: item.unit, 
-                unitSold: item.unitSold,
-                method: item.method,
-                category: item.category || 'N/A',
-                timestamp: new Date().toISOString()
-            };
+            return buildSubmissionRow(
+                finalName, item.unit, item.unitSold, item.method, item.category,
+                item.class, item.region, item.pharmacy, item.month
+            );
         });
 
-        let isResolved = false;
-        const timeout = setTimeout(() => {
-            if(!isResolved) {
-                showToast('Network timeout. Saved locally. Please try again later.', true);
-                isSubmitting = false;
-                btn.textContent = originalContent;
-                btn.classList.remove('loading');
+        submitWithQueue(submissionRows).then(result => {
+            const status = typeof result === 'string' ? result : result.status;
+            if (status === 'invalid') {
+                showToast(`The server rejected this file (${result.detail}). Please check the data.`, true);
+                return;
             }
-        }, 8000);
-
-        fetch(SUBMIT_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(submissionData)
-        })
-        .then(res => { if(!res.ok) throw new Error('submit_failed'); return res.json(); })
-        .then(() => {
-            isResolved = true;
-            clearTimeout(timeout);
-            showToast(`File submission successful! (${allValidItems.length} items)`);
+            showToast(status === 'queued'
+                ? `File saved (${allValidItems.length} items) — queued offline, will sync automatically.`
+                : `File submission successful! (${allValidItems.length} items)`);
+            generateAndDownloadFiles(exportRows);
             fileQueue.shift();
             processNextFileInQueue();
-        })
-        .catch((error) => {
-            isResolved = true;
-            clearTimeout(timeout);
-            showToast('Error submitting data.', true);
-        })
-        .finally(() => { 
-            isSubmitting = false; 
+        }).finally(() => {
+            isSubmitting = false;
             btn.textContent = originalContent;
             btn.classList.remove('loading');
         });
@@ -2690,14 +3223,15 @@ to { opacity: 1; transform: translateY(0); }
         const hasData = data.length > 0;
         
         if (type === 'csv') {
-            let csvContent = "\uFEFFclass,month,region,pharmacy,name,unit,unitSold\n";
+            let csvContent = "\uFEFFclass,month,region,pharmacy,name,unit,unitSold,method,category\n";
             if (hasData) {
                 data.forEach(item => {
                     const [name, unit] = item.product.split('|');
-                    csvContent += `${item.cls},${item.month},${item.region},"${item.pharmacy}","${name}","${unit}",${item.unitsSold}\n`;
+                    csvContent += [item.cls, item.month, item.region, item.pharmacy, name, unit || '', item.unitsSold, item.method, item.category || '']
+                        .map(csvField).join(',') + '\n';
                 });
             } else {
-                 csvContent += "workforce,January,first,MyPharmacy,Acetazolamide 250mg,10 T,50\n";
+                 csvContent += [...['workforce', 'January', 'first', 'MyPharmacy', 'Acetazolamide 250mg', '10 T', 50, 'old', '']].map(csvField).join(',') + '\n';
             }
             downloadFile(csvContent, 'pharmacy_data_template.csv', 'text/csv;charset=utf-8;');
         } else if (type === 'json') {
@@ -2711,8 +3245,10 @@ to { opacity: 1; transform: translateY(0); }
                         region: item.region,
                         pharmacy: item.pharmacy,
                         name: name,
-                        unit: unit,
-                        unitSold: item.unitsSold
+                        unit: unit || '',
+                        unitSold: item.unitsSold,
+                        method: item.method,
+                        category: item.category || ''
                     };
                 });
                 jsonContent = JSON.stringify(exportData, null, 2);
@@ -2725,7 +3261,9 @@ to { opacity: 1; transform: translateY(0); }
                         "pharmacy": "MyPharmacy",
                         "name": "Acetazolamide 250mg", 
                         "unit": "10 T", 
-                        "unitSold": 50
+                        "unitSold": 50,
+                        "method": "old",
+                        "category": ""
                     }
                 ], null, 2);
             }
@@ -2806,6 +3344,9 @@ to { opacity: 1; transform: translateY(0); }
 
     document.addEventListener('DOMContentLoaded', loadData);
     setInterval(saveData, 30000);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') saveData();
+    });
 </script>
 </body>
 </html>
