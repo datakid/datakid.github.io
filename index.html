@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0a121a" media="(prefers-color-scheme: dark)">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://firecloud.rubberylock7.workers.dev; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
-<title>بيان الخارجي</title>
+<title>تذاكر الخارجي</title>
 <script>
 (function() {
     try {
@@ -482,7 +482,7 @@ border-radius: var(--radius-lg);
 overflow: hidden;
 }
 
-th, td { padding: 1.05rem 1.2rem; text-align: left; }
+th, td { padding: 1.05rem 1.2rem; text-align: start; }
 
 th {
 background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
@@ -494,8 +494,8 @@ font-size: 0.78rem;
 border: none;
 }
 
-th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
-th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+th:first-child { border-start-start-radius: 12px; border-end-start-radius: 12px; }
+th:last-child { border-start-end-radius: 12px; border-end-end-radius: 12px; }
 
 #results table thead.no-print th { position: sticky; top: 0; z-index: 5; }
 
@@ -520,8 +520,8 @@ box-shadow: 0 12px 26px var(--shadow-hover);
 z-index: 2;
 }
 
-tr td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
-tr td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+tr td:first-child { border-start-start-radius: 12px; border-end-start-radius: 12px; }
+tr td:last-child { border-start-end-radius: 12px; border-end-end-radius: 12px; }
 
 .product-name { font-weight: 600; }
 .product-unit { color: var(--primary-color); font-weight: 700; font-size: 0.92em; }
@@ -848,7 +848,7 @@ background-color: var(--drop-bg); margin-bottom: 22px; position: relative;
 .drop-zone-hint { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; opacity: 0.75; }
 .drop-zone svg { width: 56px; height: 56px; stroke: var(--primary-color); opacity: 0.55; }
 
-.format-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 20px; text-align: left; }
+.format-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 20px; text-align: start; }
 .guide-box { background-color: var(--guide-bg); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--text-muted); box-shadow: 0 2px 8px var(--shadow-color); }
 .guide-box h4 { margin: 0 0 4px; color: var(--text-color); font-size: 0.9rem; }
 .guide-box code { display: block; background: #16232f; color: #d9c17e; padding: 11px; border-radius: 8px; margin-top: 8px; font-size: 0.8rem; overflow-x: auto; border: 1px solid #24384a; font-family: var(--font-mono); }
@@ -870,10 +870,11 @@ margin-top: 18px; background: var(--surface-alt); padding: 16px; border-radius: 
 }
 .validation-section h4 { margin: 0 0 10px; color: var(--text-color); font-size: 0.92rem; }
 .error-list { color: var(--danger-text); font-size: 0.88rem; margin: 0; padding-left: 20px; max-height: 150px; overflow-y: auto; }
+.filename-badge { margin-left: 6px; }
 .error-list li { margin-bottom: 5px; }
 
 .bulk-table { width: 100%; border-collapse: collapse; }
-.bulk-table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); padding: 8px 10px; }
+.bulk-table th { text-align: start; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); padding: 8px 10px; }
 .bulk-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
 .bulk-table select, .bulk-table input { margin-bottom: 0; padding: 9px 10px; font-size: 0.92rem; }
 
@@ -960,12 +961,16 @@ to { opacity: 1; transform: translateY(0); }
 [dir="rtl"] .id-icon { left: auto; right: 1.1rem; }
 [dir="rtl"] .id-enter-hint { right: auto; left: 1.1rem; }
 
+[dir="ltr"] .title { font-family: var(--font-ui); letter-spacing: -0.01em; }
+
 [dir="rtl"] .added-badge { float: left; }
 
-[dir="rtl"] #results th, [dir="rtl"] #results td { text-align: right; }
-[dir="rtl"] .bulk-table th, [dir="rtl"] .bulk-table td { text-align: right; }
+[dir="rtl"] select {
+background-position: left 1.15rem center;
+padding-right: 1.2rem;
+padding-left: 3.2rem;
+}
 
-[dir="rtl"] .format-guide { text-align: right; }
 [dir="rtl"] .guide-box { border-left: none; padding-left: 1.4rem; }
 [dir="rtl"] .guide-box.csv-guide { border-right: 4px solid var(--secondary-color); }
 [dir="rtl"] .guide-box.json-guide { border-right: 4px solid var(--accent-amber); }
@@ -978,6 +983,8 @@ to { opacity: 1; transform: translateY(0); }
 [dir="rtl"] .toggle-switch { margin-left: 0; margin-right: 10px; }
 
 [dir="rtl"] .undo-btn { margin-left: 0; margin-right: 10px; }
+
+[dir="rtl"] .filename-badge { margin-left: 0; margin-right: 6px; }
 
 [dir="rtl"] .legacy-pill,
 [dir="rtl"] .section-label,
@@ -1045,7 +1052,7 @@ License: MIT
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             <span data-i18n="legacyTool">Legacy tool</span>
         </span>
-        <h1 class="title" lang="ar">بيان الخارجي</h1>
+        <h1 class="title" data-i18n="appTitle">تذاكر الخارجي</h1>
         <div class="stats-strip">
             <span class="stats-chip">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"></path></svg>
@@ -1315,7 +1322,7 @@ License: MIT
             </button>
             <h2 id="fileValidationModalTitle">
                 <span data-i18n="fileVerification">File Verification:</span>
-                <span id="currentFileName" style="color: var(--text-color); margin-left: 6px; font-weight: 500; background: var(--surface-alt); padding: 4px 12px; border-radius: 8px; font-size: 1.1rem; border: 1px solid var(--border-color);"></span>
+                <span id="currentFileName" class="filename-badge" style="color: var(--text-color); font-weight: 500; background: var(--surface-alt); padding: 4px 12px; border-radius: 8px; font-size: 1.1rem; border: 1px solid var(--border-color);"></span>
             </h2>
 
             <div class="validation-stats">
@@ -1485,6 +1492,7 @@ License: MIT
 
     const I18N = {
         en: {
+            appTitle: 'Insurance Covered',
             legacyTool: 'Legacy tool',
             legacyMode: 'Legacy Mode',
             toggleTheme: 'Toggle Theme',
@@ -1645,6 +1653,7 @@ License: MIT
             rowPharmacyNotExist: (n, name, pharmacy, cls, region) => `Row ${n} (${name}): Pharmacy '${pharmacy}' does not exist in ${cls}/${region}`,
         },
         ar: {
+            appTitle: 'تذاكر الخارجي',
             legacyTool: 'أداة قديمة',
             legacyMode: 'الوضع القديم',
             toggleTheme: 'تبديل المظهر',
