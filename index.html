@@ -30,6 +30,7 @@
 --primary-glow: rgba(111, 163, 184, 0.28);
 --secondary-color: #6fa3b8;
 --accent-amber: #c2a262;
+--accent-amber-text: #8a6d34;
 --accent-plum: #7d6b93;
 --danger: #a8434a;
 --radius-xl: 22px;
@@ -82,6 +83,7 @@
 --primary-color-dark: #5892c1;
 --secondary-color: #8fc4d6;
 --accent-amber: #dbc17e;
+--accent-amber-text: #dbc17e;
 --accent-plum: #a595bb;
 --danger: #e29491;
 --bg-color: #0a121a;
@@ -183,13 +185,14 @@ box-shadow: 0 28px 80px var(--shadow-hover);
 
 .legacy-pill {
 display: inline-flex; align-items: center; gap: 6px;
-font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700;
-letter-spacing: 1.2px; text-transform: uppercase;
-color: var(--accent-amber); background: rgba(194, 162, 98, 0.12);
+font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+font-synthesis: none;
+letter-spacing: 0.3px; text-transform: uppercase;
+color: var(--accent-amber-text); background: rgba(194, 162, 98, 0.12);
 border: 1px solid rgba(194, 162, 98, 0.3);
 padding: 6px 15px; border-radius: 50px; margin-bottom: 1.1rem;
 }
-.legacy-pill svg { width: 13px; height: 13px; stroke: var(--accent-amber); }
+.legacy-pill svg { width: 13px; height: 13px; stroke: var(--accent-amber-text); }
 
 .title {
 font-family: var(--font-serif-ar);
@@ -202,7 +205,6 @@ color: transparent;
 margin: 0;
 position: relative;
 font-weight: 700;
-letter-spacing: 0.5px;
 }
 
 .title::after {
@@ -211,21 +213,13 @@ display: block;
 width: 64px;
 height: 4px;
 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-margin: 20px auto 0;
+margin: 22px auto 0;
 border-radius: 2px;
-}
-
-.subtitle {
-margin: 0.85rem 0 0;
-font-size: 0.92rem;
-color: var(--text-muted);
-font-weight: 500;
-letter-spacing: 0.2px;
 }
 
 .stats-strip {
 display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-margin: 1.4rem 0 0.25rem;
+margin: 1.9rem 0 0.25rem;
 }
 .stats-chip {
 display: flex; align-items: center; gap: 8px;
@@ -636,6 +630,15 @@ stroke-linecap: round;
 stroke-linejoin: round;
 }
 
+.lang-toggle-btn {
+font-family: var(--font-ar);
+font-size: 15px;
+font-weight: 700;
+width: 39px;
+height: 39px;
+line-height: 1;
+}
+
 .legacy-mode-toggle {
 display: flex; align-items: center; gap: 4px; font-size: 0.88rem; font-weight: 600; color: var(--text-muted);
 background: var(--surface-alt); padding: 6px 10px 6px 16px; border-radius: 50px; border: 1px solid var(--border-color);
@@ -945,6 +948,47 @@ body { padding-top: 2rem; padding-bottom: 130px; }
 from { opacity: 0; transform: translateY(-25px); }
 to { opacity: 1; transform: translateY(0); }
 }
+
+[lang="ar"] { letter-spacing: normal; }
+
+/* ---- RTL / Arabic UI mode ---- */
+[dir="rtl"] {
+--font-ui: var(--font-ar);
+}
+
+[dir="rtl"] .id-input-wrapper input { padding-left: 1rem; padding-right: 2.75rem; }
+[dir="rtl"] .id-icon { left: auto; right: 1.1rem; }
+[dir="rtl"] .id-enter-hint { right: auto; left: 1.1rem; }
+
+[dir="rtl"] .added-badge { float: left; }
+
+[dir="rtl"] #results th, [dir="rtl"] #results td { text-align: right; }
+[dir="rtl"] .bulk-table th, [dir="rtl"] .bulk-table td { text-align: right; }
+
+[dir="rtl"] .format-guide { text-align: right; }
+[dir="rtl"] .guide-box { border-left: none; padding-left: 1.4rem; }
+[dir="rtl"] .guide-box.csv-guide { border-right: 4px solid var(--secondary-color); }
+[dir="rtl"] .guide-box.json-guide { border-right: 4px solid var(--accent-amber); }
+.guide-box code { direction: ltr; text-align: left; unicode-bidi: isolate; display: inline-block; }
+
+[dir="rtl"] .error-list { padding-left: 0; padding-right: 20px; }
+
+[dir="rtl"] .modal-close { right: auto; left: 1.4rem; }
+
+[dir="rtl"] .toggle-switch { margin-left: 0; margin-right: 10px; }
+
+[dir="rtl"] .undo-btn { margin-left: 0; margin-right: 10px; }
+
+[dir="rtl"] .legacy-pill,
+[dir="rtl"] .section-label,
+[dir="rtl"] .added-badge,
+[dir="rtl"] #results th,
+[dir="rtl"] .bulk-table th,
+[dir="rtl"] label {
+letter-spacing: normal;
+text-transform: none;
+}
+
 </style>
 <script>
 /**
@@ -972,24 +1016,25 @@ License: MIT
 <div class="container">
     <div class="top-controls no-print">
         <div class="top-controls-group">
-            <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme" aria-label="Toggle theme">
+            <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" data-i18n-title="toggleTheme" data-i18n-aria="toggleTheme" title="Toggle Theme" aria-label="Toggle theme">
                 <svg id="themeIcon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
             </button>
-            <button class="theme-toggle-btn" onclick="exportSession()" title="Save Session" aria-label="Save session">
+            <button class="theme-toggle-btn" onclick="exportSession()" data-i18n-title="saveSession" data-i18n-aria="saveSession" title="Save Session" aria-label="Save session">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
             </button>
-            <button class="theme-toggle-btn" onclick="document.getElementById('sessionFileInput').click()" title="Load Session" aria-label="Load session">
+            <button class="theme-toggle-btn" onclick="document.getElementById('sessionFileInput').click()" data-i18n-title="loadSession" data-i18n-aria="loadSession" title="Load Session" aria-label="Load session">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             </button>
+            <button class="theme-toggle-btn lang-toggle-btn" id="langToggle" onclick="toggleLanguage()" title="Switch to Arabic" aria-label="Switch to Arabic">ع</button>
             <input type="file" id="sessionFileInput" accept=".json" style="display: none;" onchange="importSession(this)">
         </div>
         <div class="top-controls-group">
-            <button class="queue-badge" id="queueBadge" onclick="tryFlushOfflineQueue()" style="display:none;" title="Retry queued submissions" aria-label="Retry queued submissions"></button>
+            <button class="queue-badge" id="queueBadge" onclick="tryFlushOfflineQueue()" style="display:none;" data-i18n-title="retryQueued" data-i18n-aria="retryQueued" title="Retry queued submissions" aria-label="Retry queued submissions"></button>
         </div>
         <div class="legacy-mode-toggle">
-            <span>Legacy Mode</span>
+            <span data-i18n="legacyMode">Legacy Mode</span>
             <label class="toggle-switch">
-                <input type="checkbox" id="legacyModeToggle" onchange="toggleLegacyMode()" title="Toggle Legacy Mode">
+                <input type="checkbox" id="legacyModeToggle" onchange="toggleLegacyMode()" data-i18n-title="toggleLegacyMode" title="Toggle Legacy Mode">
                 <span class="slider"></span>
             </label>
         </div>
@@ -998,27 +1043,26 @@ License: MIT
     <div class="title-wrap no-print">
         <span class="legacy-pill">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            Legacy tool
+            <span data-i18n="legacyTool">Legacy tool</span>
         </span>
-        <h1 class="title">بيان الخارجي</h1>
-        <p class="subtitle">External supply statement &middot; pharmacy monthly report</p>
+        <h1 class="title" lang="ar">بيان الخارجي</h1>
         <div class="stats-strip">
             <span class="stats-chip">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"></path></svg>
-                <strong id="statEntries">0</strong>&nbsp;entries
+                <strong id="statEntries">0</strong>&nbsp;<span data-i18n="entries">entries</span>
             </span>
             <span class="stats-chip">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V6a5 5 0 0 1 10 0v2"></path></svg>
-                <strong id="statUnits">0</strong>&nbsp;units sold
+                <strong id="statUnits">0</strong>&nbsp;<span data-i18n="unitsSoldStat">units sold</span>
             </span>
             <span class="stats-chip" id="statPendingChip" style="display:none;">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                <strong id="statPending">0</strong>&nbsp;need context
+                <strong id="statPending">0</strong>&nbsp;<span data-i18n="needContext">need context</span>
             </span>
         </div>
     </div>
 
-    <div class="report-header print-only">
+    <div class="report-header print-only" lang="ar">
         <p>مرسل الي ادارة التموين الطبي والصيدليات</p>
         <p>فرع البحيرة الموازنة <span id="classDisplay"></span> المنطقة <span id="regionDisplay"></span></p>
         <p>صيدلية <span id="pharmacyDisplay"></span></p>
@@ -1029,80 +1073,80 @@ License: MIT
 
         <div class="id-container">
             <div class="id-helper">
-                <span>Enter ID (e.g. a21) &middot; Press <kbd class="id-badge">/</kbd> to focus</span>
-                <span style="color: var(--primary-color); font-weight: 600;">a=Students, b=Workforce, c=Infants</span>
+                <span><span data-i18n="idHelperHint">Enter ID (e.g. a21) &middot; Press</span> <kbd class="id-badge">/</kbd> <span data-i18n="idHelperHintTail"></span></span>
+                <span style="color: var(--primary-color); font-weight: 600;" data-i18n="idHelperLegend">a=Students, b=Workforce, c=Infants</span>
             </div>
             <div class="id-input-wrapper">
                 <span class="id-icon"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></span>
-                <input type="text" id="quickIdInput" placeholder="Quick ID" title="Enter Quick ID" maxlength="5">
-                <span class="id-enter-hint">Press Enter</span>
+                <input type="text" id="quickIdInput" data-i18n-placeholder="quickIdPlaceholder" data-i18n-title="quickIdTitle" placeholder="Quick ID" title="Enter Quick ID" maxlength="5">
+                <span class="id-enter-hint" data-i18n="pressEnter">Press Enter</span>
             </div>
         </div>
 
         <div class="section-label">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
-            Location
+            <span data-i18n="sectionLocation">Location</span>
         </div>
 
-        <label for="classSelect">الموازنة</label>
-        <select id="classSelect" title="Select Class" required>
-            <option value="">الموازنة</option>
-            <option value="student">طلاب (a)</option>
-            <option value="workforce">قوى عاملة (b)</option>
-            <option value="infants">مواليد (c)</option>
+        <label for="classSelect" data-i18n="fieldClass">الموازنة</label>
+        <select id="classSelect" data-i18n-title="selectClass" title="Select Class" required>
+            <option value="" data-i18n="fieldClass">الموازنة</option>
+            <option value="student" data-i18n="classStudent">طلاب (a)</option>
+            <option value="workforce" data-i18n="classWorkforce">قوى عاملة (b)</option>
+            <option value="infants" data-i18n="classInfants">مواليد (c)</option>
         </select>
 
-        <label for="regionSelect">المنطقة</label>
-        <select id="regionSelect" disabled title="Select Region" required>
-            <option value="">المنطقة</option>
-            <option value="first">الاولى (1)</option>
-            <option value="second">الثانية (2)</option>
-            <option value="third">الثالثة (3)</option>
+        <label for="regionSelect" data-i18n="fieldRegion">المنطقة</label>
+        <select id="regionSelect" disabled data-i18n-title="selectRegion" title="Select Region" required>
+            <option value="" data-i18n="fieldRegion">المنطقة</option>
+            <option value="first" data-i18n="regionFirst">الاولى (1)</option>
+            <option value="second" data-i18n="regionSecond">الثانية (2)</option>
+            <option value="third" data-i18n="regionThird">الثالثة (3)</option>
         </select>
 
-        <label for="pharmacySelect">الصيدلية</label>
-        <select id="pharmacySelect" disabled title="Select Pharmacy" required>
-            <option value="">الصيدلية</option>
+        <label for="pharmacySelect" data-i18n="fieldPharmacy">الصيدلية</label>
+        <select id="pharmacySelect" disabled data-i18n-title="selectPharmacy" title="Select Pharmacy" required>
+            <option value="" data-i18n="fieldPharmacy">الصيدلية</option>
         </select>
 
-        <label for="monthSelect">الشهر</label>
-        <select id="monthSelect" title="Select Month" required>
-            <option value="">الشهر</option>
-            <option value="January">يناير</option>
-            <option value="February">فبراير</option>
-            <option value="March">مارس</option>
-            <option value="April">ابريل</option>
-            <option value="May">مايو</option>
-            <option value="June">يونيو</option>
-            <option value="July">يوليو</option>
-            <option value="August">اغسطس</option>
-            <option value="September">سبتمبر</option>
-            <option value="October">اكتوبر</option>
-            <option value="November">نوفمبر</option>
-            <option value="December">ديسمبر</option>
+        <label for="monthSelect" data-i18n="fieldMonth">الشهر</label>
+        <select id="monthSelect" data-i18n-title="selectMonth" title="Select Month" required>
+            <option value="" data-i18n="fieldMonth">الشهر</option>
+            <option value="January" data-i18n="monthJanuary">يناير</option>
+            <option value="February" data-i18n="monthFebruary">فبراير</option>
+            <option value="March" data-i18n="monthMarch">مارس</option>
+            <option value="April" data-i18n="monthApril">ابريل</option>
+            <option value="May" data-i18n="monthMay">مايو</option>
+            <option value="June" data-i18n="monthJune">يونيو</option>
+            <option value="July" data-i18n="monthJuly">يوليو</option>
+            <option value="August" data-i18n="monthAugust">اغسطس</option>
+            <option value="September" data-i18n="monthSeptember">سبتمبر</option>
+            <option value="October" data-i18n="monthOctober">اكتوبر</option>
+            <option value="November" data-i18n="monthNovember">نوفمبر</option>
+            <option value="December" data-i18n="monthDecember">ديسمبر</option>
         </select>
 
         <div class="section-label">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            Product entry
+            <span data-i18n="sectionProductEntry">Product entry</span>
         </div>
 
         <div class="autocomplete">
-            <label for="searchInput">Search for a product</label>
-            <input type="text" id="searchInput" placeholder="Search for a product (e.g. gtin)..." title="Search for a product">
+            <label for="searchInput" data-i18n="searchForProduct">Search for a product</label>
+            <input type="text" id="searchInput" data-i18n-placeholder="searchForProductPlaceholder" data-i18n-title="searchForProduct" placeholder="Search for a product (e.g. gtin)..." title="Search for a product">
         </div>
 
-        <label for="unitsSold">Units sold</label>
-        <input type="number" id="unitsSold" placeholder="Units sold" step="1" min="0" title="Enter units sold">
+        <label for="unitsSold" data-i18n="unitsSoldLabel">Units sold</label>
+        <input type="number" id="unitsSold" data-i18n-placeholder="unitsSoldLabel" data-i18n-title="enterUnitsSold" placeholder="Units sold" step="1" min="0" title="Enter units sold">
 
         <div class="button-container">
-            <button class="btn" onclick="addData()" title="Add Data">
+            <button class="btn" onclick="addData()" data-i18n-title="addDataBtn" title="Add Data">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Add Data
+                <span data-i18n="addDataBtn">Add Data</span>
             </button>
-            <button class="btn" id="addNameBtn" onclick="showAddNameModal()" disabled title="Add Name">
+            <button class="btn" id="addNameBtn" onclick="showAddNameModal()" disabled data-i18n-title="addNameBtn" title="Add Name">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
-                Add Name
+                <span data-i18n="addNameBtn">Add Name</span>
             </button>
         </div>
     </div>
@@ -1111,12 +1155,12 @@ License: MIT
         <table>
             <thead class="no-print">
                 <tr>
-                    <th>Product / Unit</th>
-                    <th>Units Sold</th>
+                    <th data-i18n="colProductUnit">Product / Unit</th>
+                    <th data-i18n="colUnitsSold">Units Sold</th>
                     <th class="no-print" style="width: 50px;"></th>
                 </tr>
             </thead>
-            <thead class="print-table-header">
+            <thead class="print-table-header" lang="ar">
                 <tr>
                     <th>الصنف / العبوة</th>
                     <th>الكمية المنصرفة</th>
@@ -1126,7 +1170,7 @@ License: MIT
             <tbody id="dataTable">
             </tbody>
         </table>
-        <div class="print-footer">
+        <div class="print-footer" lang="ar">
             <p>تاريخ الطباعة: <span id="printDate"></span> &middot; عدد الأصناف: <span id="printItemCount"></span></p>
             <div class="print-signature">
                 <span>التوقيع: ______________________</span>
@@ -1136,88 +1180,88 @@ License: MIT
     </div>
 
     <div id="legacyMode">
-        <input type="text" id="legacyFilterInput" placeholder="Filter products…" aria-label="Filter products" oninput="filterLegacyTable(this.value)">
+        <input type="text" id="legacyFilterInput" data-i18n-placeholder="filterProductsPlaceholder" data-i18n-aria="filterProductsAria" placeholder="Filter products…" aria-label="Filter products" oninput="filterLegacyTable(this.value)">
         <table>
             <thead>
                 <tr>
-                    <th>Product / Unit</th>
-                    <th>Units Sold</th>
+                    <th data-i18n="colProductUnit">Product / Unit</th>
+                    <th data-i18n="colUnitsSold">Units Sold</th>
                 </tr>
             </thead>
             <tbody id="legacyTable">
             </tbody>
         </table>
-        <button id="saveAndExitBtn" onclick="saveAndExit()" title="Save and Exit">Save and Exit</button>
+        <button id="saveAndExitBtn" onclick="saveAndExit()" data-i18n="saveAndExit" data-i18n-title="saveAndExit" title="Save and Exit">Save and Exit</button>
     </div>
 
     <div class="action-dock no-print">
-        <button type="button" class="dock-item csv-icon" onclick="downloadTemplate('csv')" data-tooltip="CSV Export" aria-label="Export CSV">
+        <button type="button" class="dock-item csv-icon" onclick="downloadTemplate('csv')" data-i18n-tooltip="csvExport" data-i18n-aria="exportCsvAria" data-tooltip="CSV Export" aria-label="Export CSV">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 12H8"></path><path d="M16 12h-2"></path><path d="M12 18V12"></path></svg>
         </button>
-        <button type="button" class="dock-item json-icon" onclick="downloadTemplate('json')" data-tooltip="JSON Export" aria-label="Export JSON">
+        <button type="button" class="dock-item json-icon" onclick="downloadTemplate('json')" data-i18n-tooltip="jsonExport" data-i18n-aria="exportJsonAria" data-tooltip="JSON Export" aria-label="Export JSON">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 13a2 2 0 0 0 1-1.99l-1 .01a2 2 0 0 0-3.98 0l-1-.01A2 2 0 0 0 7 13"></path><path d="M17 13a2 2 0 0 0 1-1.99l-1 .01a2 2 0 0 0-3.98 0l-1-.01A2 2 0 0 0 14 13"></path></svg>
         </button>
-        <button type="button" class="dock-item upload-icon" onclick="openImportModal()" data-tooltip="Direct DB Import" aria-label="Import from file">
+        <button type="button" class="dock-item upload-icon" onclick="openImportModal()" data-i18n-tooltip="directDbImport" data-i18n-aria="importFromFileAria" data-tooltip="Direct DB Import" aria-label="Import from file">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
         </button>
-        <button type="button" class="dock-item clear-icon" onclick="clearReport()" data-tooltip="Clear Report" aria-label="Clear report">
+        <button type="button" class="dock-item clear-icon" onclick="clearReport()" data-i18n-tooltip="clearReport" data-i18n-aria="clearReportAria" data-tooltip="Clear Report" aria-label="Clear report">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
         </button>
         <div class="dock-divider"></div>
-        <button type="button" class="dock-item print-icon" onclick="printReport()" data-tooltip="Print Report" aria-label="Print report">
+        <button type="button" class="dock-item print-icon" onclick="printReport()" data-i18n-tooltip="printReport" data-i18n-aria="printReportAria" data-tooltip="Print Report" aria-label="Print report">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
         </button>
-        <button type="button" class="dock-item submit-icon" id="submitBtnDock" onclick="submitData()" data-tooltip="Submit to Database" aria-label="Submit to database">
+        <button type="button" class="dock-item submit-icon" id="submitBtnDock" onclick="submitData()" data-i18n-tooltip="submitToDb" data-i18n-aria="submitToDbAria" data-tooltip="Submit to Database" aria-label="Submit to database">
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
         </button>
     </div>
 
     <div id="addNameModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="addNameModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeAddNameModal()" title="Close" aria-label="Close">
+            <button class="modal-close" onclick="closeAddNameModal()" data-i18n-title="close" data-i18n-aria="close" title="Close" aria-label="Close">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 id="addNameModalTitle">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
-                Add New Name
+                <span data-i18n="addNewNameTitle">Add New Name</span>
             </h2>
-            <label for="nameCategory">Context</label>
-            <select id="nameCategory" title="Select context for addition" required>
-                <option value="">Context</option>
+            <label for="nameCategory" data-i18n="contextLabel">Context</label>
+            <select id="nameCategory" data-i18n-title="selectContextForAddition" title="Select context for addition" required>
+                <option value="" data-i18n="contextLabel">Context</option>
                 <option value="قرار لجنة">قرار لجنة</option>
                 <option value="حكم قضائي">حكم قضائي</option>
                 <option value="داخل اللستة">داخل اللستة</option>
                 <option value="شئون طبية">شئون طبية</option>
             </select>
-            <label for="newProductName">Product Name</label>
-            <input type="text" id="newProductName" placeholder="Product Name" title="Enter product name" required>
-            <label for="newProductUnit">Product Unit</label>
-            <input type="text" id="newProductUnit" placeholder="Product Unit (e.g., 10 T)" title="Enter product unit" required>
-            <label for="newProductUnitsSold">Units Sold</label>
-            <input type="number" id="newProductUnitsSold" placeholder="Units Sold" min="0" step="1" title="Enter units sold" required>
+            <label for="newProductName" data-i18n="productNameLabel">Product Name</label>
+            <input type="text" id="newProductName" data-i18n-placeholder="productNameLabel" data-i18n-title="productNameLabel" placeholder="Product Name" title="Enter product name" required>
+            <label for="newProductUnit" data-i18n="productUnitLabel">Product Unit</label>
+            <input type="text" id="newProductUnit" data-i18n-placeholder="productUnitPlaceholder" data-i18n-title="productUnitLabel" placeholder="Product Unit (e.g., 10 T)" title="Enter product unit" required>
+            <label for="newProductUnitsSold" data-i18n="unitsSoldModalLabel">Units Sold</label>
+            <input type="number" id="newProductUnitsSold" data-i18n-placeholder="unitsSoldModalLabel" data-i18n-title="unitsSoldModalLabel" placeholder="Units Sold" min="0" step="1" title="Enter units sold" required>
             <div class="button-container">
-                <button class="btn" onclick="addNewName()">Add</button>
-                <button class="btn btn-muted" onclick="closeAddNameModal()">Cancel</button>
+                <button class="btn" onclick="addNewName()" data-i18n="add">Add</button>
+                <button class="btn btn-muted" onclick="closeAddNameModal()" data-i18n="cancel">Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="bulkContextModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bulkContextModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="this.closest('.modal').style.display='none'" title="Close" aria-label="Close">
+            <button class="modal-close" onclick="this.closest('.modal').style.display='none'" data-i18n-title="close" data-i18n-aria="close" title="Close" aria-label="Close">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 id="bulkContextModalTitle">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                Select Context for New Items
+                <span data-i18n="selectContextTitle">Select Context for New Items</span>
             </h2>
-            <p class="modal-desc">The following items are not in the main list. Please select a context for addition.</p>
+            <p class="modal-desc" data-i18n="selectContextDesc">The following items are not in the main list. Please select a context for addition.</p>
             <div style="max-height: 400px; overflow-y: auto;">
                 <table class="bulk-table">
                     <thead>
                         <tr>
-                            <th>Product / Unit</th>
-                            <th>Context</th>
+                            <th data-i18n="colProductUnit">Product / Unit</th>
+                            <th data-i18n="contextLabel">Context</th>
                         </tr>
                     </thead>
                     <tbody id="bulkContextTableBody">
@@ -1225,82 +1269,82 @@ License: MIT
                 </table>
             </div>
             <div class="button-container">
-                <button class="btn" onclick="saveBulkContexts()">Save &amp; Continue</button>
+                <button class="btn" onclick="saveBulkContexts()" data-i18n="saveContinue">Save &amp; Continue</button>
             </div>
         </div>
     </div>
 
     <div id="importModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeImportModal()" title="Close" aria-label="Close">
+            <button class="modal-close" onclick="closeImportModal()" data-i18n-title="close" data-i18n-aria="close" title="Close" aria-label="Close">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 id="importModalTitle">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                Direct DB File Import
+                <span data-i18n="directDbFileImportTitle">Direct DB File Import</span>
             </h2>
-            <p class="modal-desc">Uploaded files will bypass the table UI and be verified before pushing directly to the database. You can select multiple files.</p>
+            <p class="modal-desc" data-i18n="importModalDesc">Uploaded files will bypass the table UI and be verified before pushing directly to the database. You can select multiple files.</p>
             <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                <div class="drop-zone-text">Drag &amp; drop files here or click to browse</div>
-                <div class="drop-zone-hint">Accepts .csv and .json &middot; multiple files supported</div>
+                <div class="drop-zone-text" data-i18n="dragDropText">Drag &amp; drop files here or click to browse</div>
+                <div class="drop-zone-hint" data-i18n="dragDropHint">Accepts .csv and .json &middot; multiple files supported</div>
                 <input type="file" id="fileInput" accept=".csv, .json" multiple style="display: none;" onchange="handleFileSelect(this)">
             </div>
 
             <div class="format-guide">
                 <div class="guide-box csv-guide">
-                    <h4>CSV Headers</h4>
+                    <h4 data-i18n="csvHeaders">CSV Headers</h4>
                     <code>class, month, region, pharmacy, name, unit, unitSold</code>
                 </div>
                 <div class="guide-box json-guide">
-                    <h4>JSON Objects</h4>
+                    <h4 data-i18n="jsonObjects">JSON Objects</h4>
                     <code>[{"class": "...", "month": "...", "region": "...", "pharmacy": "...", "name": "...", "unit": "...", "unitSold": 10}]</code>
                 </div>
             </div>
 
             <div class="button-container">
-                <button class="btn btn-muted" onclick="closeImportModal()">Close</button>
+                <button class="btn btn-muted" onclick="closeImportModal()" data-i18n="close">Close</button>
             </div>
         </div>
     </div>
 
     <div id="fileValidationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="fileValidationModalTitle">
         <div class="modal-content">
-            <button class="modal-close" onclick="requestCancelValidationBatch()" title="Close" aria-label="Close">
+            <button class="modal-close" onclick="requestCancelValidationBatch()" data-i18n-title="close" data-i18n-aria="close" title="Close" aria-label="Close">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 id="fileValidationModalTitle">
-                File Verification:
+                <span data-i18n="fileVerification">File Verification:</span>
                 <span id="currentFileName" style="color: var(--text-color); margin-left: 6px; font-weight: 500; background: var(--surface-alt); padding: 4px 12px; border-radius: 8px; font-size: 1.1rem; border: 1px solid var(--border-color);"></span>
             </h2>
 
             <div class="validation-stats">
                 <div class="stat-card valid">
                     <div style="font-size: 2rem;" id="valValidCount">0</div>
-                    <div>Ready</div>
+                    <div data-i18n="ready">Ready</div>
                 </div>
                 <div class="stat-card pending">
                     <div style="font-size: 2rem;" id="valPendingCount">0</div>
-                    <div>Need Context</div>
+                    <div data-i18n="needContextStat">Need Context</div>
                 </div>
                 <div class="stat-card pending">
                     <div style="font-size: 2rem;" id="valRemapCount">0</div>
-                    <div>Suggested Matches</div>
+                    <div data-i18n="suggestedMatches">Suggested Matches</div>
                 </div>
                 <div class="stat-card invalid">
                     <div style="font-size: 2rem;" id="valInvalidCount">0</div>
-                    <div>Errors</div>
+                    <div data-i18n="errorsStat">Errors</div>
                 </div>
             </div>
 
             <div id="valRemapSection" class="validation-section" style="display: none;">
-                <h4>Suggested matches — review before submitting</h4>
+                <h4 data-i18n="suggestedMatchesReview">Suggested matches — review before submitting</h4>
                 <div style="max-height: 200px; overflow-y: auto;">
                     <table class="bulk-table">
                         <thead>
                             <tr>
-                                <th>Imported name → Suggested match</th>
-                                <th style="width: 220px;">Decision</th>
+                                <th data-i18n="importedNameSuggested">Imported name → Suggested match</th>
+                                <th style="width: 220px;" data-i18n="decisionCol">Decision</th>
                             </tr>
                         </thead>
                         <tbody id="valRemapTableBody"></tbody>
@@ -1309,14 +1353,14 @@ License: MIT
             </div>
 
             <div id="valPendingSection" class="validation-section" style="display: none;">
-                <h4>Items requiring a context</h4>
+                <h4 data-i18n="itemsRequiringContext">Items requiring a context</h4>
                 <div style="max-height: 250px; overflow-y: auto;">
                     <table class="bulk-table">
                         <thead>
                             <tr>
-                                <th>Product / Unit</th>
-                                <th style="width: 120px;">Units Sold</th>
-                                <th>Context</th>
+                                <th data-i18n="colProductUnit">Product / Unit</th>
+                                <th style="width: 120px;" data-i18n="colUnitsSold">Units Sold</th>
+                                <th data-i18n="contextLabel">Context</th>
                             </tr>
                         </thead>
                         <tbody id="valPendingTableBody">
@@ -1326,13 +1370,13 @@ License: MIT
             </div>
 
             <div id="valErrorSection" class="validation-section" style="display: none;">
-                <h4>Errors (these rows will be ignored)</h4>
+                <h4 data-i18n="errorsIgnored">Errors (these rows will be ignored)</h4>
                 <ul id="valErrorList" class="error-list"></ul>
             </div>
 
             <div class="button-container">
-                <button class="btn" id="valSubmitBtn" onclick="submitValidatedFile()">Confirm &amp; Submit Valid</button>
-                <button class="btn btn-muted" onclick="skipCurrentFileValidation()">Cancel File</button>
+                <button class="btn" id="valSubmitBtn" onclick="submitValidatedFile()" data-i18n="confirmSubmitValid">Confirm &amp; Submit Valid</button>
+                <button class="btn btn-muted" onclick="skipCurrentFileValidation()" data-i18n="cancelFile">Cancel File</button>
             </div>
         </div>
     </div>
@@ -1341,12 +1385,12 @@ License: MIT
         <div class="modal-content" style="max-width: 460px;">
             <h2 id="confirmModalTitle">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                Please confirm
+                <span data-i18n="pleaseConfirm">Please confirm</span>
             </h2>
             <p class="modal-desc" id="confirmModalMessage" style="margin: 0 0 0.5rem;"></p>
             <div class="button-container">
-                <button class="btn" id="confirmModalYes" onclick="resolveConfirmModal(true)">Confirm</button>
-                <button class="btn btn-muted" id="confirmModalNo" onclick="resolveConfirmModal(false)">Cancel</button>
+                <button class="btn" id="confirmModalYes" onclick="resolveConfirmModal(true)" data-i18n="confirm">Confirm</button>
+                <button class="btn btn-muted" id="confirmModalNo" onclick="resolveConfirmModal(false)" data-i18n="cancel">Cancel</button>
             </div>
         </div>
     </div>
@@ -1355,13 +1399,13 @@ License: MIT
         <div class="modal-content" style="max-width: 480px;">
             <h2 id="relabelModalTitle">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                Location changed
+                <span data-i18n="locationChanged">Location changed</span>
             </h2>
             <p class="modal-desc" id="relabelModalMessage" style="margin: 0 0 0.5rem;"></p>
             <div class="button-container">
-                <button class="btn" id="relabelModalRelabel">Relabel all rows</button>
-                <button class="btn btn-muted" id="relabelModalClear">Clear &amp; start new</button>
-                <button class="btn btn-muted" id="relabelModalCancel">Cancel</button>
+                <button class="btn" id="relabelModalRelabel" data-i18n="relabelAllRows">Relabel all rows</button>
+                <button class="btn btn-muted" id="relabelModalClear" data-i18n="clearStartNew">Clear &amp; start new</button>
+                <button class="btn btn-muted" id="relabelModalCancel" data-i18n="cancel">Cancel</button>
             </div>
         </div>
     </div>
@@ -1439,6 +1483,378 @@ License: MIT
 
     applyTheme(currentTheme);
 
+    const I18N = {
+        en: {
+            legacyTool: 'Legacy tool',
+            legacyMode: 'Legacy Mode',
+            toggleTheme: 'Toggle Theme',
+            saveSession: 'Save Session',
+            loadSession: 'Load Session',
+            retryQueued: 'Retry queued submissions',
+            queuedTapRetry: (n) => `${n} queued — tap to retry`,
+            toggleLegacyMode: 'Toggle Legacy Mode',
+            switchToArabic: 'Switch to Arabic',
+            switchToEnglish: 'Switch to English',
+            entries: 'entries',
+            unitsSoldStat: 'units sold',
+            needContext: 'need context',
+            idHelperHint: 'Enter ID (e.g. a21) · Press',
+            idHelperHintTail: 'to focus',
+            idHelperLegend: 'a=Students, b=Workforce, c=Infants',
+            enterUnitsSold: 'Enter units sold',
+            quickIdPlaceholder: 'Quick ID',
+            quickIdTitle: 'Enter Quick ID',
+            pressEnter: 'Press Enter',
+            sectionLocation: 'Location',
+            sectionProductEntry: 'Product entry',
+            fieldClass: 'Class',
+            fieldRegion: 'Region',
+            fieldPharmacy: 'Pharmacy',
+            fieldMonth: 'Month',
+            selectClass: 'Select Class',
+            selectRegion: 'Select Region',
+            selectPharmacy: 'Select Pharmacy',
+            selectMonth: 'Select Month',
+            classStudent: 'Students (a)',
+            classWorkforce: 'Workforce (b)',
+            classInfants: 'Infants (c)',
+            regionFirst: 'First (1)',
+            regionSecond: 'Second (2)',
+            regionThird: 'Third (3)',
+            monthJanuary: 'January', monthFebruary: 'February', monthMarch: 'March', monthApril: 'April',
+            monthMay: 'May', monthJune: 'June', monthJuly: 'July', monthAugust: 'August',
+            monthSeptember: 'September', monthOctober: 'October', monthNovember: 'November', monthDecember: 'December',
+            searchForProduct: 'Search for a product',
+            searchForProductPlaceholder: 'Search for a product (e.g. gtin)...',
+            unitsSoldLabel: 'Units sold',
+            addDataBtn: 'Add Data',
+            addNameBtn: 'Add Name',
+            colProductUnit: 'Product / Unit',
+            colUnitsSold: 'Units Sold',
+            noEntriesYet: 'No entries yet',
+            noEntriesHint: 'Search a product above and press Enter to add your first row.',
+            deleteTitle: 'Delete',
+            deleteAria: 'Delete row',
+            missingContext: 'Missing Context',
+            extLabel: '(ext)',
+            added: 'Added',
+            undo: 'Undo',
+            removedProduct: (name) => `Removed ${name}`,
+            clearedEntries: (n, word) => `Cleared ${n} ${word}`,
+            totalItem: (n) => `Total (${n} item)`,
+            totalItems: (n) => `Total (${n} items)`,
+            csvExport: 'CSV Export',
+            exportCsvAria: 'Export CSV',
+            jsonExport: 'JSON Export',
+            exportJsonAria: 'Export JSON',
+            directDbImport: 'Direct DB Import',
+            importFromFileAria: 'Import from file',
+            clearReport: 'Clear Report',
+            clearReportAria: 'Clear report',
+            printReport: 'Print Report',
+            printReportAria: 'Print report',
+            submitToDb: 'Submit to Database',
+            submitToDbAria: 'Submit to database',
+            saveAndExit: 'Save and Exit',
+            addNewNameTitle: 'Add New Name',
+            contextLabel: 'Context',
+            productNameLabel: 'Product Name',
+            productUnitLabel: 'Product Unit',
+            productUnitPlaceholder: 'Product Unit (e.g., 10 T)',
+            unitsSoldModalLabel: 'Units Sold',
+            add: 'Add',
+            cancel: 'Cancel',
+            close: 'Close',
+            selectContextForAddition: 'Select context for addition',
+            selectContextTitle: 'Select Context for New Items',
+            selectContextDesc: 'The following items are not in the main list. Please select a context for addition.',
+            decisionCol: 'Decision',
+            saveContinue: 'Save & Continue',
+            selectContextOption: 'Select Context',
+            directDbFileImportTitle: 'Direct DB File Import',
+            importModalDesc: 'Uploaded files will bypass the table UI and be verified before pushing directly to the database. You can select multiple files.',
+            dragDropText: 'Drag & drop files here or click to browse',
+            dragDropHint: 'Accepts .csv and .json · multiple files supported',
+            csvHeaders: 'CSV Headers',
+            jsonObjects: 'JSON Objects',
+            fileVerification: 'File Verification:',
+            ready: 'Ready',
+            needContextStat: 'Need Context',
+            suggestedMatches: 'Suggested Matches',
+            errorsStat: 'Errors',
+            suggestedMatchesReview: 'Suggested matches — review before submitting',
+            importedNameSuggested: 'Imported name → Suggested match',
+            acceptMatch: 'Accept match',
+            keepAsNew: 'Keep as new',
+            itemsRequiringContext: 'Items requiring a context',
+            errorsIgnored: 'Errors (these rows will be ignored)',
+            confirmSubmitValid: 'Confirm & Submit Valid',
+            submitting: 'Submitting...',
+            cancelFile: 'Cancel File',
+            pleaseConfirm: 'Please confirm',
+            confirm: 'Confirm',
+            locationChanged: 'Location changed',
+            relabelAllRows: 'Relabel all rows',
+            clearStartNew: 'Clear & start new',
+            filterProductsPlaceholder: 'Filter products…',
+            filterProductsAria: 'Filter products',
+            syncedQueued: (n) => `Synced ${n} queued submission(s).`,
+            droppedQueued: (n) => `${n} queued submission(s) were rejected by the server and dropped — please check that data.`,
+            idRecognized: (name) => `ID recognized: ${name}`,
+            invalidQuickId: 'Invalid Quick ID',
+            updatedExistingRow: (prev, units) => `Updated existing row: ${prev} → ${units}`,
+            fillAllFields: 'Please fill in all fields',
+            enterValidNumber: 'Please enter a valid number.',
+            selectValidProduct: "Select a valid product or add via 'Add Name'.",
+            nothingToClear: "There's nothing to clear.",
+            fillClassRegionPharmMonth: 'Please fill in Class, Region, Pharmacy, and Month before entering Legacy Mode.',
+            savedDataCorrupted: 'Saved data was corrupted and could not be loaded. Starting fresh.',
+            enterValidUnitsNumber: 'Please enter a valid number for Units Sold',
+            alreadyOnMasterList: 'That product is already on the master list — use the search box instead.',
+            addedManually: 'Added manually.',
+            nothingToSubmit: 'There is nothing to submit.',
+            selectAllFields: 'Please select all fields.',
+            everyRowNeedsUnits: 'Every row needs units sold greater than 0 before submitting — fix or remove zero-quantity rows.',
+            serverRejected: (detail) => `The server rejected this submission (${detail}). Please check the data.`,
+            offlineQueuedMsg: 'Offline — saved and queued. It will sync automatically.',
+            submittedSuccess: 'Data submitted successfully!',
+            selectContextAllItems: 'Please select a context for all items.',
+            provideCsvJson: 'Please provide .csv or .json files.',
+            errorProcessingFile: (filename) => `Error processing ${filename}`,
+            resolveSuggestedMatches: 'Please resolve the suggested matches before submitting.',
+            selectContextPendingItems: 'Please select a context for all pending items before submitting.',
+            noValidItems: 'No valid items to submit.',
+            everyItemNeedsUnits: 'Every item needs units sold greater than 0 — fix the values above before submitting.',
+            serverRejectedFile: (detail) => `The server rejected this file (${detail}). Please check the data.`,
+            fileSavedQueuedOffline: (n) => `File saved (${n} items) — queued offline, will sync automatically.`,
+            fileSubmissionSuccess: (n) => `File submission successful! (${n} items)`,
+            sessionLoadedSuccess: 'Session loaded successfully!',
+            invalidSessionFile: 'Invalid session file.',
+            couldNotReadSession: 'Could not read session file.',
+            productNotFoundConfirm: (name, unit) => `Product not found. Did you mean "${name} | ${unit}"?`,
+            alreadyHaveEntries: (n, word) => `You already have ${n} ${word} in this report. Relabel them all to the new selection, or clear the report and start fresh?`,
+            clearAllEntries: (n, word) => `Clear all ${n} ${word} from this report?`,
+            cancelRemainingQueued: (n) => `This will also cancel the ${n} remaining queued file(s). Continue?`,
+            entryWord: (n) => n === 1 ? 'entry' : 'entries',
+            itemWord: (n) => n === 1 ? 'item' : 'items',
+            rowMissingName: (n) => `Row ${n}: Missing Product Name`,
+            rowInvalidUnits: (n, name) => `Row ${n} (${name}): Invalid Units Sold`,
+            rowInvalidClass: (n, name, cls) => `Row ${n} (${name}): Invalid Class '${cls}'`,
+            rowInvalidRegion: (n, name, region) => `Row ${n} (${name}): Invalid Region '${region}'`,
+            rowInvalidMonth: (n, name, month) => `Row ${n} (${name}): Invalid Month '${month}'`,
+            rowPharmacyNotExist: (n, name, pharmacy, cls, region) => `Row ${n} (${name}): Pharmacy '${pharmacy}' does not exist in ${cls}/${region}`,
+        },
+        ar: {
+            legacyTool: 'أداة قديمة',
+            legacyMode: 'الوضع القديم',
+            toggleTheme: 'تبديل المظهر',
+            saveSession: 'حفظ الجلسة',
+            loadSession: 'تحميل الجلسة',
+            retryQueued: 'إعادة محاولة الإرسال المعلّق',
+            queuedTapRetry: (n) => `${n} في الانتظار — اضغط لإعادة المحاولة`,
+            toggleLegacyMode: 'تبديل الوضع القديم',
+            switchToArabic: 'التبديل إلى العربية',
+            switchToEnglish: 'التبديل إلى الإنجليزية',
+            entries: 'إدخال',
+            unitsSoldStat: 'وحدة مباعة',
+            needContext: 'بحاجة لسياق',
+            idHelperHint: 'أدخل المعرف (مثل a21) · اضغط',
+            idHelperHintTail: 'للتركيز',
+            idHelperLegend: 'a=طلاب، b=قوى عاملة، c=مواليد',
+            enterUnitsSold: 'أدخل الكمية المنصرفة',
+            quickIdPlaceholder: 'المعرف السريع',
+            quickIdTitle: 'أدخل المعرف السريع',
+            pressEnter: 'اضغط Enter',
+            sectionLocation: 'الموقع',
+            sectionProductEntry: 'إدخال المنتج',
+            fieldClass: 'الموازنة',
+            fieldRegion: 'المنطقة',
+            fieldPharmacy: 'الصيدلية',
+            fieldMonth: 'الشهر',
+            selectClass: 'اختر الموازنة',
+            selectRegion: 'اختر المنطقة',
+            selectPharmacy: 'اختر الصيدلية',
+            selectMonth: 'اختر الشهر',
+            classStudent: 'طلاب (a)',
+            classWorkforce: 'قوى عاملة (b)',
+            classInfants: 'مواليد (c)',
+            regionFirst: 'الاولى (1)',
+            regionSecond: 'الثانية (2)',
+            regionThird: 'الثالثة (3)',
+            monthJanuary: 'يناير', monthFebruary: 'فبراير', monthMarch: 'مارس', monthApril: 'ابريل',
+            monthMay: 'مايو', monthJune: 'يونيو', monthJuly: 'يوليو', monthAugust: 'اغسطس',
+            monthSeptember: 'سبتمبر', monthOctober: 'اكتوبر', monthNovember: 'نوفمبر', monthDecember: 'ديسمبر',
+            searchForProduct: 'ابحث عن منتج',
+            searchForProductPlaceholder: 'ابحث عن منتج (مثل gtin)...',
+            unitsSoldLabel: 'الكمية المنصرفة',
+            addDataBtn: 'إضافة بيانات',
+            addNameBtn: 'إضافة اسم',
+            colProductUnit: 'الصنف / العبوة',
+            colUnitsSold: 'الكمية المنصرفة',
+            noEntriesYet: 'لا توجد إدخالات بعد',
+            noEntriesHint: 'ابحث عن منتج أعلاه واضغط Enter لإضافة أول صف.',
+            deleteTitle: 'حذف',
+            deleteAria: 'حذف الصف',
+            missingContext: 'سياق مفقود',
+            extLabel: '(خارجي)',
+            added: 'تمت الإضافة',
+            undo: 'تراجع',
+            removedProduct: (name) => `تم حذف ${name}`,
+            clearedEntries: (n, word) => `تم مسح ${n} ${word}`,
+            totalItem: (n) => `الإجمالي (${n} صنف)`,
+            totalItems: (n) => `الإجمالي (${n} صنف)`,
+            csvExport: 'تصدير CSV',
+            exportCsvAria: 'تصدير CSV',
+            jsonExport: 'تصدير JSON',
+            exportJsonAria: 'تصدير JSON',
+            directDbImport: 'استيراد مباشر لقاعدة البيانات',
+            importFromFileAria: 'استيراد من ملف',
+            clearReport: 'مسح التقرير',
+            clearReportAria: 'مسح التقرير',
+            printReport: 'طباعة التقرير',
+            printReportAria: 'طباعة التقرير',
+            submitToDb: 'إرسال لقاعدة البيانات',
+            submitToDbAria: 'إرسال لقاعدة البيانات',
+            saveAndExit: 'حفظ وخروج',
+            addNewNameTitle: 'إضافة اسم جديد',
+            contextLabel: 'السياق',
+            productNameLabel: 'اسم المنتج',
+            productUnitLabel: 'عبوة المنتج',
+            productUnitPlaceholder: 'عبوة المنتج (مثل 10 T)',
+            unitsSoldModalLabel: 'الكمية المنصرفة',
+            add: 'إضافة',
+            cancel: 'إلغاء',
+            close: 'إغلاق',
+            selectContextForAddition: 'اختر السياق للإضافة',
+            selectContextTitle: 'اختر السياق للعناصر الجديدة',
+            selectContextDesc: 'العناصر التالية غير موجودة في القائمة الرئيسية. يرجى اختيار سياق لإضافتها.',
+            decisionCol: 'القرار',
+            saveContinue: 'حفظ ومتابعة',
+            selectContextOption: 'اختر السياق',
+            directDbFileImportTitle: 'استيراد ملف مباشر لقاعدة البيانات',
+            importModalDesc: 'الملفات المرفوعة ستتجاوز واجهة الجدول وسيتم التحقق منها قبل إرسالها مباشرة لقاعدة البيانات. يمكنك اختيار عدة ملفات.',
+            dragDropText: 'اسحب وأفلت الملفات هنا أو اضغط للتصفح',
+            dragDropHint: 'يقبل .csv و .json · يدعم عدة ملفات',
+            csvHeaders: 'رؤوس CSV',
+            jsonObjects: 'كائنات JSON',
+            fileVerification: 'التحقق من الملف:',
+            ready: 'جاهز',
+            needContextStat: 'بحاجة لسياق',
+            suggestedMatches: 'تطابقات مقترحة',
+            errorsStat: 'أخطاء',
+            suggestedMatchesReview: 'التطابقات المقترحة — راجعها قبل الإرسال',
+            importedNameSuggested: 'الاسم المستورد ← التطابق المقترح',
+            acceptMatch: 'قبول التطابق',
+            keepAsNew: 'الإبقاء كجديد',
+            itemsRequiringContext: 'عناصر تحتاج إلى سياق',
+            errorsIgnored: 'أخطاء (سيتم تجاهل هذه الصفوف)',
+            confirmSubmitValid: 'تأكيد وإرسال الصالح',
+            submitting: 'جارٍ الإرسال...',
+            cancelFile: 'إلغاء الملف',
+            pleaseConfirm: 'يرجى التأكيد',
+            confirm: 'تأكيد',
+            locationChanged: 'تم تغيير الموقع',
+            relabelAllRows: 'إعادة تسمية كل الصفوف',
+            clearStartNew: 'مسح والبدء من جديد',
+            filterProductsPlaceholder: 'تصفية المنتجات…',
+            filterProductsAria: 'تصفية المنتجات',
+            syncedQueued: (n) => `تمت مزامنة ${n} من الإرسالات المعلّقة.`,
+            droppedQueued: (n) => `تم رفض ${n} من الإرسالات المعلّقة من الخادم وتم إسقاطها — يرجى مراجعة تلك البيانات.`,
+            idRecognized: (name) => `تم التعرف على المعرف: ${name}`,
+            invalidQuickId: 'معرف سريع غير صالح',
+            updatedExistingRow: (prev, units) => `تم تحديث الصف الموجود: ${prev} ← ${units}`,
+            fillAllFields: 'يرجى ملء جميع الحقول',
+            enterValidNumber: 'يرجى إدخال رقم صالح.',
+            selectValidProduct: "اختر منتجًا صالحًا أو أضفه عبر 'إضافة اسم'.",
+            nothingToClear: 'لا يوجد شيء لمسحه.',
+            fillClassRegionPharmMonth: 'يرجى ملء الموازنة والمنطقة والصيدلية والشهر قبل الدخول إلى الوضع القديم.',
+            savedDataCorrupted: 'البيانات المحفوظة تالفة ولا يمكن تحميلها. سيتم البدء من جديد.',
+            enterValidUnitsNumber: 'يرجى إدخال رقم صالح للكمية المنصرفة',
+            alreadyOnMasterList: 'هذا المنتج موجود بالفعل في القائمة الرئيسية — استخدم مربع البحث بدلاً من ذلك.',
+            addedManually: 'تمت الإضافة يدويًا.',
+            nothingToSubmit: 'لا يوجد شيء لإرساله.',
+            selectAllFields: 'يرجى اختيار جميع الحقول.',
+            everyRowNeedsUnits: 'كل صف يحتاج إلى كمية منصرفة أكبر من 0 قبل الإرسال — يرجى تصحيح أو حذف الصفوف ذات الكمية صفر.',
+            serverRejected: (detail) => `رفض الخادم هذا الإرسال (${detail}). يرجى مراجعة البيانات.`,
+            offlineQueuedMsg: 'غير متصل — تم الحفظ والانتظار في الطابور. ستتم المزامنة تلقائيًا.',
+            submittedSuccess: 'تم إرسال البيانات بنجاح!',
+            selectContextAllItems: 'يرجى اختيار سياق لجميع العناصر.',
+            provideCsvJson: 'يرجى تقديم ملفات .csv أو .json.',
+            errorProcessingFile: (filename) => `خطأ في معالجة ${filename}`,
+            resolveSuggestedMatches: 'يرجى حل التطابقات المقترحة قبل الإرسال.',
+            selectContextPendingItems: 'يرجى اختيار سياق لجميع العناصر المعلّقة قبل الإرسال.',
+            noValidItems: 'لا توجد عناصر صالحة للإرسال.',
+            everyItemNeedsUnits: 'كل عنصر يحتاج إلى كمية منصرفة أكبر من 0 — يرجى تصحيح القيم أعلاه قبل الإرسال.',
+            serverRejectedFile: (detail) => `رفض الخادم هذا الملف (${detail}). يرجى مراجعة البيانات.`,
+            fileSavedQueuedOffline: (n) => `تم حفظ الملف (${n} صنف) — في الانتظار دون اتصال، ستتم المزامنة تلقائيًا.`,
+            fileSubmissionSuccess: (n) => `تم إرسال الملف بنجاح! (${n} صنف)`,
+            sessionLoadedSuccess: 'تم تحميل الجلسة بنجاح!',
+            invalidSessionFile: 'ملف جلسة غير صالح.',
+            couldNotReadSession: 'تعذّرت قراءة ملف الجلسة.',
+            productNotFoundConfirm: (name, unit) => `المنتج غير موجود. هل تقصد "${name} | ${unit}"؟`,
+            alreadyHaveEntries: (n, word) => `لديك بالفعل ${n} ${word} في هذا التقرير. أعد تسمية الكل حسب الاختيار الجديد، أو امسح التقرير وابدأ من جديد؟`,
+            clearAllEntries: (n, word) => `مسح كل ${n} ${word} من هذا التقرير؟`,
+            cancelRemainingQueued: (n) => `سيؤدي هذا أيضًا إلى إلغاء ${n} ملف/ملفات معلّقة متبقية. هل تريد المتابعة؟`,
+            entryWord: () => 'إدخال',
+            itemWord: () => 'صنف',
+            rowMissingName: (n) => `الصف ${n}: اسم المنتج مفقود`,
+            rowInvalidUnits: (n, name) => `الصف ${n} (${name}): كمية منصرفة غير صالحة`,
+            rowInvalidClass: (n, name, cls) => `الصف ${n} (${name}): موازنة غير صالحة '${cls}'`,
+            rowInvalidRegion: (n, name, region) => `الصف ${n} (${name}): منطقة غير صالحة '${region}'`,
+            rowInvalidMonth: (n, name, month) => `الصف ${n} (${name}): شهر غير صالح '${month}'`,
+            rowPharmacyNotExist: (n, name, pharmacy, cls, region) => `الصف ${n} (${name}): الصيدلية '${pharmacy}' غير موجودة في ${cls}/${region}`,
+        }
+    };
+
+    let currentLang = localStorage.getItem('app-lang') || 'en';
+
+    function t(key, ...args) {
+        const entry = (I18N[currentLang] && I18N[currentLang][key] !== undefined) ? I18N[currentLang][key] : I18N.en[key];
+        return typeof entry === 'function' ? entry(...args) : entry;
+    }
+
+    function applyLanguage(lang) {
+        currentLang = lang;
+        const isAr = lang === 'ar';
+        document.documentElement.lang = isAr ? 'ar' : 'en';
+        document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            el.textContent = t(el.getAttribute('data-i18n'));
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            el.title = t(el.getAttribute('data-i18n-title'));
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+            el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
+        });
+        document.querySelectorAll('[data-i18n-tooltip]').forEach(el => {
+            el.setAttribute('data-tooltip', t(el.getAttribute('data-i18n-tooltip')));
+        });
+
+        const langToggleBtn = document.getElementById('langToggle');
+        if (langToggleBtn) {
+            langToggleBtn.title = isAr ? t('switchToEnglish') : t('switchToArabic');
+            langToggleBtn.setAttribute('aria-label', langToggleBtn.title);
+            langToggleBtn.textContent = isAr ? 'EN' : 'ع';
+        }
+
+        try { updateTable(); } catch (e) {}
+        try { updateLegacyTable(); } catch (e) {}
+        try { updateQueueBadge(); } catch (e) {}
+    }
+
+    function toggleLanguage() {
+        const next = currentLang === 'ar' ? 'en' : 'ar';
+        localStorage.setItem('app-lang', next);
+        applyLanguage(next);
+    }
+
+    applyLanguage(currentLang);
+
     const SUBMIT_ENDPOINT = (typeof window.__BAYAN_SUBMIT_URL__ === 'string' && window.__BAYAN_SUBMIT_URL__)
         ? window.__BAYAN_SUBMIT_URL__
         : 'https://firecloud.rubberylock7.workers.dev/submit/plan-b';
@@ -1471,12 +1887,15 @@ License: MIT
     function updateQueueBadge() {
         const badge = document.getElementById('queueBadge');
         if (!badge) return;
+        const wrapper = badge.parentElement;
         const queue = loadOfflineQueue();
         if (queue.length > 0) {
             badge.style.display = 'inline-flex';
-            badge.textContent = queue.length + ' queued — tap to retry';
+            if (wrapper) wrapper.style.display = '';
+            badge.textContent = t('queuedTapRetry', queue.length);
         } else {
             badge.style.display = 'none';
+            if (wrapper) wrapper.style.display = 'none';
         }
     }
 
@@ -1530,8 +1949,8 @@ License: MIT
         }
         saveOfflineQueue(remaining);
         updateQueueBadge();
-        if (syncedCount > 0) showToast(`Synced ${syncedCount} queued submission(s).`);
-        if (droppedCount > 0) showToast(`${droppedCount} queued submission(s) were rejected by the server and dropped — please check that data.`, true);
+        if (syncedCount > 0) showToast(t('syncedQueued', syncedCount));
+        if (droppedCount > 0) showToast(t('droppedQueued', droppedCount), true);
     }
 
     window.addEventListener('online', tryFlushOfflineQueue);
@@ -1879,7 +2298,7 @@ License: MIT
                         handleRegionChange(false);
                         document.getElementById('pharmacySelect').value = pharm.name;
                         handleStateChange(false);
-                        showToast("ID recognized: " + pharm.name);
+                        showToast(t('idRecognized', pharm.name));
                         found = true;
                         this.blur();
                         break;
@@ -1889,7 +2308,7 @@ License: MIT
             }
 
             if (!found && val.length > 0) {
-                showToast("Invalid Quick ID", true);
+                showToast(t('invalidQuickId'), true);
             }
         }
     });
@@ -1915,7 +2334,7 @@ License: MIT
                 const item = itemsToShow[i];
                 const already = isDuplicate(item.fullString);
                 const row = document.createElement("DIV");
-                row.innerHTML = `<span class="product-name">${esc(item.name)}</span> <span class="product-unit">${esc(item.unit)}</span>${already ? ' <span class="added-badge">Added</span>' : ''}<input type='hidden' value='${esc(item.fullString)}'>`;
+                row.innerHTML = `<span class="product-name">${esc(item.name)}</span> <span class="product-unit">${esc(item.unit)}</span>${already ? ` <span class="added-badge">${t('added')}</span>` : ''}<input type='hidden' value='${esc(item.fullString)}'>`;
 
                 if (already) row.classList.add("already-in-table");
 
@@ -1980,7 +2399,7 @@ License: MIT
         const pharmacySelect = document.getElementById("pharmacySelect");
         
         regionSelect.value = "";
-        pharmacySelect.innerHTML = '<option value="">الصيدلية</option>';
+        pharmacySelect.innerHTML = '<option value="">' + t('fieldPharmacy') + '</option>';
         pharmacySelect.disabled = true;
         
         if (cls) { regionSelect.disabled = false; }
@@ -1994,7 +2413,7 @@ License: MIT
         const region = document.getElementById("regionSelect").value;
         const pharmacySelect = document.getElementById("pharmacySelect");
         
-        pharmacySelect.innerHTML = '<option value="">الصيدلية</option>';
+        pharmacySelect.innerHTML = '<option value="">' + t('fieldPharmacy') + '</option>';
         
         if (cls && region && pharmacyOptions[cls] && pharmacyOptions[cls][region]) {
             pharmacyOptions[cls][region].forEach(pharmacy => {
@@ -2074,7 +2493,7 @@ License: MIT
         if (existingEntry) {
             const previous = existingEntry.unitsSold;
             existingEntry.unitsSold = unitsSold;
-            if (previous !== unitsSold) showToast(`Updated existing row: ${previous} → ${unitsSold}`);
+            if (previous !== unitsSold) showToast(t('updatedExistingRow', previous, unitsSold));
         } else {
             const method = products.includes(product) ? 'old' : 'new';
             data.push({ id: makeId(), product, unitsSold, cls, region, pharmacy, month, method, category: null });
@@ -2094,13 +2513,13 @@ License: MIT
         }
 
         if (!product || !unitsSold || !cls || !region || !pharmacy || !month) {
-            if (!isLegacyMode) showToast("Please fill in all fields", true);
+            if (!isLegacyMode) showToast(t('fillAllFields'), true);
             return;
         }
 
         unitsSold = parseInt(unitsSold);
         if (isNaN(unitsSold) || unitsSold < 0 || !Number.isInteger(unitsSold)) {
-            if (!isLegacyMode) showToast("Please enter a valid number.", true);
+            if (!isLegacyMode) showToast(t('enterValidNumber'), true);
             return;
         }
 
@@ -2114,7 +2533,7 @@ License: MIT
                     const searchRes = fuseSearcher.search(product);
                     if (searchRes.length > 0 && searchRes[0].score <= 0.4) {
                         const bestMatch = searchRes[0].item;
-                        const confirmed = await showConfirmModal(`Product not found. Did you mean "${bestMatch.name} | ${bestMatch.unit}"?`);
+                        const confirmed = await showConfirmModal(t('productNotFoundConfirm', bestMatch.name, bestMatch.unit));
                         if (confirmed) {
                             product = bestMatch.fullString;
                             document.getElementById("searchInput").value = product;
@@ -2122,7 +2541,7 @@ License: MIT
                             return;
                         }
                     } else {
-                        showToast("Select a valid product or add via 'Add Name'.", true);
+                        showToast(t('selectValidProduct'), true);
                         return;
                     }
                 } else {
@@ -2163,8 +2582,8 @@ License: MIT
                     <td colspan="3">
                         <div class="empty-state">
                             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M9 15l2 2 4-4"></path></svg>
-                            <p>No entries yet</p>
-                            <span>Search a product above and press Enter to add your first row.</span>
+                            <p>${t('noEntriesYet')}</p>
+                            <span>${t('noEntriesHint')}</span>
                         </div>
                     </td>
                 </tr>`;
@@ -2184,16 +2603,16 @@ License: MIT
             
             let extraInfo = '';
             if(isExternal) {
-                extraInfo = ` <span style="color: #a8434a; font-size:0.8em;">(ext)</span>`;
+                extraInfo = ` <span style="color: #a8434a; font-size:0.8em;">${t('extLabel')}</span>`;
                 if(entry.category) extraInfo += ` <span style="color: #6fa3b8; font-size:0.8em;">[${esc(entry.category)}]</span>`;
-                else extraInfo += ` <span style="color: #c2a262; font-size:0.8em;">[Missing Context]</span>`;
+                else extraInfo += ` <span style="color: #c2a262; font-size:0.8em;">[${t('missingContext')}]</span>`;
             }
 
             row.innerHTML = `
                 <td><span class="product-name">${esc(name)}</span> <span class="product-unit">${esc(unit)}</span>${extraInfo}</td>
                 <td contenteditable="true" data-role="units">${entry.unitsSold}</td>
                 <td class="no-print">
-                    <button class="delete-btn" data-role="delete" title="Delete" aria-label="Delete row">
+                    <button class="delete-btn" data-role="delete" title="${t('deleteTitle')}" aria-label="${t('deleteAria')}">
                         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -2211,7 +2630,7 @@ License: MIT
         const totalUnits = data.reduce((sum, e) => sum + (parseInt(e.unitsSold) || 0), 0);
         const totalRow = document.createElement("tr");
         totalRow.className = "total-row";
-        totalRow.innerHTML = `<td>Total (${data.length} ${data.length === 1 ? 'item' : 'items'})</td><td>${numberFormatter.format(totalUnits)}</td><td class="no-print"></td>`;
+        totalRow.innerHTML = `<td>${data.length === 1 ? t('totalItem', data.length) : t('totalItems', data.length)}</td><td>${numberFormatter.format(totalUnits)}</td><td class="no-print"></td>`;
         table.appendChild(totalRow);
     }
 
@@ -2234,7 +2653,7 @@ License: MIT
         toastRestoreFn = restoreFn;
         const toast = document.getElementById("toast");
         toast.className = "show";
-        toast.innerHTML = `<span>${esc(message)}</span> <button id="undoBtn" style="margin-left:10px; background:rgba(255,255,255,0.25); border:none; color:#fff; padding:5px 12px; border-radius:50px; cursor:pointer; font-weight:bold;">Undo</button>`;
+        toast.innerHTML = `<span>${esc(message)}</span> <button id="undoBtn" class="undo-btn" style="background:rgba(255,255,255,0.25); border:none; color:#fff; padding:5px 12px; border-radius:50px; cursor:pointer; font-weight:bold;">${t('undo')}</button>`;
         document.getElementById("undoBtn").onclick = () => {
             if (toastRestoreFn) {
                 toastRestoreFn();
@@ -2255,7 +2674,7 @@ License: MIT
         data.splice(index, 1);
         updateTable();
         saveData();
-        showUndoToast(`Removed ${entry.product.split('|')[0]}`, () => {
+        showUndoToast(t('removedProduct', entry.product.split('|')[0]), () => {
             data.push(entry);
             updateTable();
             saveData();
@@ -2267,7 +2686,7 @@ License: MIT
         if (!entry) return;
         const newValue = parseInt(element.textContent);
         if (isNaN(newValue) || newValue < 0) {
-            showToast("Please enter a valid number.", true);
+            showToast(t('enterValidNumber'), true);
             element.textContent = entry.unitsSold;
         } else {
             entry.unitsSold = newValue;
@@ -2285,7 +2704,7 @@ License: MIT
 
         const hasOtherLabel = data.some(e => e.cls !== cls || e.region !== region || e.pharmacy !== pharmacy || e.month !== month);
         if (data.length > 0 && hasOtherLabel) {
-            const choice = await showRelabelModal(`You already have ${data.length} ${data.length === 1 ? 'entry' : 'entries'} in this report. Relabel them all to the new selection, or clear the report and start fresh?`);
+            const choice = await showRelabelModal(t('alreadyHaveEntries', data.length, t('entryWord', data.length)));
             if (choice === 'cancel') return;
             if (choice === 'clear') {
                 data = [];
@@ -2305,14 +2724,14 @@ License: MIT
     }
 
     async function clearReport() {
-        if (data.length === 0) { showToast("There's nothing to clear."); return; }
-        const confirmed = await showConfirmModal(`Clear all ${data.length} ${data.length === 1 ? 'entry' : 'entries'} from this report?`);
+        if (data.length === 0) { showToast(t('nothingToClear')); return; }
+        const confirmed = await showConfirmModal(t('clearAllEntries', data.length, t('entryWord', data.length)));
         if (!confirmed) return;
         const previousData = [...data];
         data = [];
         updateTable();
         saveData();
-        showUndoToast(`Cleared ${previousData.length} ${previousData.length === 1 ? 'entry' : 'entries'}`, () => {
+        showUndoToast(t('clearedEntries', previousData.length, t('entryWord', previousData.length)), () => {
             data = previousData;
             updateTable();
             saveData();
@@ -2328,7 +2747,7 @@ License: MIT
         const pharmacy = document.getElementById("pharmacySelect").value;
         const month = document.getElementById("monthSelect").value;
         if (!cls || !region || !pharmacy || !month) {
-            showToast("Please fill in Class, Region, Pharmacy, and Month before entering Legacy Mode.", true);
+            showToast(t('fillClassRegionPharmMonth'), true);
             document.getElementById("legacyModeToggle").checked = false;
             return;
         }
@@ -2506,7 +2925,7 @@ License: MIT
                 data = Array.isArray(parsed) ? parsed : [];
             } catch (err) {
                 data = [];
-                showToast('Saved data was corrupted and could not be loaded. Starting fresh.', true);
+                showToast(t('savedDataCorrupted'), true);
             }
             data.forEach(entry => { if (!entry.id) entry.id = makeId(); });
             updateTable();
@@ -2520,7 +2939,7 @@ License: MIT
         const savedMonth = storageGet('selectedMonth');
         if (savedMonth) { document.getElementById("monthSelect").value = savedMonth; }
         
-        document.getElementById("saveAndExitBtn").textContent = "Save and Exit";
+        document.getElementById("saveAndExitBtn").textContent = t('saveAndExit');
         handleStateChange(true);
         saveData();
     }
@@ -2556,16 +2975,16 @@ License: MIT
         const unit = document.getElementById("newProductUnit").value.trim();
         const unitsSold = document.getElementById("newProductUnitsSold").value;
 
-        if (!category || !name || !unit || !unitsSold) { showToast("Please fill in all fields", true); return; }
+        if (!category || !name || !unit || !unitsSold) { showToast(t('fillAllFields'), true); return; }
         if (isNaN(unitsSold) || parseInt(unitsSold) < 0 || !Number.isInteger(parseFloat(unitsSold))) {
-            showToast("Please enter a valid number for Units Sold", true);
+            showToast(t('enterValidUnitsNumber'), true);
             return;
         }
 
         const newProduct = `${name}|${unit}`;
 
         if (products.includes(newProduct)) {
-            showToast("That product is already on the master list — use the search box instead.", true);
+            showToast(t('alreadyOnMasterList'), true);
             return;
         }
 
@@ -2574,7 +2993,7 @@ License: MIT
             const previous = existingEntry.unitsSold;
             existingEntry.unitsSold = parseInt(unitsSold);
             existingEntry.category = category;
-            if (previous !== existingEntry.unitsSold) showToast(`Updated existing row: ${previous} → ${existingEntry.unitsSold}`);
+            if (previous !== existingEntry.unitsSold) showToast(t('updatedExistingRow', previous, existingEntry.unitsSold));
         } else {
             data.push({
                 id: makeId(),
@@ -2592,7 +3011,7 @@ License: MIT
         saveData();
         updateTable();
         closeAddNameModal();
-        showToast("Added manually.");
+        showToast(t('addedManually'));
     }
 
     function updateHeaderInfo() {
@@ -2658,17 +3077,17 @@ License: MIT
         }
         pendingSubmitAfterContext = false;
 
-        if (data.length === 0) { showToast("There is nothing to submit."); return; }
+        if (data.length === 0) { showToast(t('nothingToSubmit')); return; }
         
         const cls = document.getElementById("classSelect").value;
         const region = document.getElementById("regionSelect").value;
         const pharmacy = document.getElementById("pharmacySelect").value;
         const month = document.getElementById("monthSelect").value;
         
-        if (!cls || !region || !pharmacy || !month) { showToast("Please select all fields."); return; }
+        if (!cls || !region || !pharmacy || !month) { showToast(t('selectAllFields')); return; }
 
         if (data.some(item => !(item.unitsSold > 0))) {
-            showToast("Every row needs units sold greater than 0 before submitting — fix or remove zero-quantity rows.", true);
+            showToast(t('everyRowNeedsUnits'), true);
             return;
         }
         
@@ -2699,13 +3118,13 @@ License: MIT
         submitWithQueue(submissionRows).then(result => {
             const status = typeof result === 'string' ? result : result.status;
             if (status === 'invalid') {
-                showToast(`The server rejected this submission (${result.detail}). Please check the data.`, true);
+                showToast(t('serverRejected', result.detail), true);
                 return;
             }
             if (status === 'queued') {
-                showToast('Offline — saved and queued. It will sync automatically.', true);
+                showToast(t('offlineQueuedMsg'), true);
             } else {
-                showToast('Data submitted successfully!');
+                showToast(t('submittedSuccess'));
                 btn.classList.add('success-pulse');
                 setTimeout(() => btn.classList.remove('success-pulse'), 900);
             }
@@ -2811,7 +3230,7 @@ License: MIT
         
         selects.forEach(select => { if(!select.value) allSelected = false; });
 
-        if (!allSelected) { showToast("Please select a context for all items.", true); return; }
+        if (!allSelected) { showToast(t('selectContextAllItems'), true); return; }
 
         selects.forEach(select => {
             const product = select.getAttribute("data-product");
@@ -2840,7 +3259,7 @@ License: MIT
 
     async function requestCancelValidationBatch() {
         if (fileQueue.length > 1) {
-            const confirmed = await showConfirmModal(`This will also cancel the ${fileQueue.length - 1} remaining queued file(s). Continue?`);
+            const confirmed = await showConfirmModal(t('cancelRemainingQueued', fileQueue.length - 1));
             if (!confirmed) return;
         }
         closeValidationModal();
@@ -2849,7 +3268,7 @@ License: MIT
     function queueFiles(fileList) {
         const files = Array.from(fileList).filter(f => f.name.endsWith('.csv') || f.name.endsWith('.json'));
         if (!files.length) {
-            showToast("Please provide .csv or .json files.", true);
+            showToast(t('provideCsvJson'), true);
             return;
         }
         closeImportModal();
@@ -2901,7 +3320,7 @@ License: MIT
             const parsedData = await parseFile(currentFile);
             validateFileBatch(parsedData);
         } catch (err) {
-            showToast(`Error processing ${currentFile.name}`, true);
+            showToast(t('errorProcessingFile', currentFile.name), true);
             fileQueue.shift();
             processNextFileInQueue();
         }
@@ -2966,19 +3385,19 @@ License: MIT
             let importedMethod = normItem.method;
             let importedCategory = normItem.category;
 
-            if (!name) { fileValidationData.invalid.push(`Row ${index + 1}: Missing Product Name`); return; }
-            if (isNaN(sold) || sold < 0) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Units Sold`); return; }
+            if (!name) { fileValidationData.invalid.push(t('rowMissingName', index + 1)); return; }
+            if (isNaN(sold) || sold < 0) { fileValidationData.invalid.push(t('rowInvalidUnits', index + 1, name)); return; }
             
-            if (!validClasses.includes(cls)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Class '${cls}'`); return; }
-            if (!validRegions.includes(region)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Region '${region}'`); return; }
-            if (!validMonths.includes(month)) { fileValidationData.invalid.push(`Row ${index + 1} (${name}): Invalid Month '${month}'`); return; }
+            if (!validClasses.includes(cls)) { fileValidationData.invalid.push(t('rowInvalidClass', index + 1, name, cls)); return; }
+            if (!validRegions.includes(region)) { fileValidationData.invalid.push(t('rowInvalidRegion', index + 1, name, region)); return; }
+            if (!validMonths.includes(month)) { fileValidationData.invalid.push(t('rowInvalidMonth', index + 1, name, month)); return; }
 
             let validPharmacy = false;
             if (pharmacyOptions[cls] && pharmacyOptions[cls][region]) {
                 validPharmacy = pharmacyOptions[cls][region].some(p => p.name === pharmacy);
             }
             if (!validPharmacy) {
-                fileValidationData.invalid.push(`Row ${index + 1} (${name}): Pharmacy '${pharmacy}' does not exist in ${cls}/${region}`); 
+                fileValidationData.invalid.push(t('rowPharmacyNotExist', index + 1, name, pharmacy, cls, region));
                 return; 
             }
 
@@ -3141,7 +3560,7 @@ License: MIT
         if (isSubmitting) return;
 
         if (fileValidationData.remap.some(r => !r.resolved)) {
-            showToast("Please resolve the suggested matches before submitting.", true);
+            showToast(t('resolveSuggestedMatches'), true);
             return;
         }
 
@@ -3163,26 +3582,26 @@ License: MIT
         });
 
         if (!allContextsFilled) {
-            showToast("Please select a context for all pending items before submitting.", true);
+            showToast(t('selectContextPendingItems'), true);
             return;
         }
 
         const allValidItems = [...fileValidationData.valid, ...fileValidationData.pending];
         if (allValidItems.length === 0) {
-            showToast("No valid items to submit.", true);
+            showToast(t('noValidItems'), true);
             skipCurrentFileValidation();
             return;
         }
 
         if (allValidItems.some(item => !(item.unitSold > 0))) {
-            showToast("Every item needs units sold greater than 0 — fix the values above before submitting.", true);
+            showToast(t('everyItemNeedsUnits'), true);
             return;
         }
 
         isSubmitting = true;
         const btn = document.getElementById('valSubmitBtn');
         const originalContent = btn.textContent;
-        btn.textContent = 'Submitting...';
+        btn.textContent = t('submitting');
         btn.classList.add('loading');
 
         const exportRows = allValidItems.map(item => ({
@@ -3203,12 +3622,12 @@ License: MIT
         submitWithQueue(submissionRows).then(result => {
             const status = typeof result === 'string' ? result : result.status;
             if (status === 'invalid') {
-                showToast(`The server rejected this file (${result.detail}). Please check the data.`, true);
+                showToast(t('serverRejectedFile', result.detail), true);
                 return;
             }
             showToast(status === 'queued'
-                ? `File saved (${allValidItems.length} items) — queued offline, will sync automatically.`
-                : `File submission successful! (${allValidItems.length} items)`);
+                ? t('fileSavedQueuedOffline', allValidItems.length)
+                : t('fileSubmissionSuccess', allValidItems.length));
             generateAndDownloadFiles(exportRows);
             fileQueue.shift();
             processNextFileInQueue();
@@ -3329,14 +3748,14 @@ License: MIT
                 handleStateChange(false);
                 updateTable();
                 saveData();
-                showToast("Session loaded successfully!");
+                showToast(t('sessionLoadedSuccess'));
             } catch (err) {
-                showToast("Invalid session file.", true);
+                showToast(t('invalidSessionFile'), true);
             }
             input.value = '';
         };
         reader.onerror = function() {
-            showToast("Could not read session file.", true);
+            showToast(t('couldNotReadSession'), true);
             input.value = '';
         };
         reader.readAsText(file);
