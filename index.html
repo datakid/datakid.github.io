@@ -239,7 +239,7 @@ box-shadow: 0 28px 80px var(--shadow-hover);
 
 .legacy-pill {
 display: inline-flex; align-items: center; gap: 6px;
-font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 600;
 font-synthesis: none;
 letter-spacing: 0.3px; text-transform: uppercase;
 color: var(--accent-amber-text); background: rgba(194, 162, 98, 0.12);
@@ -251,7 +251,7 @@ padding: 6px 15px; border-radius: 50px; margin-bottom: 1.1rem;
 .title {
 font-family: var(--font-serif-ar);
 text-align: center;
-font-size: 3rem;
+font-size: var(--fs-3xl);
 background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
 -webkit-background-clip: text;
 background-clip: text;
@@ -278,16 +278,16 @@ margin: 1.9rem 0 0.25rem;
 .stats-chip {
 display: flex; align-items: center; gap: 8px;
 background: var(--surface-alt); border: 1px solid var(--border-color);
-padding: 9px 17px; border-radius: 50px; font-size: 0.88rem; color: var(--text-muted);
+padding: 9px 17px; border-radius: 50px; font-size: var(--fs-sm); color: var(--text-muted);
 transition: var(--transition);
 }
 .stats-chip:hover { border-color: var(--primary-color); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow-color); }
-.stats-chip strong { color: var(--text-color); font-family: var(--font-mono); font-weight: 600; }
+.stats-chip strong { color: var(--text-color); font-family: var(--font-mono); font-weight: 600; font-variant-numeric: tabular-nums; }
 .stats-chip svg { width: 15px; height: 15px; stroke: var(--primary-color); flex-shrink: 0; }
 
 .section-label {
 display: flex; align-items: center; gap: 8px;
-font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px;
+font-size: var(--fs-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px;
 color: var(--text-muted); margin: 1.9rem 0 0.9rem;
 }
 .section-label svg { width: 15px; height: 15px; stroke: var(--primary-color); }
@@ -310,7 +310,7 @@ flex-wrap: wrap;
 gap: 6px;
 align-items: center;
 margin-bottom: 0.85rem;
-font-size: 0.85rem;
+font-size: var(--fs-sm);
 color: var(--text-muted);
 }
 
@@ -332,7 +332,7 @@ position: relative;
 margin-bottom: 0;
 padding-left: 2.75rem;
 font-family: var(--font-mono);
-font-size: 1.15rem;
+font-size: var(--fs-md);
 letter-spacing: 2px;
 color: var(--primary-color);
 font-weight: 700;
@@ -1002,6 +1002,11 @@ td[contenteditable="true"] { background-image: none !important; border: 1px soli
 .validation-stats { flex-direction: column; }
 body { padding-top: 2rem; padding-bottom: 130px; }
 .modal-content { padding: 1.5rem; margin: 8% auto; }
+}
+
+@media (max-width: 480px) {
+.container { padding-top: 1.5rem; }
+.top-controls { position: static; width: auto; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 1.25rem; }
 }
 
 @keyframes fadeIn {
