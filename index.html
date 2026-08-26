@@ -81,6 +81,14 @@
 --stat-invalid-bg: rgba(168, 67, 74, 0.12);
 --stat-invalid-border: rgba(168, 67, 74, 0.35);
 --pulse-rgb: 111, 163, 184;
+--fs-xs: clamp(0.7rem, 0.68rem + 0.1vw, 0.76rem);
+--fs-sm: clamp(0.82rem, 0.79rem + 0.14vw, 0.88rem);
+--fs-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+--fs-md: clamp(1.05rem, 1rem + 0.3vw, 1.15rem);
+--fs-lg: clamp(1.2rem, 1.1rem + 0.5vw, 1.35rem);
+--fs-xl: clamp(1.6rem, 1.4rem + 1vw, 2rem);
+--fs-2xl: clamp(2rem, 1.7rem + 1.5vw, 2.4rem);
+--fs-3xl: clamp(2.4rem, 2rem + 2.5vw, 3rem);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -355,7 +363,7 @@ font-weight: 500;
 
 label {
 display: block;
-font-size: 0.85rem;
+font-size: var(--fs-sm);
 font-weight: 700;
 color: var(--text-muted);
 margin: 1.35rem 0 0.55rem;
@@ -369,7 +377,7 @@ padding: 1rem 1.2rem;
 margin-bottom: 0;
 border: 1.5px solid var(--border-color);
 border-radius: var(--radius-sm);
-font-size: 1.02rem;
+font-size: var(--fs-base);
 font-family: inherit;
 transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
 -webkit-appearance: none;
@@ -386,12 +394,17 @@ border-color: var(--secondary-color);
 }
 
 select {
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364798c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 background-repeat: no-repeat;
 background-position: right 1.15rem center;
 background-size: 1.3em;
 padding-right: 3.2rem;
 cursor: pointer;
+}
+[data-theme="light"] select {
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235d7183' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+[data-theme="dark"] select {
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2393a6b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 select:disabled { cursor: not-allowed; opacity: 0.6; }
 
