@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#eef2f6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a121a" media="(prefers-color-scheme: dark)">
@@ -452,33 +452,24 @@ z-index: 1;
 
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-.btn::after {
-content: '';
-position: absolute;
-top: 0;
-left: -150%;
-width: 150%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-transform: skewX(-20deg);
-transition: none;
-z-index: -1;
-}
-
 .btn:hover {
 background-color: var(--primary-color-dark);
 transform: translateY(-1px);
 box-shadow: 0 10px 22px var(--shadow-hover);
 }
 
-.btn:hover::after {
-animation: sheen 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+.btn:active {
+transform: translateY(0);
+box-shadow: 0 3px 10px var(--shadow-color);
 }
+
+.btn:focus-visible { border-radius: 13px; }
 
 .btn.btn-muted { background-color: var(--btn-muted-bg); }
 .btn.btn-muted:hover { background-color: var(--btn-muted-hover-bg); }
 .btn.btn-small { padding: 0.5rem 1rem; font-size: 0.82rem; border-radius: 9px; box-shadow: none; }
 .btn.btn-small:hover { transform: translateY(-1px); box-shadow: 0 4px 10px var(--shadow-color); }
+.btn.btn-small:focus-visible { border-radius: 9px; }
 
 .btn:disabled {
 background-color: var(--btn-disabled-bg);
@@ -487,12 +478,6 @@ transform: none;
 box-shadow: none;
 opacity: 0.7;
 }
-
-.btn:disabled::after {
-display: none;
-}
-
-@keyframes sheen { 100% { left: 150%; } }
 
 #results, #legacyResults { margin-top: 2.75rem; width: calc(100% + 16px); margin-inline: -8px; padding-inline: 8px; overflow-x: auto; }
 
@@ -785,27 +770,18 @@ transition: var(--transition); width: auto; max-width: 90%;
 overflow: hidden;
 }
 
-#saveAndExitBtn::after {
-content: '';
-position: absolute;
-top: 0;
-left: -150%;
-width: 150%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-transform: skewX(-20deg);
-transition: none;
-}
-
 #saveAndExitBtn:hover {
 background-color: var(--primary-color-dark);
 transform: translateX(-50%) translateY(-1px);
 box-shadow: 0 14px 30px var(--shadow-hover);
 }
 
-#saveAndExitBtn:hover::after {
-animation: sheen 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+#saveAndExitBtn:active {
+transform: translateX(-50%) translateY(0);
+box-shadow: 0 4px 12px var(--shadow-color);
 }
+
+#saveAndExitBtn:focus-visible { border-radius: 15px; }
 
 .modal {
 display: none; position: fixed; z-index: 2000;
@@ -860,6 +836,7 @@ display: none; box-shadow: 0 8px 20px var(--shadow-color); font-family: var(--fo
 .action-dock {
 position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
 display: flex; gap: 10px; padding: 10px 18px;
+padding-bottom: calc(10px + env(safe-area-inset-bottom));
 background: var(--dock-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
 border-radius: 22px; box-shadow: 0 14px 44px var(--shadow-color);
 border: 1px solid var(--dock-border); z-index: 100; transition: var(--transition);
@@ -953,6 +930,15 @@ display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap
 #toast.show { visibility: visible; opacity: 1; top: 50px; }
 #toast.error { background-color: var(--danger); }
 #toast.warning { background-color: var(--accent-amber); }
+.undo-btn {
+background: rgba(255, 255, 255, 0.25);
+border: none;
+color: #fff;
+padding: 5px 12px;
+border-radius: 50px;
+cursor: pointer;
+font-weight: bold;
+}
 
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 .loading-icon {
@@ -1000,7 +986,7 @@ td[contenteditable="true"] { background-image: none !important; border: 1px soli
 .button-container { flex-direction: column; }
 .title { font-size: 2rem; margin-top: 0.5rem; }
 .top-controls { top: 16px; width: calc(100% - 32px); }
-.action-dock { width: 92%; justify-content: space-between; padding: 10px 12px; }
+.action-dock { width: 92%; justify-content: space-between; padding: 10px 12px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
 .stats-strip { gap: 8px; }
 .stats-chip { font-size: 0.78rem; padding: 6px 12px; }
 .format-guide { grid-template-columns: 1fr; }
@@ -1012,6 +998,25 @@ body { padding-top: 2rem; padding-bottom: 130px; }
 @media (max-width: 480px) {
 .container { padding-top: 1.5rem; }
 .top-controls { position: static; width: auto; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 1.25rem; }
+}
+
+@keyframes sheetIn {
+from { opacity: 0; transform: translateY(100%); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 560px) {
+.modal-content {
+position: fixed;
+left: 0; right: 0; bottom: 0; top: auto;
+margin: 0;
+width: 100%;
+max-width: 100%;
+max-height: 88vh;
+border-radius: var(--r-lg) var(--r-lg) 0 0;
+border-bottom: none;
+animation: sheetIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 }
 
 @keyframes fadeIn {
@@ -1088,7 +1093,7 @@ License: MIT
 </script>
 </head>
 <body>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <div class="container">
     <div class="top-controls no-print">
         <div class="top-controls-group">
@@ -2731,7 +2736,7 @@ License: MIT
         toastRestoreFn = restoreFn;
         const toast = document.getElementById("toast");
         toast.className = "show";
-        toast.innerHTML = `<span>${esc(message)}</span> <button id="undoBtn" class="undo-btn" style="background:rgba(255,255,255,0.25); border:none; color:#fff; padding:5px 12px; border-radius:50px; cursor:pointer; font-weight:bold;">${t('undo')}</button>`;
+        toast.innerHTML = `<span>${esc(message)}</span> <button id="undoBtn" class="undo-btn">${t('undo')}</button>`;
         document.getElementById("undoBtn").onclick = () => {
             if (toastRestoreFn) {
                 toastRestoreFn();
