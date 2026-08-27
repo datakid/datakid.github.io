@@ -467,7 +467,7 @@ z-index: -1;
 
 .btn:hover {
 background-color: var(--primary-color-dark);
-transform: translateY(-3px);
+transform: translateY(-1px);
 box-shadow: 0 10px 22px var(--shadow-hover);
 }
 
@@ -566,16 +566,16 @@ border-radius: 12px;
 
 tbody tr {
 background-color: var(--row-bg);
-transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+transition: var(--transition);
 position: relative;
 z-index: 1;
 border-radius: 12px;
-box-shadow: 0 2px 8px var(--shadow-color);
+box-shadow: var(--shadow-1);
 }
 
 tbody tr:hover {
-transform: translateY(-3px);
-box-shadow: 0 12px 26px var(--shadow-hover);
+background-color: var(--hover-bg);
+box-shadow: 0 0 0 1.5px var(--primary-color), var(--shadow-2);
 z-index: 2;
 }
 
@@ -584,6 +584,10 @@ tr td:last-child { border-start-end-radius: 12px; border-end-end-radius: 12px; }
 
 .product-name { font-weight: 600; }
 .product-unit { color: var(--primary-color); font-weight: 700; font-size: 0.92em; }
+.tag { font-size: 0.8em; }
+.tag-ext { color: var(--danger); }
+.tag-ctx { color: var(--secondary-color); }
+.tag-pending { color: var(--accent-amber); }
 
 .delete-btn {
 background: none;
@@ -625,6 +629,7 @@ background: var(--surface-alt) !important;
 font-weight: 700;
 box-shadow: none !important;
 border-top: 2px solid var(--border-color);
+font-variant-numeric: tabular-nums;
 }
 .total-row:hover { transform: none !important; }
 
@@ -751,6 +756,7 @@ background-position: right 0.75rem center;
 cursor: text;
 font-family: var(--font-mono);
 font-weight: 600;
+font-variant-numeric: tabular-nums;
 }
 
 td[contenteditable="true"]:hover {
@@ -794,7 +800,7 @@ transition: none;
 
 #saveAndExitBtn:hover {
 background-color: var(--primary-color-dark);
-transform: translateX(-50%) translateY(-3px);
+transform: translateX(-50%) translateY(-1px);
 box-shadow: 0 14px 30px var(--shadow-hover);
 }
 
@@ -2676,9 +2682,9 @@ License: MIT
             
             let extraInfo = '';
             if(isExternal) {
-                extraInfo = ` <span style="color: #a8434a; font-size:0.8em;">${t('extLabel')}</span>`;
-                if(entry.category) extraInfo += ` <span style="color: #6fa3b8; font-size:0.8em;">[${esc(entry.category)}]</span>`;
-                else extraInfo += ` <span style="color: #c2a262; font-size:0.8em;">[${t('missingContext')}]</span>`;
+                extraInfo = ` <span class="tag tag-ext">${t('extLabel')}</span>`;
+                if(entry.category) extraInfo += ` <span class="tag tag-ctx">[${esc(entry.category)}]</span>`;
+                else extraInfo += ` <span class="tag tag-pending">[${t('missingContext')}]</span>`;
             }
 
             row.innerHTML = `
